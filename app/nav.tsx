@@ -5,9 +5,9 @@
 
 // Imports
 import { useEffect, useState } from 'react';
-import Navbar from './components/navbar';
-import ApiConnector from './ApiConnector/ApiConnector';
-import { Admin } from './Shared/Interfaces';
+import Navbar from '../components/navbar';
+import ApiConnector from './services/ApiConnector';
+
 import { useRouter } from 'next/navigation';
 
 // Grabs the instance of the ApiConnector Class (Singleton) which connects to the backend endpoints.
