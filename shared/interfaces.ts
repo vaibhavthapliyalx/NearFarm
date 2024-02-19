@@ -18,8 +18,9 @@ import { ToastType } from "./constants";
 export interface Customer {
   id: number;
   name: string;
+  age: number;
+  username: string;
   contact: ContactDetails;
-  membershipStatus: string;
   previousOrders: Order["id"][] | string[];
 }
 

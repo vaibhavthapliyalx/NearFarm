@@ -6,7 +6,7 @@ const f = createUploadthing();
 // Gets the instance of ApiConnector class that is used to connect to the backend.
 const apiConnectorInstance = ApiConnector.getInstance();
 
-const auth = async(req: any) => await apiConnectorInstance.getCurrentUser(req);
+const auth = async(req: any) => await apiConnectorInstance.getCurrentUserFromSession();
 
 export const ourFileRouter = {
 //   imageUploader: f({ image: { maxFileSize: "4MB" } })

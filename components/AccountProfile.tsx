@@ -91,7 +91,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
 
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      setFiles(Array.from(e.target.files));
+      // setFiles(Array.from(e.target.files));
 
       if (!file.type.includes("image")) return;
 
