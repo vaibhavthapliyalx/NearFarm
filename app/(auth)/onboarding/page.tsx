@@ -33,7 +33,7 @@ export default function Onboarding() {
     router.push("/");
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: any) => {
     // Handle form submission if needed
     console.log(data);
     handleOnboarding();
