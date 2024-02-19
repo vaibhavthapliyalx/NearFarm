@@ -100,7 +100,7 @@ export default function ResetPassword({params}: IProps) {
                 <br/>
                 Now we are just a few steps away from resetting your password.
                 <br/>
-                Please enter your new passoword below. And don't forget to confirm it.
+                Please enter your new passoword below. And don&apos;t forget to confirm it.
               </p>
             </div>
             <div className="grid gap-6 ">

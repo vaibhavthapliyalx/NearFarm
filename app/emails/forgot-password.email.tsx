@@ -14,7 +14,7 @@ export default function ForgotPasswordEmail({params}: {params: {
       <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px', color: '#333' }}>
         <h1 style={{ color: '#333' }}>Hello {params.name},</h1>
         <p>
-          We received a request to reset your password. If you didn't make the request, just ignore this email.
+          We received a request to reset your password. If you didn&apos;t make the request, just ignore this email.
         <br/>
           Otherwise, you can reset your password using this link:
         </p>
@@ -33,7 +33,7 @@ export default function ForgotPasswordEmail({params}: {params: {
           Reset Password
         </Button>
         <p>
-          If you have any issues or questions, please don't hesitate to contact us.
+          If you have any issues or questions, please don&apos;t hesitate to contact us.
         </p>
         <p>
           Best regards,<br/>

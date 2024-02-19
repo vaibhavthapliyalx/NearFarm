@@ -100,7 +100,7 @@ export default function ForgotPassword() {
                 Reset your password
               </h1>
               <p className="text-sm text-muted-foreground dark:text-gray-400">
-                It is common to forget your password. We've all been there, so we'll make this quick.
+                It is common to forget your password. {"We've all been there, so we'll make this quick."}
                 <br/>
                 Just enter your email below and passoword reset link should be on your way.
               </p>
@@ -145,7 +145,7 @@ export default function ForgotPassword() {
               </Link>
             </p>
             <p className="text-center text-sm text-muted-foreground mt-6 dark:text-gray-400">
-              Don't have an account?{" "}
+              {"Don't have an account?"}{" "}
               <Link
                 href="/signup"
                 className="underline underline-offset-4 hover:text-primary dark:text-gray-400"
