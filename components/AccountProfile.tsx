@@ -1,7 +1,5 @@
 "use client";
 
-import vine from "@vinejs/vine";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { usePathname, useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";

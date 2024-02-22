@@ -6,7 +6,6 @@ export default function ForgotPasswordEmail({params}: {params: {
   name: string,
   resetLink: string
 }}) {
- 
 
   return (
     <Html>

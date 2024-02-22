@@ -12,8 +12,6 @@ export async function POST(request: NextRequest) {
   // Connect to the database
   await connectDB();
   const payload: ForgotPasswordPayload = await request.json();
-  console.log("Server received the request to reset the password.");
-  console.log(payload);
 
   // Check if the email exists in the database
   const user = await User.findOne({ email: payload.email });
@@ -49,11 +47,9 @@ export async function POST(request: NextRequest) {
                 resetLink: resetPasswordLink,
                 name: user.name,
             }
-
         }));
 
         // Sending email using nodemailer to the user.
-
         await sendEmail(payload.email, "Reset your password", html);
 
         return NextResponse.json({
@@ -63,8 +59,7 @@ export async function POST(request: NextRequest) {
                 message: "Email sent successfully",
             },
         });
-    } catch (error) {
-        console.log(error);
+    } catch(error) {
         return NextResponse.json({
             status: 500,
             body: {

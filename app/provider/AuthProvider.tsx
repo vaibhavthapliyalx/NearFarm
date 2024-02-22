@@ -7,7 +7,7 @@ export default function AuthProvider({ children }: {
 }) {
   return (
     <SessionProvider>
-        {children}
+      {children}
     </SessionProvider>
     )
 }

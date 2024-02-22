@@ -4,12 +4,22 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   try {
     pingDB();
-    return NextResponse.json({status: 200, message: "Database connection is functional"},
-        {status: 200}
-    );
+    return NextResponse.json({
+      status: 200,
+      body: {
+        success: true, 
+        message: "Database connection is operational." 
+      }
+    });
   } catch (error) {
-    return NextResponse.json({status: 400, message: "Database connection failed"},
-        {status: 200}
+    return NextResponse.json({
+      status: 500,
+      body: {
+        success: false,
+        message: "An error occurred while pinging the database.",
+        error: error
+      }
+    }
     );
   }
 }

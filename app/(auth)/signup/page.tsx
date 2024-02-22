@@ -1,9 +1,9 @@
 'use client';
 import * as React from 'react';
 
-import { ToastType, GithubLogoVariant, GoogleLogo, SignupErrorType} from '../../../shared/constants';
+import { ToastType, GithubLogoVariant, GoogleLogo, SignupErrorType, PROVIDER_TYPE} from '../../../shared/constants';
 import { useState } from 'react';
-import { User } from '@/shared/interfaces';
+import { ApiResponse, User } from '@/shared/interfaces';
 import ApiConnector from '@/app/services/ApiConnector';
 // import { Alert, Divider, Icon } from '@mui/material';
 import Image from 'next/image';
@@ -27,7 +27,6 @@ export default function SignUp() {
 
   const [error, setError] = useState<SignupErrorType>({});
   const [githubIcon, setGithubIcon] = useState<GithubLogoVariant>(GithubLogoVariant.BLACK);
-  const [alert, setAlert] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const { toast } = useToast();
@@ -53,29 +52,34 @@ export default function SignUp() {
     apiConnectorInstance.signup(userData)
       .then((response) => {
         console.log(response);
-        setAlert(response as string);
+        toast(
+          {
+            description: response.message,
+            variant: ToastType.DEFAULT,
+            title: "Account created successfully",
+            action: <ToastAction altText='Continue to login'> Continue to login </ToastAction>
+          }
+        );
 
         
       })
-      .catch((error) => {    
+      .catch((error:ApiResponse) => {
+        console.log(error);  
         if (error) {
-          if(typeof error === 'string'){
-            toast(
-              {
-                description: error,
+          if(typeof error.message === 'string'){
+            toast({
+                description: error.message,
                 variant: ToastType.DESTRUCTIVE,
                 title: "Something went wrong!",
-                action: <ToastAction altText='Try again'> Try Again </ToastAction>
-                
-              }
-            );
+                action: <ToastAction altText='Try again'> Try Again </ToastAction> 
+              });
           } else {
-          const errorMessages = error.reduce((acc: { [x: string]: any; }, curr: { field: string | number; message: any; }) => {
+          const errorMessages = error.message.reduce((acc: { [x: string]: any; }, curr: { field: string | number; message: any; }) => {
             acc[curr.field] = curr.message;
             return acc;
           }, {});
           console.log(error);
-          error.map((error: any) => {
+          error.message.map((error: any) => {
             toast(
               {
                 description: error.message,
@@ -89,7 +93,6 @@ export default function SignUp() {
           
           console.log(errorMessages);
           setError(errorMessages);
-          setAlert("");
         }
         }
       })
@@ -217,7 +220,7 @@ export default function SignUp() {
                 </div>
               </div>
               <Button variant="outline" type="button" disabled={isLoading}
-                onClick={apiConnectorInstance.loginWithGithub}
+                onClick={() => apiConnectorInstance.login(PROVIDER_TYPE.GITHUB)}
               >
                 <Image
                   src={GithubLogoVariant.BLACK}
@@ -228,7 +231,9 @@ export default function SignUp() {
                 />
                 GitHub
               </Button>
-              <Button variant="outline" type="button" disabled={isLoading} onClick={apiConnectorInstance.loginWithGoogle}>
+              <Button variant="outline" type="button" disabled={isLoading} 
+                onClick={() => apiConnectorInstance.login(PROVIDER_TYPE.GOOGLE)}
+              >
                 <Image
                   src={GoogleLogo.DEFAULT}
                   alt="Google Logo"

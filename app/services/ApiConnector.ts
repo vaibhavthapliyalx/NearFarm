@@ -2,13 +2,9 @@
 
 import axios from "axios";
 import {getSession, signIn, signOut} from "next-auth/react";
-import { ResetPasswordPayload, User } from "../../shared/interfaces";
+import { ApiResponse, ResetPasswordPayload, User } from "../../shared/interfaces";
 import type { NextApiRequest } from "next";
-
-// Imports
-// import axios from "axios";
-// import qs from "qs";
-
+import { PROVIDER_TYPE } from "@/shared/constants";
 
 /**
  * @class ApiConnector
@@ -42,19 +38,62 @@ export default class ApiConnector {
     return ApiConnector.instance;
   }
 
+
+  /**
+   * This function sends a GET request to the server to get the application version.
+   * 
+   * @description
+   * This function is used to get the application version from the server.
+   * The server reads the version from the package.json file and sends it as a response.
+   * The version is read in this way to ensure security by not exposing the package.json file
+   * directly to the client.
+   * 
+   * If there's a better alternative to this, please let me know.
+   * 
+   * @returns Promise<ApiResponse> - The promise resolves if the application version is fetched successfully, otherwise it rejects.
+   */
+  async getAppVersion() : Promise<ApiResponse> {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/app-version')
+      .then((res: any) => {
+        const response = res.data.body;
+
+        // If the response is not successful, reject the promise.
+        if (!response.success) {
+          reject(response);
+        }
+        // If the response is successful, resolve the promise.
+        resolve(response);
+      })
+      .catch((result:any) => {
+        // In case of an error, reject the promise.
+        reject(result.response.data);
+      })
+    })
+  }
+
   /**
    * This function sends a GET request to the server to get the database connection status
    * by pinging the database.
    * 
    * @returns Promise<void> - The promise resolves if the database is connected, otherwise it rejects.
    */
-  async getDatabaseConnectionStatus() : Promise<void> {
-    return new Promise<void>((resolve, reject) => {
+  async getDatabaseConnectionStatus() : Promise<ApiResponse> {
+    return new Promise<ApiResponse>((resolve, reject) => {
       axios.get('/api/connection/database')
-      .then((result:any) => {
-        resolve(result);
+      .then((res:any) => {
+        const response = res.data.body;
+
+        // If the response is not successful, reject the promise.
+        if (!response.success) {
+          reject(response);
+        }
+        
+        // If the response is successful, resolve the promise.
+        resolve(response);
       })
       .catch((result:any) => {
+        // In case of an error, reject the promise.
         reject(result.response.data);
       })
     })
@@ -63,15 +102,25 @@ export default class ApiConnector {
   /**
   * This function sends a GET request to the server to get the server connection status.
   * 
-  * @returns Promise<void> - The promise resolves if the server is connected, otherwise it rejects.
+  * @returns Promise<ApiResponse> - The promise resolves if the server is connected, otherwise it rejects.
   */
-  async getServerConnectionStatus() : Promise<void> {
-    return new Promise<void>((resolve, reject) => {
+  async getServerConnectionStatus() : Promise<ApiResponse> {
+    return new Promise<ApiResponse>((resolve, reject) => {
       axios.get('/api/connection/server')
-      .then((result:any) => {
-        resolve(result);
+      .then((res:any) => {
+        const response = res.data.body;
+
+        // If the response is not successful, reject the promise.
+        if (!response.success) {
+          reject(response);
+        }
+
+        // If the response is successful, resolve the promise.
+        resolve(response);
       })
       .catch((result:any) => {
+
+        // In case of an error, reject the promise.
         reject(result.response.data);
       })
     })
@@ -83,8 +132,8 @@ export default class ApiConnector {
     * @param data - The data to be sent to the server.
     * @returns Promise<void> - The promise resolves if the user is created successfully, otherwise it rejects.
     */
-  async signup(data: User) : Promise<any> {
-    return new Promise<any>((resolve, reject) => {
+  async signup(data: User) : Promise<ApiResponse> {
+    return new Promise<ApiResponse>((resolve, reject) => {
       axios.post('/api/auth/signup', {
         name: data.name,
         userType: data.userType,
@@ -92,16 +141,20 @@ export default class ApiConnector {
         password: data.password,
         createdAt: data.createdAt,
       })
-      .then(async (response:any) => {
-        console.log(response.data);
-        if (response.data.status !== 200) {
-          reject(response.data.error);
+      .then((res:any) => {
+        const response = res.data.body;
+
+        // If the response is not successful, reject the promise.
+        if (response.status !== 200) {
+          reject(response);
         }
-        resolve(response.data)
+
+        // If the response is successful, resolve the promise.
+        resolve(response);
       })
-      .catch((response:any) => {
-        console.log(response.data.error);
-        reject(response.data.error);
+      .catch((result:any) => {
+        // In case of an error, reject the promise.
+        reject(result.response.data);
       })
     })
   }
@@ -111,41 +164,49 @@ export default class ApiConnector {
     * This function sends a POST request to the server to login a user.
     * 
     * @param data - The data to be sent to the server.
-    * @param provider - The provider to be used for authentication.
+    * @param provider - The provider to be used for authentication. i.e. credentials, google, github.
     * 
-    * @returns Promise<void> - The promise resolves if the user is logged in successfully, otherwise it rejects.
+    * @returns Promise<ApiResponse> - The promise resolves if the user is logged in successfully, otherwise it rejects.
     */
-  async login(data: User, provider: any) : Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      axios.post('/api/auth/login', {
-        email: data.email,
-        password: data.password,
-      })
-      .then((response:any) => {
-        console.log(response);
-        
+  async login(provider: PROVIDER_TYPE, data?: User) : Promise<ApiResponse> {
+    return new Promise<ApiResponse>((resolve, reject) => {
 
-        if (response.data.status !== 200) {
-          reject(response.data.error);
-        }
+      // If the provider is credentials, send a POST request to the server to login the user.
+      if (data && provider === PROVIDER_TYPE.CREDENTIALS) {
+        axios.post('/api/auth/login', {
+          email: data.email,
+          password: data.password,
+        })
+        .then((res: any) => {
+          const response = res.data.body;
+          
+          // If the response is not successful, reject the promise.
+          if (!response.success) {
+            reject(response);
+          } else {
+            // Sign in the user.
+            signIn(provider, {
+              email: data.email,
+              password: data.password,
+              callbackUrl: "/",
+              redirect: true
+            })
+            resolve(response);
+          }
+        })
+        .catch((result:any) => {
+          reject(result.response.data);
+        });
 
-        if (response.data.status === 200) {
-          resolve(response.data)
-
-          // Sign in the user.
-          signIn(provider,{
-            email: data.email,
-            password: data.password,
-            callbackUrl: "/",
-            redirect: true
-          })
-        }
-
-      })
-      .catch((result:any) => {
-        console.log(result);
-        reject(result.data.error);
-      })
+        // If the provider is google or github, sign in the user using the provider.
+      } else if (provider === PROVIDER_TYPE.GOOGLE || provider === PROVIDER_TYPE.GITHUB) {
+        signIn(provider, {
+          callbackUrl: "/",
+          redirect: true,
+        })
+      } else {
+        console.log("Invalid provider");
+      }
     })
   }
 
@@ -154,7 +215,7 @@ export default class ApiConnector {
     * 
     * @returns Promise<void> - The promise resolves if the user is logged out successfully, otherwise it rejects.
     */
-  async logout() : Promise<void> {
+  async logout(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       signOut({callbackUrl: '/login', redirect: true})
       .then((result:any) => {
@@ -172,49 +233,41 @@ export default class ApiConnector {
     * 
     * @returns Promise<any> - The promise resolves if the user data is fetched successfully, otherwise it rejects.
     */
-  async getUserFromEmail(email: string) : Promise<any> {
-    return new Promise<any>((resolve, reject) => {
+  async getUserFromEmail(email: string): Promise<ApiResponse> {
+    return new Promise<ApiResponse>((resolve, reject) => {
       axios.get('/api/user', { params: { email } })
-      .then((result:any) => {
-        resolve(result.data.data);
+      .then((res: any) => {
+        const response = res.data.body;
+        resolve(response);
       })
-      .catch((result:any) => {
+      .catch((result: any) => {
         reject(result.response.data);
       })
     })
   }
 
 
+  /**
+   * This function uses the next-auth getSession function to get the current user from the session.
+   * 
+   * 
+   * @param req - The request object.
+   * @returns  User - The user object.
+   */
   async getCurrentUserFromSession(req?: NextApiRequest) {
-    let  session = {} as any;
+    let  session = null;
     if (!req) {
       session = await getSession();
     } else {
       session = await getSession({ req });
     }
-    console.log(session);
+    if (!session) {
+      console.log("No session found");
+      return null;
+    }
     return session?.user;
   }
 
-  /**
-   * This function sends the request to Google to login a user.
-   */
-  async loginWithGoogle() {
-    await signIn("google", {
-      callbackUrl: "/",
-      redirect: true,
-    })
-  }
-
-  /**
-   * This function sends the request to Github to login a user.
-   */
-  async loginWithGithub() {
-    await signIn("github", {
-      callbackUrl: "/",
-      redirect: true,
-    })
-  }
 
   /**
    * This function sends a POST request to the server to reset the password of a user.
@@ -222,37 +275,23 @@ export default class ApiConnector {
    * 
    * @param email - The email of the user whose password is to be reset.
    * 
-   * @returns Promise<void> - The promise resolves if the password is reset successfully, otherwise it rejects.
+   * @returns Promise<ApiResponse> - The promise resolves if the password is reset successfully, otherwise it rejects.
    */
 
-  async forgotPassword(email: any) : Promise<any> {
-    console.log("Interface received the request to reset the password.");
-    return new Promise<any>((resolve, reject) => {
-      axios.post('/api/auth/forgot-password', {
-        email: email,
-      })
-      .then((result:any) => {
-        const response = result.data;
-        console.log("This is response.data");
-        console.log(response);
+  async forgotPassword(email: any) : Promise<ApiResponse> {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.post('/api/auth/forgot-password', { email: email })
+      .then((res:any) => {
+        const response = res.data.body;
 
-
-        if (response.status === 400) {
-          // User not found.
+        // If the response is not successful, reject the promise.
+        if (!response.success) {
           reject(response);
-        } else if (response.status === 200) {
-          // User received the email.
-          resolve(response);
         } else {
-          // User did not receive the email.
-          reject(response);
+          resolve(response);
         }
-
-        resolve(response);
       })
       .catch((result:any) => {
-        console.log("This is error object");
-        console.log(result);
         reject(result.response.data);
       })
     });
@@ -266,10 +305,10 @@ export default class ApiConnector {
    * @param password - The new password of the user.
    * @param token - The reset password token.
    * 
-   * @returns Promise<void> - The promise resolves if the password is reset successfully, otherwise it rejects.
+   * @returns Promise<ApiResponse> - The promise resolves if the password is reset successfully, otherwise it rejects.
    */
-  async resetPassword(payload: ResetPasswordPayload) : Promise<any> {
-    return new Promise<any>((resolve, reject) => {
+  async resetPassword(payload: ResetPasswordPayload) : Promise<ApiResponse> {
+    return new Promise<ApiResponse>((resolve, reject) => {
       // Before sending the request to the server, check if the password and confirm password match.
       if (payload.password !== payload.confirmPassword) {
         reject({
@@ -282,21 +321,18 @@ export default class ApiConnector {
         password: payload.password,
         signature: payload.signature
       })
-      .then((result:any) => {
-        console.log(result);
-        const response = result.data;
-        if (response.status === 400) {
-          // User not found.
+      .then((res: any) => {
+        const response = res.data;
+        
+        // If the response is not successful, reject the promise.
+        if (!response.success) {
           reject(response);
-        } else if (response.status === 200) {
-          // User received the email.
+        } else {
           resolve(response);
         }
       })
       .catch((result:any) => {
-        console.log("This is error object");
-        console.log(result);
-        reject(result);
+        reject(result.response.data);
       })
     });
   }

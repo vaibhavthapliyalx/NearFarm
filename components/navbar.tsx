@@ -3,16 +3,8 @@
 import React, { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
-import { signOut } from 'next-auth/react';
 import ApiConnector from '@/app/services/ApiConnector';
-import Image from 'next/image';
-import { buttonVariants } from './ui/button';
-import MaxWidthWrapper from './MaxWidthWrapper';
-import { Icons } from './Icons';
-import NavItems from './DesktopNav';
-import Link from 'next/link';
 import MobileNav from './mobileNav';
-import UserAccountNav from './UserAccountNav';
 import DesktopNav from './DesktopNav';
 import { User } from '@/shared/interfaces';
 
@@ -37,12 +29,19 @@ export default function NavigationBar() {
   useEffect(() => {
     apiConnectorInstance.getCurrentUserFromSession()
     .then((user) => {
+
+      // If the user is not logged in, redirect them to the login page.
+      if (!user) {
+        setUser({} as User);
+        router.push('/login');
+        return;
+      }
       setUser(user);
       // Making request to server to get the user's data
       apiConnectorInstance.getUserFromEmail(user.email)
-      .then((userData) => {
-        console.log("Check this");
-        console.log(userData);
+      .then((response) => {
+        const userData = response.data;
+        
         // If the user is not onboarded, redirect them to the onboarding page
         if (!userData.isOnBoarded) {
           router.push('/onboarding');

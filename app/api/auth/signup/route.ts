@@ -6,14 +6,11 @@ import bcrypt from "bcryptjs";
 import User from "@/lib/models/user.model";
 
 
-
-
 export async function POST(request: NextRequest) {
     try {
         // Connect to MongoDB
         await connectDB();
         const body = await request.json();
-        console.log(body);
         const validator = vine.compile(signupValidation);
 
         const output = await validator.validate(body);
@@ -22,7 +19,13 @@ export async function POST(request: NextRequest) {
         const user = await User.findOne({ email: output.email });
 
         if (user) {
-            return NextResponse.json({status: 400, error: "User with this email already exists"});
+            return NextResponse.json({
+                status: 400,
+                body: {
+                    success: false,
+                    message: "User with this email already exists"
+                }
+            });
         }
 
         // Encrypt password with the generated salt.
@@ -35,9 +38,21 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({status: 200, message: "User created successfully"});
     } catch (error) {
         if (error instanceof errors.E_VALIDATION_ERROR) {
-            return NextResponse.json({ status: 400, error: error.messages});
+            return NextResponse.json({ 
+                status: 400, 
+                body: {
+                    success: false,
+                    message: error.messages,
+                }
+            });
         } 
-        console.log(error);
-        return NextResponse.json({ status: 500, error: error });
+        return NextResponse.json({ 
+            status: 500, 
+            body: {
+                success: false,
+                message: 'An error occurred while creating the user. Please try again.',
+                error: error
+            }
+        });
     }
 }

@@ -51,16 +51,21 @@ export default function Home({ searchParams } : { searchParams: {q?: string} }) 
   useEffect(() => {
     apiConnectorInstance.getCurrentUserFromSession()
     .then((user) => {
-      console.log(user);
+      if (!user) {
+        setCurrentUser("");
+        setIsPageLoading(false);
+        return;
+      }
       setCurrentUser(user);
+    })
+    .catch((error) => {
+      setCurrentUser("");
+    })
+    .finally(() => {
       setTimeout(() => {
         setIsPageLoading(false);
       }, 5000);
-    })
-    .catch((error) => {
-      console.log(error);
-      setCurrentUser("");
-    })
+    });
   },[]);
  
 

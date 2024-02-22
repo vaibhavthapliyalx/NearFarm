@@ -16,12 +16,31 @@ export async function GET(
 
     const user = await User.findOne({ email });
     if (user) {
-      return NextResponse.json({ status: 200, message: "User found", data: user });
+      return NextResponse.json({
+        status: 200, 
+        body : {
+          success: true,
+          message: "User found", 
+          data: user
+        }
+      });
     } else {
-      return NextResponse.json({ status: 400, error: "No user found" });
+      return NextResponse.json({
+        status: 400,
+        body: {
+          success: false,
+          message: "No user found" 
+        }
+      });
     }
   } catch (error) {
-    console.log(error);
-    return NextResponse.json({status:500, error: 'An error occurred while fetching the user' });
+    return NextResponse.json({
+      status: 500, 
+      body: {
+        success: false,
+        message: 'An error occurred while fetching the user',
+        error: error
+      } 
+    });
   }
 }

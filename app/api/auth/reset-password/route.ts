@@ -12,8 +12,6 @@ export async function POST(request: NextRequest) {
 
   // Decrypting the email.
   const email = decrypt(payload.email);
-  console.log("The email is: ", email);
-  console.log("The signature is: ", payload.signature);
 
   const user  = await User.findOne({ email: email, resetPasswordToken: payload.signature });
 
@@ -40,8 +38,5 @@ export async function POST(request: NextRequest) {
       success: true,
       message: "Your password has been reset successfully.",
     },
-  });
-
-
-  
+  });  
 }

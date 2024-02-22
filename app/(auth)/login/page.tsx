@@ -1,23 +1,17 @@
 'use client';
 import * as React from 'react';
 
-import { ToastType, GithubLogoVariant, GoogleLogo, SignupErrorType} from '../../../shared/constants';
+import { ToastType, GithubLogoVariant, GoogleLogo, SignupErrorType, PROVIDER_TYPE } from '../../../shared/constants';
 import { useState } from 'react';
-import { User } from '@/shared/interfaces';
+import { ApiResponse, User } from '@/shared/interfaces';
 import ApiConnector from '@/app/services/ApiConnector';
-// import { Alert, Divider, Icon } from '@mui/material';
 import Image from 'next/image';
 import VideoProvider from '@/components/VideoProvider/VideoProvider';
-import { set } from 'mongoose';
 import Link from 'next/link';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { Icons } from '@/components/Icons';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import LoadingSpinner from '@/components/ui/loadingSpinner';
-import { motion } from 'framer-motion';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
 import { ToastAction } from '@/components/ui/toast';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -45,51 +39,42 @@ export default function Login() {
     userData.email = data.get('email') as string;
     userData.password = data.get('password') as string;
 
-    apiConnectorInstance.login(userData, "credentials")
-    .then((response) => {
-      console.log(response);
+    apiConnectorInstance.login(PROVIDER_TYPE.CREDENTIALS, userData)
+    .then((response: ApiResponse) => {
+      // Callback redirects the user automatically to the home page.
+      // We don't need to handle that here.
     })
-    .catch((error) => {
+    .catch((error: ApiResponse) => {
       if (error) {
-        if(typeof error === 'string'){
-          toast(
-            {
-              description: error,
-              variant: ToastType.DESTRUCTIVE,
-              title: "Something went wrong!",
-              action: <ToastAction altText='Try again'> Try Again </ToastAction>
-              
-            }
-          );
-        } else {
-        const errorMessages = error.reduce((acc: { [x: string]: any; }, curr: { field: string | number; message: any; }) => {
-          acc[curr.field] = curr.message;
-          return acc;
-        }, {});
-        console.log(error);
-        error.map((error: any) => {
-          toast(
-            {
+        if(typeof error.message === 'string'){
+          toast({
               description: error.message,
               variant: ToastType.DESTRUCTIVE,
               title: "Something went wrong!",
-              action: <ToastAction altText='Try again'> Try Again </ToastAction>
-                
-            }
-          );
-        })
-        
-        console.log(errorMessages);
-        setError(errorMessages);
-      }
+              action: <ToastAction altText='Try again'> Try Again </ToastAction> 
+            });
+        } else {
+          const errorMessages = error.message.reduce((acc: { [x: string]: any; }, curr: { field: string | number; message: any; }) => {
+            acc[curr.field] = curr.message;
+            return acc;
+          }, {});
+          console.log(error);
+          error.message.map((error: ApiResponse) => {
+            toast({
+                description: error.message,
+                variant: ToastType.DESTRUCTIVE,
+                title: "Something went wrong!",
+                action: <ToastAction altText='Try again'> Try Again </ToastAction>   
+              });
+          })
+          setError(errorMessages);
+        }
       }
     })
     .finally(() => {
       setIsLoading(false);
     });
   };
-
-  
 
   return (
     <>
@@ -177,7 +162,7 @@ export default function Login() {
             <Button variant="outline"
               type="button" 
               disabled={isLoading}
-              onClick={apiConnectorInstance.loginWithGithub}
+              onClick={() => apiConnectorInstance.login(PROVIDER_TYPE.GITHUB)}
              >
               <Image
                 src={GithubLogoVariant.BLACK}
@@ -192,7 +177,7 @@ export default function Login() {
               variant="outline" 
               type="button" 
               disabled={isLoading}
-              onClick={apiConnectorInstance.loginWithGoogle}
+              onClick={() => apiConnectorInstance.login(PROVIDER_TYPE.GOOGLE)}
             >
               <Image
                 src={GoogleLogo.DEFAULT}

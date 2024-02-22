@@ -67,8 +67,6 @@ export const options: NextAuthOptions = {
     ],
     callbacks: {
         jwt: async ({ token, user }) => {
-            console.log("This look here ");
-            console.log(user);
           if (user) {
             token.id = user.id;
             token.name = user.name;  // Add user name to token
@@ -102,7 +100,6 @@ export const options: NextAuthOptions = {
                 }
                 return true;
             } catch (error) {
-                console.log(error);
                 return false;
             }
             

@@ -5,16 +5,15 @@ import { DatabaseIcon, ServerIcon, MoonIcon, SunIcon, HeartIcon, InstagramIcon, 
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
 import { Button } from './ui/button';
 import { useTheme } from 'next-themes';
+import ApiConnector from '@/app/services/ApiConnector';
+import { ApiResponse } from '@/shared/interfaces';
 
-const logoStyle = {
-  width: '140px',
-  height: 'auto',
-};
+const apiConnectorInstance = ApiConnector.getInstance();
 
 export default function Footer() {
   const [isDatabaseConnected, setIsDatabaseConnected] = useState(false);
   const [isServerConnected, setIsServerConnected] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [appVersion, setAppVersion] = useState('');
   const [isDropdownIconUp, setIsDropdownIconUp] = useState(false);
   const [isConnectionDropdownOpen, setIsConnectionDropdownOpen] = useState(false);
 
@@ -22,23 +21,31 @@ export default function Footer() {
   const { setTheme } = useTheme();
 
   useEffect(() => {
-    // Simulated fetching of server and database status
-    const fetchStatus = async () => {
-      // Simulated delay for fetching status
-      const delay = (ms: number | undefined) => new Promise(res => setTimeout(res, ms));
+    // Get the database connection status
+    apiConnectorInstance.getDatabaseConnectionStatus()
+    .then((response: ApiResponse) => {
+      setIsDatabaseConnected(response.success);
+    })
+    .catch((response: ApiResponse) => {
+      setIsDatabaseConnected(response.success);
+    });
 
-      await delay(1000); // Simulating API call delay
+    // Get the server connection status 
+    apiConnectorInstance.getServerConnectionStatus()
+    .then((response: ApiResponse) => {
+      setIsServerConnected(response.success);
+    })
+    .catch((response: ApiResponse) => {
+      setIsServerConnected(response.success);
+    });
 
-      // Simulated response for server status
-      setIsServerConnected(true);
-
-      await delay(1000); // Simulating API call delay
-
-      // Simulated response for database status
-      setIsDatabaseConnected(true);
-    };
-
-    fetchStatus();
+    apiConnectorInstance.getAppVersion()
+    .then((response: ApiResponse) => {
+      setAppVersion(response.data.version);
+    })
+    .catch((response: ApiResponse) => {
+      setAppVersion("N/A");
+    });
   }, []);
 
   const toggleConnectionDropdown = () => {
@@ -51,48 +58,46 @@ export default function Footer() {
     <footer className="bg-white rounded-lg shadow dark:bg-gray-900 m-4">
       <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
         <div className="sm:flex sm:items-center sm:justify-between">
-          {/* Brand logo */}
-          <a href="/" className="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
-            <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo" />
-            <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">NearFarm</span>
-          </a>
-          
-          {/* Connection status dropdown */}
+        {/* Brand logo */}
+        <a href="/" className="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
+          <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo" />
+          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">NearFarm</span>
+        </a>
+        
+        {/* Connection status dropdown */}
         <div className="relative inline-block text-left">
           <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant='ghost'
-              size="default"
-              onClick={toggleConnectionDropdown}
-              className={`${(isServerConnected && isDatabaseConnected) ? 'text-orange-500 dark:text-orange-400' : 'text-red-500 dark:text-red-400'}`}
-            >
-              <span className="sr-only">Toggle connection status</span>
-              <div className="flex items-center space-x-1">
-                <span className="text-sm font-semibold flex flex-row items-center"><Dot color={isServerConnected && isDatabaseConnected ? 'orange' : 'red'} size={40}/> All sytems operational </span>
-                <ChevronDownIcon color={`${(isServerConnected && isDatabaseConnected) ? "orange": "red"}`} className={`h-5 w-5 ${isDropdownIconUp ? 'rotate-180' : ''} transition-transform dark:text-white`} />
-              </div>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className='min-w-full bg-white rounded-lg shadow dark:bg-gray-900 flex flex-col'>
-            <DropdownMenuItem className='block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white' role="button">
-              <div className="flex items-center space-x-2">
-                <DatabaseIcon className={`${isDatabaseConnected ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'} h-5 w-5`} />
-                <span>Database healthy</span>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem className='block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white' role="button">
-              <div className="flex items-center space-x-2">
-                <ServerIcon className={`${isServerConnected ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'} h-5 w-5`} />
-                <span>Server healthy</span>
-              </div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant='ghost'
+                size="default"
+                onClick={toggleConnectionDropdown}
+                className={`${(isServerConnected && isDatabaseConnected) ? 'text-orange-500 dark:text-orange-400' : 'text-red-500 dark:text-red-400'}`}
+              >
+                <span className="sr-only">Toggle connection status</span>
+                <div className="flex items-center space-x-1">
+                  <span className="text-sm font-semibold flex flex-row items-center"><Dot color={isServerConnected && isDatabaseConnected ? 'orange' : 'red'} size={40}/> All sytems operational </span>
+                  <ChevronDownIcon color={`${(isServerConnected && isDatabaseConnected) ? "orange": "red"}`} className={`h-5 w-5 ${isDropdownIconUp ? 'rotate-180' : ''} transition-transform dark:text-white`} />
+                </div>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className='min-w-full bg-white rounded-lg shadow dark:bg-gray-900 flex flex-col'>
+              <DropdownMenuItem className='block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white' role="button">
+                <div className="flex items-center space-x-2">
+                  <DatabaseIcon className={`${isDatabaseConnected ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'} h-5 w-5`} />
+                  <span>Database healthy</span>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem className='block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white' role="button">
+                <div className="flex items-center space-x-2">
+                  <ServerIcon className={`${isServerConnected ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'} h-5 w-5`} />
+                  <span>Server healthy</span>
+                </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
           </DropdownMenu>
         </div>
-
-          
-        </div>
+      </div>
 
         {/* Divider */}
         <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
@@ -106,14 +111,15 @@ export default function Footer() {
 
       {/* Footer text */}
       <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-      <p>Thank you for visiting NearFarm! We are committed to providing you with the best experience.</p>
-  <p>If you have any questions or feedback, feel free to reach out to our support team at support@nearfarm.com.</p>
-  <p>Stay updated with the latest news and updates by following us on social media:</p>
+        <p>Thank you for visiting NearFarm! We are committed to providing you with the best experience.</p>
+        <p>If you have any questions or feedback, feel free to reach out to our support team at support@nearfarm.com.</p>
+        <p>Stay updated with the latest news and updates by following us on social media:</p>
       </div>
 
       {/* Copyright */}
       <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
         <p>© 2024 NearFarm. All rights reserved.</p>
+        <p>Version: {appVersion}</p>
       </div>
       {/* Divider */}
       <hr className="mt-1 mb-0 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />

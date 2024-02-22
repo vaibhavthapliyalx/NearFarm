@@ -6,8 +6,6 @@ import bcrypt from "bcryptjs";
 import User from "@/lib/models/user.model";
 
 
-
-
 export async function POST(request: NextRequest) {
     try {
         // Connect to MongoDB
@@ -21,28 +19,52 @@ export async function POST(request: NextRequest) {
         // Check if user exists.
         // Here we use the select method to include the password field in the query.
         const user = await User.findOne({ email: output.email }).select('+password');
-        console.log(user);
 
         if (user) {
             const validPassword = bcrypt.compareSync(output.password!, user.password);
             
             if (!validPassword) {
-                return NextResponse.json(
-                    { status: 400, error: 'Please check your credentials and try again.'}
-                );
+                return NextResponse.json({ 
+                    status: 400,
+                    body: {
+                        success: false,
+                        message: "Please check your credentials and try again."
+                    }
+                });
             }
-            return NextResponse.json(
-                { status: 200,  message: "User logged in successfully" }
-            );
+            return NextResponse.json({ 
+                status: 200,  
+                body: {
+                    success: true,
+                    message: "User logged in successfully"
+                }
+            });
         } else {
-            return NextResponse.json({status: 400, error: "No account found with this email"});
+            return NextResponse.json({
+                status: 400,
+                body: {
+                    success: false,
+                    message: "No account found with this email"
+                }
+            });
         }
     } catch (error) {
         if (error instanceof errors.E_VALIDATION_ERROR) {
-            return NextResponse.json({ status: 400, error: error.messages})
+            return NextResponse.json({ 
+                status: 400,
+                body: {
+                    success: false,
+                    message: error.messages,
+                }
+            });
         } 
-        console.log(error);
-        return NextResponse.json({ status: 500, error: error
-    });
+        return NextResponse.json({
+            status: 500, 
+            body: {
+                success: false,
+                message: 'An error occurred while logging in. Please try again.',
+                error: error
+            }
+        });
     }
 }

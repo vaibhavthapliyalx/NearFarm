@@ -73,3 +73,9 @@ export enum NAV_ITEM_TYPE {
   MOBILE,
   DESKTOP
 }
+
+export enum PROVIDER_TYPE {
+  GOOGLE = "google",
+  GITHUB = "github",
+  CREDENTIALS = "credentials"
+}

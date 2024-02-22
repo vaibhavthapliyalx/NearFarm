@@ -113,56 +113,6 @@ export interface User {
   onBoarded?: boolean;
 }
 
-/**
- * @interface OrdersWithAllDetails
- * This interface defines the structure of the orders with all details received from the backend.
- * 
- * @property {number} id - The id of the order.
- * @property {number} customerId - The id of the customer who placed the order.
- * @property {string} customerName - The name of the customer who placed the order.
- * @property {string} deliveryStatus - The delivery status of the order.
- * @property {string | OrderStatus} orderStatus - The order status of the order.
- * @property {string} orderDate - The date on which the order was placed.
- * @property {Product[]} products - The products in the order.
- * @property {number} totalPrice - The total price of the order.
- * @property {number} totalQuantity - The total quantity of the order.
- * @property {number} totalSales - The total sales of the order.
- */
-export interface OrdersWithAllDetails {
-  id: number;
-  customerId: number;
-  customerName: string;
-  deliveryStatus: string;
-  orderDate: string;
-  products: [];
-  totalPrice: number;
-  totalQuantity: number;
-  totalSales: number;
-}
-
-/**
- * @interface TotalSalesForCustomer
- * This interface defines the structure of the total sales for customer object.
- * 
- * @property {number} customerId - The id of the customer.
- * @property {number} totalSales - The total sales for the customer.
- */
-export interface TotalSalesForCustomer {
-  customerId: number;
-  totalSales: number;
-}
-
-/**
- * @interface NumOrdersForCustomer
- * This interface defines the structure of the number of orders for customer object.
- * 
- * @property {number} customerId - The id of the customer.
- * @property {number} numOrders - The number of orders for the customer.
- */
-export interface NumOrdersForCustomer {
-  customerId: number;
-  totalOrders: number;
-}
 
 
 // Forgot Password payload interface
@@ -177,15 +127,15 @@ export interface ResetPasswordPayload {
   confirmPassword: string;
 }
 
-export interface BannerProps {
-  title: string,
-  msg: string, 
-  type: ToastType, 
-  isDisplayed: boolean, 
-  duration?: number, 
-  onClick?: () => void, 
-  action?: ToastActionElement
+
+
+export interface ApiResponse {
+  data?: any;
+  success: boolean;
+  message: string | [];
+  error?: any; 
 }
+
 
 
   
