@@ -1,7 +1,6 @@
 'use client';
 import React, { useState } from 'react';
 import { SignupErrorType, ToastType } from '@/shared/constants';
-import { BannerProps } from '@/shared/interfaces';
 import LoadingSpinner from '@/components/ui/loadingSpinner';
 import ApiConnector from '@/app/services/ApiConnector';
 import { Label } from '@/components/ui/label';
@@ -37,7 +36,7 @@ export default function ForgotPassword() {
     apiConnectorInstance.forgotPassword(email)
       .then((response) => {
         toast({
-          description: response?.body?.message,
+          description: response.message,
           variant: ToastType.DEFAULT,
           title: "Success!",
         })
