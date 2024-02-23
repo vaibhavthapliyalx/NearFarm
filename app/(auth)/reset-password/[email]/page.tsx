@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import {useRouter, useSearchParams} from "next/navigation" 
 import LoadingSpinner from '@/components/ui/loadingSpinner';
 import ApiConnector from '@/app/services/ApiConnector';
-import { BannerProps, ResetPasswordPayload } from '@/shared/interfaces';
+import { ResetPasswordPayload } from '@/shared/interfaces';
 import { ToastType } from '@/shared/constants';
 
 import Image from 'next/image';
@@ -27,8 +27,6 @@ export default function ResetPassword({params}: IProps) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState<string | undefined>();
-  const [banner, setBanner] = useState<BannerProps>({} as BannerProps);
 
   const router = useRouter();
   const { toast } = useToast();
@@ -50,7 +48,7 @@ export default function ResetPassword({params}: IProps) {
       
         console.log(response);
         toast({
-          description: response?.body?.message,
+          description: response.message,
           variant: ToastType.DEFAULT,
           title: "Success!",
         })
