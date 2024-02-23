@@ -1,0 +1,40 @@
+name: Build Pipeline
+
+# Events that trigger the workflow
+on:
+  # Trigger the workflow on push events to the main branch
+  push:
+    branches:
+      - '*' # Push events to all branches
+  # Also trigger the workflow on pull request events to the integration branch
+  pull_request:
+    branches:
+      - integration
+jobs:
+  build_pipeline:
+    runs-on: ubuntu-latest
+    env:
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.8.0'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Front End Unit Tests
+        run: npm test
+
+      - name: Build
+        run: |
+          npm run build
+       
+
+      
+      
+      
