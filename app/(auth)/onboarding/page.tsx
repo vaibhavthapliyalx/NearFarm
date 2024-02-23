@@ -18,7 +18,7 @@ export default function Onboarding() {
     if (status === "authenticated" && session) {
       apiConnectorInstance.getUserFromEmail(session.user.email)
         .then((res) => {
-          setAvatarUrl(res.avatarUrl);
+          setAvatarUrl(res.data.image);
         })
         .catch((err) => {
           console.error(err);
