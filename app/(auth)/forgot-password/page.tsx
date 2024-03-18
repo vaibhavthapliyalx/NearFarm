@@ -1,7 +1,15 @@
+/**
+ * @fileoverview ForgotPassword component.
+ * This file contains the implementation of the ForgotPassword component.
+ */
+
+// Directive to use client side rendering.
 'use client';
+
+// Imports
 import React, { useState } from 'react';
 import { SignupErrorType, ToastType } from '@/shared/constants';
-import LoadingSpinner from '@/components/ui/loadingSpinner';
+import LoadingSpinner from '@/components/LoadingAnimations/loadingSpinner';
 import ApiConnector from '@/app/services/ApiConnector';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -15,21 +23,31 @@ import Image from 'next/image';
 // Grabs the instance of the ApiConnector Class (Singleton) which connects to the backend endpoints.
 const apiConnectorInstance = ApiConnector.getInstance();
 
+/**
+ * This function renders the ForgotPassword component.
+ * 
+ * @returns The rendered ForgotPassword component.
+ */
 export default function ForgotPassword() {
+  // State variables.
   const [error, setError] = useState<SignupErrorType>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  // Grabs the toast function from the useToast hook.
+  // This then pushes the toast to the toast queue.
   const { toast }  = useToast();
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  /**
+   * This function is called when the user submits the forgot password form.
+   * It then send a request to the server to reset the user's password.
+   * 
+   * @param event The form event object that contains the form data.
+   */
+  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsLoading(true);
 
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-    });
-
     const email = data.get('email') as string;
 
     // Send the request to the server.
@@ -42,9 +60,6 @@ export default function ForgotPassword() {
         })
       })
       .catch((error) => {
-      
-        console.log("Below is the error")
-        console.log(error);
         if (error) {
           if(typeof error === 'string'){
             toast(
@@ -80,6 +95,7 @@ export default function ForgotPassword() {
       });
   };
 
+  /******************* Render Function ********************/
   return (
     <>
       <LoadingSpinner display={isLoading} message='Please be patient ! We are working on it!'/>
@@ -124,11 +140,11 @@ export default function ForgotPassword() {
                       autoComplete="email"
                       autoCorrect="off"
                       disabled={isLoading}
-                      className="p-4" // Increase padding to make the input field bigger
+                      className="p-4" 
                     />
                     {error.email && <p className="text-red-500">{error.email}</p>} {/* Display email error */}
                   </div>
-                  <Button disabled={isLoading} className="p-4"> {/* Increase padding to make the button bigger */}
+                  <Button disabled={isLoading} className="p-4"> 
                     Send Reset Link
                   </Button> 
                 </div>
@@ -157,4 +173,4 @@ export default function ForgotPassword() {
       </div>
     </>
   );
- }
+}

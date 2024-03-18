@@ -1,3 +1,6 @@
+/**
+ * @fileoverview This file contains the API route for pinging the database.
+ */
 import { pingDB } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 

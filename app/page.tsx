@@ -1,11 +1,14 @@
-// This file is the entry point for the application.
-// This file contains the dashboard page component.
+/**
+ * @ fileoverview This file is the enttry point for the application.
+ * It contains the main page of the application.
+ * For the main page, we will display the trending products and the features of the application.
+ * This page can also be called home page.
+ */
 
 // Directive to use client side rendering.
 "use client";
 
-// Imports
-
+// Imports.
 import ApiConnector from './services/ApiConnector';
 import { useEffect, useState } from 'react';
 import MaxWidthWrapper from '@/components/MaxWidthWrapper';
@@ -16,6 +19,8 @@ import {CheckCircle, Leaf, MapPinnedIcon} from 'lucide-react'
 // Grabs the instance of the ApiConnector Class (Singleton) which connects to the backend endpoints.
 const apiConnectorInstance = ApiConnector.getInstance();
 
+// This is the list of features that the application provides.
+// ToDo: Modify and add more features.
 const features = [
   {
     name: 'Guaranteed Quality',
@@ -52,13 +57,13 @@ export default function Home({ searchParams } : { searchParams: {q?: string} }) 
     apiConnectorInstance.getCurrentUserFromSession()
     .then((user) => {
       if (!user) {
-        setCurrentUser("");
+        setCurrentUser("")
         setIsPageLoading(false);
         return;
       }
       setCurrentUser(user);
     })
-    .catch((error) => {
+    .catch((error) => {0
       setCurrentUser("");
     })
     .finally(() => {
@@ -122,7 +127,6 @@ export default function Home({ searchParams } : { searchParams: {q?: string} }) 
             </div>
           ))}
         </div>
-
       </MaxWidthWrapper>
     </section>
     </>

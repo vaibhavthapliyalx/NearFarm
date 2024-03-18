@@ -1,15 +1,36 @@
+/**
+ * @fileoverview This file contains the email template for the forgot password email.
+ */
+
+// Directive to use server side rendering.
+'use server';
+
+// Imports
 import { Button, Html } from "@react-email/components";
 import React from "react";
 
-export default function ForgotPasswordEmail({params}: {params: {
-  email: string,
-  name: string,
-  resetLink: string
-}}) {
-
+/**
+ * @interface
+ * Interface for the props of the ForgotPasswordEmail component.
+ */
+interface IProps {
+  params: {
+    email: string,
+    name: string,
+    resetLink: string
+  }
+}
+/**
+ * This function renders the forgot password email template.
+ * 
+ * @param params  The parameters for the email.
+ * @returns The rendered forgot password email template.
+ */ 
+export default function ForgotPasswordEmail({params}: IProps) {
+// ToDo: Fix the bug where there is <h character in the email.
+  /********************************* Render Function **********************************/
   return (
     <Html>
-      <head></head>
       <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px', color: '#333' }}>
         <h1 style={{ color: '#333' }}>Hello {params.name},</h1>
         <p>

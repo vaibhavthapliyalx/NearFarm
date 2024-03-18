@@ -1,10 +1,14 @@
+/**
+ * @fileoverview This file contains the NextAuth options.
+ * Please note that some parts of this code are directly copied from the NextAuth documentation.
+ * Please refer to the NextAuth documentation for more information.
+ */
 import type { NextAuthOptions } from 'next-auth'
 import GithubProvider from "next-auth/providers/github"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
 import { connectDB } from '@/lib/database'
 import User from '@/lib/models/user.model'
-
 
 export const options: NextAuthOptions = {
     pages: {
@@ -46,6 +50,7 @@ export const options: NextAuthOptions = {
                     // Any object returned will be saved in `user` property of the JWT
                     return {
                         id: user.id,
+                        email: user.email,
                         name: user.name,
                         image: user.image,
                         isOnBoarded: user.isOnBoarded,
@@ -76,7 +81,6 @@ export const options: NextAuthOptions = {
         },
         session: async ({ session, token }) => {
             if (session.user) {
-
                 session.user.id = token.id;
                 session.user.name = token.name;  // Add user name to session
                 session.user.image = token.image;  // Add user image to session
@@ -93,7 +97,7 @@ export const options: NextAuthOptions = {
                         name: user.name,
                         email: user.email,
                         image: user.image,
-                        createdAt: new Date().toISOString(),
+                        joinDate: new Date().toISOString(),
                         isOnBoarded: false
                     });
                     return true;

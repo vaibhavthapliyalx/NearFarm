@@ -1,4 +1,8 @@
-// This API reads the package.json file and returns the app version.
+/**
+ * @fileoverview This file contains the API routes for the app version.
+ * 
+ * Note: This API reads the package.json file to fetch the app version.
+ */
 
 import { NextResponse } from "next/server";
 import PackageJson from "@/package.json";

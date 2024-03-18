@@ -1,10 +1,18 @@
+/**
+ * @fileoverview This file contains the user model.
+ * This model is used to define the user schema and the user model.
+ */
+import { UserRole } from '@/shared/constants';
 import {Schema, model, models} from 'mongoose';
 
 const UserSchema = new Schema({
+  id: {
+    type: Schema.Types.String,
+    required: false,
+  },
   name: {
     type: Schema.Types.String,
-    required: [true, 'Full name is required'],
-    minLength: [4, 'Full name should be at least 4 characters long'],
+    required: false,
     maxLength: [32, 'Full name should not be more than 32 characters long'],
   },
   email: {
@@ -18,26 +26,74 @@ const UserSchema = new Schema({
     type: Schema.Types.String,
     required: false,
   },
-  userType: {
+  username: {
+    type: Schema.Types.String,
+    required: false,
+  },
+  isOnBoarded: {
+    type: Schema.Types.Boolean,
+    required: false,
+    default: false,
+  },
+  bio: {
+    type: Schema.Types.String,
+    required: false,
+    maxLength: [100, 'Bio should not be more than 100 characters long'],
+  },
+  age: {
+    type: Schema.Types.Number,
+    required: false,
+    max: [100, 'You should not be more than 100 years old to use this platform'],
+  },
+  role: {
     required: false,
     type: Schema.Types.String,
-    enum: ['user', 'farmer'],
-    default: 'user',
+    enum: [UserRole.CONSUMER, UserRole.FARMER],
+    default: UserRole.CONSUMER,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now(),
+  prevOrders: {
+    type: [Schema.Types.String],
+    required: false,
+  },
+  cart: {
+    type: [Schema.Types.String],
+    required: false,
   },
   image: {
     type: Schema.Types.String,
     required: false,
   },
-  resetPasswordToken: {
-    type: String,
+  joinDate: {
+    type: Schema.Types.String,
     required: false,
   },
-  isOnBoarded: {
-    type: Boolean,
+  resetPasswordToken: {
+    type: Schema.Types.String,
+    required: false,
+  },
+  documents: {
+    type: [Schema.Types.String],
+    required: false,
+  },
+  contactDetails: {
+    email: {
+      type: Schema.Types.String,
+      required: false,
+      match: [/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'Please provide a valid email'],
+    },
+    phone: {
+      type: Schema.Types.String,
+      required: false,
+      maxLength: [15, 'Phone number should not be more than 15 characters long'],
+    },
+    address: {
+      type: Schema.Types.String,
+      required: false,
+      maxLength: [70, 'Address should not be more than 70 characters long'],
+    },
+  },
+  isVerified: {
+    type: Schema.Types.Boolean,
     required: false,
     default: false,
   },

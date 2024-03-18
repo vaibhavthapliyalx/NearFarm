@@ -1,7 +1,14 @@
+/**
+ * @fileoverview This file contains the desktop navigation component.
+ * This nav bar is used to display the navigation links for the desktop view.
+ */
+
+// Directive to use client side rendering.
 'use client'
 
-import { NAVBAR_LINKS, NAV_ITEM_TYPE } from '@/shared/constants'
-import NavItem from './navItem'
+// Imports
+import { NavbarLinks, NavItemType } from '@/shared/constants'
+import NavItem from './NavItem'
 import { usePathname } from 'next/navigation'
 import { User } from '@/shared/interfaces'
 import Link from 'next/link'
@@ -9,12 +16,22 @@ import MaxWidthWrapper from './MaxWidthWrapper'
 import { Icons } from './Icons'
 import UserAccountNav from './UserAccountNav'
 
+// Interface for the DesktopNav component props.
 interface IProps {
   user: User
 }
+
+/**
+ * This function renders the DesktopNav component.
+ * 
+ * @param user The user object.
+ * @returns The rendered DesktopNav component.
+ */
 export default function DesktopNav ({user}: IProps) {
+  // Grabs the current pathname from the router.
   const pathname = usePathname();
 
+  /********************** Render Function******************/
   return (
     <MaxWidthWrapper>
       <div className='border-b border-gray-200'>
@@ -24,32 +41,28 @@ export default function DesktopNav ({user}: IProps) {
               <Icons.logo className='h-10 w-10' />
             </Link>
           </div>
-
           <div className='hidden z-50 lg:ml-8 lg:block lg:self-stretch'>
-          <div className='flex gap-4 h-full'>
-            {NAVBAR_LINKS.map((item) => {
-              const isActive =
-              (pathname.includes(item.route) && item.route.length > 1) ||
-              pathname === item.route;
-            
-            if (item.label !== "Profile")
-              
-              return (
-                <NavItem
-                  item={item}
-                  type={NAV_ITEM_TYPE.DESKTOP}
-                  isActive={isActive}
-                  key={item.label}
-                />
-                
-              )
-            })}
+            <div className='flex gap-4 h-full'>
+              {NavbarLinks.map((item) => {
+                const isActive =
+                (pathname.includes(item.route) && item.route.length > 1) ||
+                pathname === item.route;
+                if (item.label !== "Profile")
+                  
+                  return (
+                    <NavItem
+                      item={item}
+                      type={NavItemType.DESKTOP}
+                      isActive={isActive}
+                      key={item.label}
+                    />
+                    
+                  )
+                })}
+            </div>
           </div>
-          </div>
-
           <div className='ml-auto flex items-center'>
             <div className='hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6'>
-
               {user ? null : (
                 <span
                   className='h-6 w-px bg-gray-200'
@@ -57,14 +70,12 @@ export default function DesktopNav ({user}: IProps) {
                 />
               )}
               <UserAccountNav user={user} />
-
               {user ? (
                 <span
                   className='h-6 w-px bg-gray-200'
                   aria-hidden='true'
                 />
               ) : null}
-
               {user ? null : (
                 <div className='flex lg:ml-6'>
                   <span
@@ -73,16 +84,12 @@ export default function DesktopNav ({user}: IProps) {
                   />
                 </div>
               )}
-
               <div className='ml-4 flow-root lg:ml-6'>
-                {/* <Cart /> */}
-              
               </div>
             </div>
           </div>
         </div>
       </div>
     </MaxWidthWrapper>
-   
   )
 }
