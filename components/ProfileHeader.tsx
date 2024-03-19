@@ -15,7 +15,7 @@ import { CalendarIcon, ChevronDownCircle, Mail, MapPin, PhoneIcon } from "lucide
 import { getYearFromDate } from "@/lib/utilityfunctions";
 import { ChangePasswordDrawer } from "./ChangePassword";
 import MaxWidthWrapper from "./MaxWidthWrapper";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "./LoadingAnimations/loadingSpinner";
 import { AuthenticationStatus, ToastType } from "@/shared/constants";
@@ -154,7 +154,6 @@ export default function ProfileHeader({user}: IProps) {
                   <DropdownMenuContent
                     className='bg-white rounded-lg shadow dark:bg-gray-900'
                     align='end'>
-                      <DropdownMenuSeparator />
 
                       <DropdownMenuItem role="button"
                         className='cursor-pointer block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white'

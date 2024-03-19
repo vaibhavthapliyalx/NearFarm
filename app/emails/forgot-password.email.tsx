@@ -26,7 +26,7 @@ interface IProps {
  * @param params  The parameters for the email.
  * @returns The rendered forgot password email template.
  */ 
-export default function ForgotPasswordEmail({params}: IProps) {
+export default async function ForgotPasswordEmail({params}: IProps) {
 // ToDo: Fix the bug where there is <h character in the email.
   /********************************* Render Function **********************************/
   return (

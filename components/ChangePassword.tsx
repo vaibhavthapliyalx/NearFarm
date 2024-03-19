@@ -19,7 +19,7 @@ import {
 } from "./ui/drawer";
 import { Input } from "@/components/ui/input";
 import { classMerge } from "@/lib/utilityfunctions";
-import { passwordChangeValidation } from "@/lib/validations/OnboardingValidation";
+import { passwordChangeValidation } from "@/lib/validations/onboarding.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { FormProvider, useForm } from "react-hook-form";

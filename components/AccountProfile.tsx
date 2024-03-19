@@ -25,7 +25,7 @@ import { ToastType, UserRole } from "@/shared/constants";
 import { ApiResponse, User } from "@/shared/interfaces";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { onBoardingValidation } from "@/lib/validations/OnboardingValidation";
+import { onBoardingValidation } from "@/lib/validations/onboarding.validation";
 import ApiConnector from "@/app/services/ApiConnector";
 import { useToast } from "./ui/use-toast";
 import LoadingSpinner from "./LoadingAnimations/loadingSpinner";

@@ -1,7 +1,7 @@
 import { connectDB } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 import vine, { errors } from '@vinejs/vine'
-import { signupValidation} from "@/lib/validations/AuthValidation";
+import { signupValidation} from "@/lib/validations/auth.validation";
 import bcrypt from "bcryptjs";
 import User from "@/lib/models/user.model";
 
