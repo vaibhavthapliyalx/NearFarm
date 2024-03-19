@@ -3,7 +3,7 @@
  * This class is used to connect to the Server.
  */
 
-// Imports
+// Importing necessary libraries and modules.
 import axios from "axios";
 import { getSession, signIn, signOut } from "next-auth/react";
 import { ApiResponse, ChangePasswordPayload, ResetPasswordPayload, User } from "../../shared/interfaces";
