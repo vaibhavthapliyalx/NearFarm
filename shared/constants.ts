@@ -119,3 +119,101 @@ export enum AuthenticationStatus {
   UNAUTHENTICATED = "unauthenticated",
   LOADING = "loading"
 }
+
+/**
+ * @enum Categories of products.
+ * 
+ * @property {string} FRUITS - The fruits category.
+ * @property {string} VEGETABLES - The vegetables category.
+ * @property {string} DAIRY - The dairy category.
+ * @property {string} MEAT - The meat category.
+ * @property {string} FISH - The fish category.
+ * @property {string} SPICES - The spices category.
+ * @property {string} GRAINS - The grains category.
+ * @property {string} BEVERAGES - The beverages category.
+ * @property {string} SNACKS - The snacks category.
+ * @property {string} OTHERS - The others category. 
+ */
+export enum ProductCategory {
+  FRUITS = "Fruits",
+  VEGETABLES = "Vegetables",
+  DAIRY = "Dairy",
+  MEAT = "Meat",
+  FISH = "Fish",
+  SPICES = "Spices",
+  GRAINS = "Grains",
+  BEVERAGES = "Beverages",
+  SNACKS = "Snacks",
+  OTHERS = "Others",
+}
+
+/**
+ * @enum The method of purchase of the product.
+ * 
+ * @property {string} COLLECT - Consumers collect the product.
+ * @property {string} DELIVER - Consumers have the product delivered to them.
+ */
+export enum OrderMethod {
+  COLLECT = "Collect",
+  DELIVER = "Deliver",
+}
+
+/**
+ * @enum The status of the order.
+ * 
+ * @property {string} PENDING - The order is pending.
+ * @property {string} CONFIRMED - The order is confirmed.
+ * @property {string} CANCELLED - The order is cancelled.
+ * @property {string} DELIVERED - The order is delivered.
+ * @property {string} RETURNED - The order is returned.
+ * @property {string} REFUNDED - The order is refunded.
+ * @property {string} COMPLETED - The order is completed.
+ */
+export enum OrderStatus {
+  PENDING = "Pending",
+  CONFIRMED = "Confirmed",
+  CANCELLED = "Cancelled",
+  DELIVERED = "Delivered",
+  RETURNED = "Returned",
+  REFUNDED = "Refunded",
+  COMPLETED = "Completed",
+}
+
+/**
+ * @enum The permissions of the user.
+ * 
+ * @property {string} LIST_PRODUCTS - The permission to list products.
+ * @property {string} EDIT_LISTINGS - The permission to edit listings.
+ * @property {string} DELETE_LISTINGS - The permission to delete listings.
+ * @property {string} VIEW_ORDERS - The permission to view orders.
+ * @property {string} EDIT_ORDERS - The permission to edit orders.
+ * @property {string} DELETE_ORDERS - The permission to delete orders.
+ */
+export const Permissions = {
+  LIST_PRODUCTS: "listProducts",
+  EDIT_LISTINGS: "editListings",
+  DELETE_LISTINGS: "deleteListings",
+  VIEW_ORDERS: "viewOrders",
+  EDIT_ORDERS: "editOrders",
+  DELETE_ORDERS: "deleteOrders",
+  MANAGE_USERS: "manageUsers",
+}
+// Pseudo-code authorization middleware
+// function checkPermission(user: User, permission: string): boolean {
+//   // Get the user's role and check if it has the required permission
+//   switch (user.role) {
+//     case UserRole.FARMER:
+//       return permission === Permissions.ADD_PRODUCT || permission === Permissions.EDIT_PRODUCT;
+//     case UserRole.ADMIN:
+//       return permission === Permissions.VIEW_ORDERS;
+//     case UserRole.CUSTOMER:
+//       return permission === Permissions.PLACE_ORDER;
+//     default:
+//       return false; // Unknown role
+//   }
+// }
+
+// // Example usage
+// const loggedInUser: User = /* Fetch user from authentication */;
+// const canAddProduct = checkPermission(loggedInUser, Permissions.ADD_PRODUCT);
+// console.log(`Can add product? ${canAddProduct}`); // Output: Can add product? true

@@ -13,6 +13,7 @@ import { useTheme } from 'next-themes';
 import ApiConnector from '@/app/services/ApiConnector';
 import { ApiResponse } from '@/shared/interfaces';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
+import Image from 'next/image';
 
 // Grabs the instance of the ApiConnector Class (Singleton) which connects to the backend endpoints.
 const apiConnectorInstance = ApiConnector.getInstance();
@@ -70,13 +71,21 @@ export default function Footer() {
 
   /************************ Render Function ****************/
   return (
-    <footer className="bg-white rounded-lg shadow dark:bg-gray-900 m-4">
+    <footer className="bg-inherit rounded-lg shadow dark:bg-gray-900 m-4">
       <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
         <div className="sm:flex sm:items-center sm:justify-between">
         {/* Brand logo */}
         <a href="/" className="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
-          <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo" />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">NearFarm</span>
+          <Image
+            src="/assets/logos/app/logo.png"
+            alt="Logo"
+            width={100}
+            height={100}
+          />
+          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white leading-tight">NearFarm
+            <br/>
+            <span className="text-xs font-semibold text-gray-400 dark:text-gray-300 mt-[-0.1em] block">Harvesting local goodness for you</span>
+          </span>
         </a>
         {/* Connection status dropdown */}
         <div className="relative inline-block text-left">

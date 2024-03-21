@@ -63,7 +63,7 @@ export default function Home({ searchParams } : { searchParams: {q?: string} }) 
       }
       setCurrentUser(user);
     })
-    .catch((error) => {0
+    .catch((error) => {
       setCurrentUser("");
     })
     .finally(() => {

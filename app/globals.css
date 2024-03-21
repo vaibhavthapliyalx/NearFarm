@@ -60,23 +60,21 @@
   }
 }
 
-
-  .animate-progress {
-    animation: progress 1s infinite linear;
-    transform-origin: 0% 50%;
+/**
+ * This is the CSS for the progress bar animation
+ */
+.animate-progress {
+  animation: progress 1s infinite linear;
+  transform-origin: 0% 50%;
+}
+@keyframes progress {
+  0% {
+      transform:  translateX(0) scaleX(0);
   }
-  
-  
-  
-  
-  @keyframes progress {
-    0% {
-        transform:  translateX(0) scaleX(0);
-    }
-    40% {
-        transform:  translateX(0) scaleX(0.4);
-    }
-    100% {
-        transform:  translateX(100%) scaleX(0.5);
-    }
+  40% {
+      transform:  translateX(0) scaleX(0.4);
   }
+  100% {
+      transform:  translateX(100%) scaleX(0.5);
+  }
+}

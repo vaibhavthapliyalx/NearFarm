@@ -15,6 +15,7 @@ import Link from 'next/link'
 import MaxWidthWrapper from './MaxWidthWrapper'
 import { Icons } from './Icons'
 import UserAccountNav from './UserAccountNav'
+import Image from 'next/image'
 
 // Interface for the DesktopNav component props.
 interface IProps {
@@ -38,7 +39,13 @@ export default function DesktopNav ({user}: IProps) {
         <div className='flex h-16 items-center'>
           <div className='ml-4 flex lg:ml-0'>
             <Link href='/'>
-              <Icons.logo className='h-10 w-10' />
+              {/* <Icons.logo className='h-10 w-10' /> */}
+              <Image
+                src='/assets/logos/app/logo.png'
+                alt='Logo'
+                width={75}
+                height={75}
+              />
             </Link>
           </div>
           <div className='hidden z-50 lg:ml-8 lg:block lg:self-stretch'>

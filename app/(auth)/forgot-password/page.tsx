@@ -102,9 +102,8 @@ export default function ForgotPassword() {
       <div className="container relative h-screen w-screen overflow-hidden flex flex-col items-center justify-center md:flex md:items-center md:justify-center lg:max-w-none lg:grid-cols-2 lg:items-center lg:justify-center ">
       <Card className="lg:p-8 p-4 rounded-lg sm:w-[450px] sm:h-[450px] lg:w-[500px] lg:h-[500px]  bg-inherit border-2 w-full h-auto">
         <Image 
-          src="/assets/logos/app/logo.png"
+          src="/assets/logos/app/full-logo.png"
           alt="Logo"
-          layout="responsive"
           width={500}
           height={500}
           className='mx-auto'
