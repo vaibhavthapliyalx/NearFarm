@@ -34,9 +34,9 @@
 
 Nearfarm utilizes both frontend unit tests and backend automation testing to ensure reliability and functionality.
 
-** Integration Branch:** [![Build Pipeline](https://github.com/vaibhavthapliyalx/NearFarm/actions/workflows/build-test.yml/badge.svg?branch=integration)](https://github.com/vaibhavthapliyalx/NearFarm/actions/workflows/build-test.yml)
+**Integration Branch:** [![Build Pipeline](https://github.com/vaibhavthapliyalx/NearFarm/actions/workflows/build-test.yml/badge.svg?branch=integration)](https://github.com/vaibhavthapliyalx/NearFarm/actions/workflows/build-test.yml)
 
-** Main Branch:**
+**Main Branch:**
 [![Build Pipeline](https://github.com/vaibhavthapliyalx/NearFarm/actions/workflows/build-test.yml/badge.svg?branch=main)](https://github.com/vaibhavthapliyalx/NearFarm/actions/workflows/build-test.yml)
 
 ### Frontend Unit Tests
@@ -86,7 +86,6 @@ This project is currently a work in progress. Developed as a Final Year Project 
 Nearfarm is a Final Year project developed by Vaibhav Thapliyal. All rights to the codebase, including but not limited to its design, implementation, and associated documentation, are reserved. Any unauthorized use, reproduction, or distribution of the codebase or its components is strictly prohibited. The project maintainers and contributors disclaim any liability for any issues, damages, or legal consequences arising from the unauthorized use or distribution of Nearfarm. 
 Any third-party services, libraries, or tools used in this project are the respective properties of their owners and may be protected by trademarks, copyrights, or other intellectual property rights. They are subject to their own terms and licenses.
 
-
 ## Open Issues and Suggestions
 
 We welcome any suggestions or feedback to improve Nearfarm. Feel free to open an issue if you encounter any bugs, have ideas for new features, or would like to suggest improvements to the existing functionality. Your input is valuable in shaping the future development of Nearfarm.
@@ -97,8 +96,6 @@ To open an issue, please follow these steps:
 3. Provide a descriptive title and detailed description of the issue or suggestion.
 4. Assign appropriate labels and milestones if applicable.
 5. Submit the issue.
-
-Thank you for contributing to Nearfarm! 
 
 ## License
 
