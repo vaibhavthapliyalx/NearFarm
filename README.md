@@ -5,10 +5,14 @@
 
 ## Key Features
 
-* **Seamless Marketplace:** Connects consumers with local farmers for convenient online shopping.
-* **Direct Farmer-Consumer Interaction:** Farmers control their pricing and establish direct customer relationships.
-* **Accessibility:** Caters to both professional farmers and individuals with homegrown produce.
-* **Fresh and Local Produce:** Promotes healthy eating habits by providing fresh, locally sourced food.
+- **User-Friendly Interface:** Nearfarm boasts an intuitive interface for easy navigation and product listing, ensuring a seamless user experience.
+- **Direct Transactions:** Nearfarm enables direct transactions between farmers and consumers, fostering transparency and trust.
+- **Empowerment of Farmers:** Small-scale farmers can reach a wider audience and sell their products professionally, breaking free from reliance on intermediary companies.
+- **Surplus Produce Sales:** Individuals with surplus produce from personal gardens can conveniently list and sell their goods on the platform.
+- **Fully Mobile Responsive:** Nearfarm is designed to be fully responsive on mobile devices, ensuring an optimal experience for users across all screen sizes.
+- **Integration with Third-Party Authentication Services:** Nearfarm integrates with third-party authentication services such as Google and GitHub, providing users with seamless login options.
+- **Continuous Integration and Deployment:** New code is merged into the integration branch and subsequently deployed to the main branch for releases. Vercel bot automates specific tasks, ensuring smooth operations.
+- **Testing:** Frontend unit tests are conducted using Jest, while backend automation testing is performed with Postman.
 
 ## Technology Stack
 
