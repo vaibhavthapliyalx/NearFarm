@@ -20,7 +20,7 @@
 * **Frontend Unit Testing:** Jest
 * **Backend Automation Testing:** Postman
 * **API Requests:** Axios
-* **UI Component Library:** Tailwind CSS
+* **UI Component Library:** ShadCN and Tailwind CSS
 * **Form Handling:** React Hook Form
 * **Other Dependencies:** Refer to `package.json` for a complete list (additional dependencies like email sending libraries, date pickers, etc.)
 
