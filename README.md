@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Nearfarm: Connecting Consumers with Local Farmers
 
-## Getting Started
+**Nearfarm** is a web application designed to revolutionize the local food ecosystem. It bridges the gap between consumers seeking fresh, locally sourced produce and local farmers struggling to reach a wider audience. By providing a user-friendly online marketplace, Nearfarm empowers small-scale farmers and individuals with surplus produce to sell directly to consumers, fostering a more sustainable and equitable food system.
 
-First, run the development server:
+## Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+* **Seamless Marketplace:** Connects consumers with local farmers for convenient online shopping.
+* **Direct Farmer-Consumer Interaction:** Farmers control their pricing and establish direct customer relationships.
+* **Accessibility:** Caters to both professional farmers and individuals with homegrown produce.
+* **Fresh and Local Produce:** Promotes healthy eating habits by providing fresh, locally sourced food.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technology Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+* **Frontend:** NextJs (app router)
+* **Backend:** NodeJs
+* **Hosting:** Vercel
+* **Database:** MongoDB
+* **Authentication:** NextAuth.js
+* **Frontend Unit Testing:** Jest
+* **Backend Automation Testing:** Postman
+* **API Requests:** Axios
+* **UI Component Library:** Tailwind CSS
+* **Form Handling:** React Hook Form
+* **Other Dependencies:** Refer to `package.json` for a complete list (additional dependencies like email sending libraries, date pickers, etc.)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Development Workflow
 
-## Learn More
+* **Integration Branch:** All new code is initially merged into the `integration` branch for rigorous testing.
+* **Main Branch:** Code is merged into the `main` branch upon successful release.
+* **Vercel Bot:** Automates specific tasks to streamline deployment and maintenance processes.
 
-To learn more about Next.js, take a look at the following resources:
+## Project Status
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This is a work in progress. We are actively developing Nearfarm to become the leading platform for connecting local farmers and consumers.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Disclaimer
 
-## Deploy on Vercel
+* **Public for Reference Only:** This repository is public for reference purposes only. Copying or unauthorized use of the code is strictly prohibited.
+* **Respect Intellectual Property:** We value intellectual property rights. Please contribute ethically.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Open Issues and Suggestions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+We welcome any suggestions or feedback to improve Nearfarm. Feel free to open an issue if you encounter any bugs, have ideas for new features, or would like to suggest improvements to the existing functionality. Your input is valuable in shaping the future development of Nearfarm.
+
+To open an issue, please follow these steps:
+1. Navigate to the [Issues](<https://github.com/vaibhavthapliyalx/NearFarm/issues>) tab of the repository.
+2. Click on the "New Issue" button.
+3. Provide a descriptive title and detailed description of the issue or suggestion.
+4. Assign appropriate labels and milestones if applicable.
+5. Submit the issue.
+
+Thank you for contributing to Nearfarm! 
+
+## License
+
+This project is proprietary and not licensed for public use. All rights to the codebase are reserved by the project owner. Unauthorized use, reproduction, or distribution of the code is strictly prohibited. If you wish to use or modify the codebase, please contact the project owner for permission.
