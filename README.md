@@ -71,7 +71,9 @@ Visit [http://localhost:3000](http://localhost:3000) to explore the application.
 
 ## Deployment
 
-Nearfarm utilizes Vercel for seamless deployment and hosting. The deployment process is automated through Vercel's integration with GitHub.
+Nearfarm utilizes Vercel for seamless deployment and hosting. The deployment process is automated through Vercel's integration with GitHub.  
+**Production Build:** [Visit now!](https://near-farm.vercel.app)
+
 
 ### Deployment Process
 
