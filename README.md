@@ -1,5 +1,5 @@
 # Nearfarm: Harvesting Local Goodness For You
-![NearFarm Logo](public/assets/full-logo.png)
+![NearFarm Logo](/public/assets/full-logo.png)
 
 **Nearfarm** is a web application designed to revolutionize the local food ecosystem. It bridges the gap between consumers seeking fresh, locally sourced produce and local farmers struggling to reach a wider audience. By providing a user-friendly online marketplace, Nearfarm empowers small-scale farmers and individuals with surplus produce to sell directly to consumers, fostering a more sustainable and equitable food system.
 
