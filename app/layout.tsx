@@ -8,12 +8,12 @@ import './globals.css';
 // Imports.
 import AuthProvider from './provider/AuthProvider';
 import { Inter } from 'next/font/google';
-import ProgressBar from '@/components/LoadingAnimations/ProgressBar';
+import { Toaster } from "@/components/ui/toaster";
 import NavigationBar from '@/components/NavBar';
-import { Toaster } from '@/components/ui/toaster';
 import { classMerge } from '@/lib/utilityfunctions';
-import { ThemeProvider } from 'next-themes';
-import { Footer } from 'react-day-picker';
+import { ThemeProvider } from '@/components/ThemeProvider';
+import ProgressBar from '@/components/LoadingAnimations/ProgressBar';
+import Footer from '@/components/Footer';
 
 // Gets the instance of the Inter font.
 const inter  = Inter({subsets: ['latin']});
@@ -38,7 +38,7 @@ export default function RootLayout({ children }: IProps){
 
   /***************************************** Render Function **********************************/
   return (
-    <html lang="en" className="h-full bg-inherit">
+    <html suppressHydrationWarning lang="en" className="h-full bg-inherit">
       <body className={classMerge("relative h-full font-sans antialiased", inter.className)}>
         <ThemeProvider
           attribute="class"
