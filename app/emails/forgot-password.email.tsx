@@ -43,7 +43,7 @@ export default function ForgotPasswordEmail({params}: IProps) {
             <h1 style={{ color: '#333', textAlign: 'center', marginBottom: '20px', fontSize: '24px' }}>Password Reset Request</h1>
             <p style={{ marginBottom: '20px', fontSize: '16px', lineHeight: '1.5' }}>
               Hello {params.name},<br />
-              We received a request to reset your password for NearFarm account. If you didn't make this request, you can ignore this email.
+              {`We received a request to reset your password for NearFarm account. If you didn't make this request, you can ignore this email.`}
             </p>
             <div style={{ textAlign: 'center' }}>
               <Button

@@ -52,9 +52,10 @@ export default function MobileNav({ user }: IProps) {
               key={item.label}
               item={item}
               isActive={isActive}
-              children={children}
               className={`relative flex flex-col items-center gap-2 rounded-lg p-2 sm:flex-1 sm:px-2 sm:py-2.5`}
-            />
+            >
+              {children}
+            </NavItem>
         )})}
       </div>
     </section>

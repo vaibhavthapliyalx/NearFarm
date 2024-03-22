@@ -190,7 +190,7 @@ export function ChangePasswordDrawer( {user, setLoadingMessage, displaySpinner}:
           <DrawerHeader className="text-left">
             <DrawerTitle>Change Password</DrawerTitle>
             <DrawerDescription>
-              Update your password to keep your account secure. Click save when you're done.
+              {`Update your password to keep your account secure. Click save when you're done.`}
             </DrawerDescription>
           </DrawerHeader>
           <FormProvider {...form}>
@@ -200,7 +200,7 @@ export function ChangePasswordDrawer( {user, setLoadingMessage, displaySpinner}:
             <DrawerClose asChild>
               <Button variant="outline">Cancel</Button>
             </DrawerClose>
-            <span className="text-sm text-yellow-500">*Please note that if you have signed up using third-party, you can't change your password here.
+            <span className="text-sm text-yellow-500">{`*Please note that if you have signed up using third-party, you can't change your password here.`}
             Please refer to the third-party service for password changes.</span>
           </DrawerFooter>
         </DrawerContent>

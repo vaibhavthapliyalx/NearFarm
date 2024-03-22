@@ -408,8 +408,8 @@ export default function AccountProfile({ user, onOnboardingComplete }: IProps) {
                   />
                 </FormControl>
                 <FormDescription> 
-                  Please upload a valid ID card, passport or driver's license for getting a verified badge on your profile.
-                  This feature is only available to farmers and is used to ensure that consumers can trust the farmers they are buying from.
+                  {`Please upload a valid ID card, passport or driver's license for getting a verified badge on your profile.
+                  This feature is only available to farmers and is used to ensure that consumers can trust the farmers they are buying from.`}
                   {<br />}
                   <span style={{ color: 'red' }}>*Please note that this feature is not yet available. We are working hard to make it available soon.</span>
                 </FormDescription>
