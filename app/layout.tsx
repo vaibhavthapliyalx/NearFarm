@@ -9,11 +9,11 @@ import './globals.css';
 import AuthProvider from './provider/AuthProvider';
 import { Inter } from 'next/font/google';
 import { Toaster } from "@/components/ui/toaster";
-import NavigationBar from '@/components/NavBar';
 import { classMerge } from '@/lib/utilityfunctions';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import ProgressBar from '@/components/LoadingAnimations/ProgressBar';
 import Footer from '@/components/Footer';
+import NavigationBar from '@/components/NavBar';
 
 // Gets the instance of the Inter font.
 const inter  = Inter({subsets: ['latin']});
