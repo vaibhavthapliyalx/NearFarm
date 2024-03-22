@@ -6,10 +6,11 @@
 'use client'
 
 // Importing necessary libraries and components.
-import { NavbarLinks, NavItemType } from '@/shared/constants'
-import Image from 'next/image'
-import { classMerge } from '@/lib/utilityfunctions'
-import Link from 'next/link'
+import { NavbarLinks, NavItemType } from '@/shared/constants';
+import Image from 'next/image';
+import { classMerge } from '@/lib/utilityfunctions';
+import Link from 'next/link';
+import { useTheme } from 'next-themes';
 
 type NavBarLinks = (typeof NavbarLinks)[number]
 
@@ -33,6 +34,9 @@ interface NavItemProps {
  * @returns The rendered navigation item.
  */
 export default function NavItem({ item, isActive, type, className, children }: NavItemProps): React.ReactElement {
+  // Grabs the resolved theme from the useTheme hook.
+  // This is used to determine the theme of the system.
+  const {resolvedTheme} = useTheme();
   /**
    * Renders the navigation item.
    * If the navigation item type is mobile or desktop, the navigation item is rendered accordingly.
@@ -52,6 +56,7 @@ export default function NavItem({ item, isActive, type, className, children }: N
             children ? children : (
               <Image 
                 src={item.imgURL} 
+                style={{filter: resolvedTheme === 'light' && !isActive ? 'invert(1)' : 'invert(0)'}}
                 alt={item.label}
                 width={20}
                 height={20}

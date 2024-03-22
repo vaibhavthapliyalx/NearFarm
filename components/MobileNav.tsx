@@ -34,16 +34,13 @@ export default function MobileNav({ user }: IProps) {
 
   /************************* Render Function **********************/
   return (
-    <section className='fixed bottom-0 z-10 w-full rounded-t-3xl bg-glassmorphism p-4 backdrop-blur-lg xs:px-7 lg:hidden'>
+    <section className='fixed bottom-0 z-10 w-full rounded-t-3xl bg-gray-50 dark:bg-inherit p-4 backdrop-blur-lg xs:px-7 lg:hidden'>
       <div className='flex items-center justify-between gap-3 xs:gap-5'>
         {NavbarLinks.map((item) => {
           isActive =
           (pathname.includes(item.route) && item.route.length > 1) || pathname === item.route;
           let children = null;
           if(!isObjectEmpty(user) && item.label === "Profile") {
-            console.log("User is as below");
-            console.log(user);
-            // item.route = `/profile/${user.id}`;
             children = <UserAccountNav user={user}/>;
           }
           return (
