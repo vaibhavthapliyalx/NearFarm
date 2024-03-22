@@ -1,4 +1,10 @@
-'use client'
+/**
+ * @fileoverview This file contains the user account navigation component.
+ * This allows the user to navigate to their profile and log out of the application
+ * in both mobile and desktop views.
+ */
+
+// Importing necessary libraries and components.
 import ApiConnector from '@/app/services/ApiConnector';
 import { Button } from './ui/button'
 import {
@@ -9,35 +15,49 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 import Link from 'next/link'
-import { AvatarIcon } from '@radix-ui/react-icons';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
+import { User } from '@/shared/interfaces';
 
+// Interface for the props that the UserAccountNav component accepts.
+interface IProps {
+  user: User;
+}
+
+// Grabs the instance of the ApiConnector Class (Singleton) which connects to the backend endpoints.
 const apiConnectorInstance = ApiConnector.getInstance();
 
-const UserAccountNav = ({ user }: { user: any }) => {
+/**
+ * Renders the user account navigation component.
+ * 
+ * @param user The user object.
+ * @returns The rendered user account navigation component.
+ */
+export default function UserAccountNav({ user }: IProps) {
+  // Grabs the user's session object.
   const { data: session } = useSession();
+  // Grabs the user's initials from their name by splitting the name and getting the first letter of each word.
+  const initials = session?.user.name.split(' ').map((n: string) => n[0]).join('');
+  // Grabs the router object.
   const router = useRouter();
-
+  // Grabs the current path of the page.
   const pathName = usePathname();
 
-
+  /********************** Render Function ***********************/
   return (
     <>
-      {session ?  (
+      { session && user  ?  (
         <DropdownMenu>
           <DropdownMenuTrigger
             asChild
             className='overflow-hidden'
             >
               <Avatar className='cursor-pointer'>
-                <AvatarImage src={user.image} alt={user.name} />
-                <AvatarFallback> {user.name[0]}</AvatarFallback>
+                <AvatarImage src={user.image } alt={user.name} />
+                <AvatarFallback> {initials ?? user.name}</AvatarFallback>
               </Avatar>
           </DropdownMenuTrigger>
-
           <DropdownMenuContent
             className='bg-white rounded-lg shadow dark:bg-gray-900'
             align='end'>
@@ -48,15 +68,12 @@ const UserAccountNav = ({ user }: { user: any }) => {
                 </p>
               </div>
             </div>
-
             <DropdownMenuSeparator />
-
             <DropdownMenuItem asChild
               className='cursor-pointer block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white'
             >
-              <Link href='/sell'>My Profile</Link>
+              <Link href={`/profile/${user.id}`}>My Profile</Link>
             </DropdownMenuItem>
-
             <DropdownMenuItem
               onClick={apiConnectorInstance.logout}
               className='cursor-pointer block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white'
@@ -78,5 +95,3 @@ const UserAccountNav = ({ user }: { user: any }) => {
     </>
   )
 }
-
-export default UserAccountNav

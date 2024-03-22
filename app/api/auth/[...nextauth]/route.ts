@@ -1,3 +1,6 @@
+/**
+ * @fileoverview This file contains the API routes for the next-auth.
+ */
 import NextAuth from "next-auth"
 import { options } from "./options"
 

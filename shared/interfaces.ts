@@ -1,52 +1,43 @@
-// This file contains all the common interfaces used in the application.
-
-import { ToastActionElement } from "@/components/ui/toast";
-import { ToastType } from "./constants";
-
-// Imports
-
 /**
- * @interface Customer
- * This interface defines the structure of the customer object.
- * 
- * @property {number} id - The id of the customer.
- * @property {string} name - The name of the customer.
- * @property {ContactDetails} contact - The contact details of the customer.
- * @property {string} membershipStatus - The membership status of the customer.
- * @property {Order["id"][]} previousOrders - The previous orders of the customer.
+ * @fileoverview This file contains all the common interfaces used in the application.
  */
-export interface Customer {
-  id: number;
-  name: string;
-  age: number;
-  username: string;
-  contact: ContactDetails;
-  previousOrders: Order["id"][] | string[];
-}
+
+import { OrderMethod, OrderStatus, ProductCategory, UserRole } from "./constants";
 
 /**
- * @interface Product
- * This interface defines the structure of the product object.
+ * @interface Product This interface defines the structure of the product object.
  * 
  * @property {number} id - The id of the product.
  * @property {string} name - The name of the product.
- * @property {string} category - The category of the product.
- * @property {number} price - The price of the product.
- * @property {number} stockQuantity - The stock quantity of the product.
  * @property {string} description - The description of the product.
+ * @property {number} price - The price of the product.
+ * @property {number} quantity - The quantity of the product.
+ * @property {string} image - The image of the product.
+ * @property {string} sellerId - The id of the seller.
+ * @property {string} availableFrom - The date from which the product is available.
+ * @property {string} listedAt - The date/time on which the product was listed.
+ * @property {string} collectionAddress - The collection address of the product.
+ * @property {string} category - The category of the product.
+ * @property {string} notes - The notes of the product.
  */
 export interface Product {
   id?: number;
   name: string;
-  category?: string;
-  price: number;
-  stockQuantity: number;
   description: string;
+  price: number;
+  quantity: number;
+  image: string;
+  sellerId: string;
+  availableFrom: string;
+  listedAt: string; 
+  collectionAddress: string;
+  category: ProductCategory;
+  notes: string;
 }
 
+
 /**
- * @interface Order
- * This interface defines the structure of the order object.
+ * @interface Order This interface defines the structure of the order object.
  * 
  * @property {number} id - The id of the order.
  * @property {number} customerId - The id of the customer who placed the order.
@@ -58,19 +49,29 @@ export interface Product {
  */
 export interface Order {
   id: number;
-  customerId: number;
-  products: Array<{
-    productId: number;
-    quantity: number;
-  }>,
+  consumerId: number;
+  products: OrderItem[],
   orderDate: string;
   totalPrice: number;
-  deliveryStatus: string;
+  orderMethod: OrderMethod;
+  orderStatus: OrderStatus;
 }
 
 /**
- * @interface ContactDetails
- * This interface defines the structure of the contact details object.
+ * @interface This interface defines the structure of the order item.
+ * 
+ * @property {number} productId - The id of the product.
+ * @property {number} quantity - The quantity of the product.
+ */
+export interface OrderItem {
+  productId: number;
+  quantity: number;
+}
+
+
+
+/**
+ * @interface This interface defines the structure of the contact details object.
  * 
  * @property {string} email - The email of the customer.
  * @property {string} phone - The phone number of the customer.
@@ -78,64 +79,90 @@ export interface Order {
  */
 export interface ContactDetails {
   email: string;
-  phone: string;
+  phone?: string;
   address: string;
 }
 
 /**
- * @interface Admin
- * This interface defines the structure of the admin object.
+ * @interface This interface defines the structure of the user object.
  * 
- * @property {string} id - Optional: The id of the admin.
- * @property {string} fullName - The full name of the admin.
- * @property {Gender} gender - Optional: The gender of the admin.
- * @property {string} username - The username of the admin.
- * @property {string} password - Optional: The password of the admin.
- * @property {string} email - The email of the admin.
- * @property {string} profilePhoto - Optional: The file name of profile photo of the admin.
+ * @property {number} id - The id of the user.
+ * @property {string} name - The name of the user.
+ * @property {string} email - The email of the user.
+ * @property {string} password - The password of the user.
+ * @property {string} joinDate - The date on which the user joined.
  */
-export interface Admin {
-  id?: string;
-  fullName: string;
-  username: string;
-  password?: string;
-  email: string;
-  profilePhoto?: string;
-}
-
 export interface User {
   id?: string;
   name: string;
   email: string;
-  password: string;
-  userType: string;
-  createdAt: string;
-  onBoarded?: boolean;
+  username: string;
+  bio: string;
+  password?: string;
+  isOnBoarded: boolean;
+  age: number;
+  role: UserRole;
+  prevOrders: string[];
+  cart: string[];
+  image: string;
+  joinDate: string;
+  resetPasswordToken: string;
+  documents: string[];
+  contactDetails: ContactDetails;
+  isVerified: boolean;
 }
 
-
-
-// Forgot Password payload interface
+/**
+ * @interface This interface defines the structure of the forgot password payload.
+ * 
+ * @property {string} email - The email of the user.
+ */
 export interface ForgotPasswordPayload {
   email: string;
 }
 
+/**
+ * @interface This interface defines the structure of the reset password payload.
+ * 
+ * @property {string} email - The email of the user.
+ * @property {string} password - The new password of the user.
+ * @property {string} confirmPassword - The new password of the user.
+ * @property {string} signature - The signature of the user.
+ */
 export interface ResetPasswordPayload {
   email: string;
   password: string;
-  signature: string;
   confirmPassword: string;
+  signature: string; 
+}
+
+/**
+ * @interface This interface defines the structure of the login payload.
+ * 
+ * @property {string} email - The email of the user.
+ * @property {string} password - The password of the user.
+ */
+export interface ChangePasswordPayload {
+  id: string;
+  oldPassword: string;
+  newPassword: string;
 }
 
 
-
+/**
+ * @interface This interface defines the structure of response from the server.
+ * 
+ * @property {any} data - The data from the server.
+ * @property {boolean} success - The success status of the response.
+ * @property {string | Array<string>} message - The message from the server.
+ * @property {any} error - The error from the server.
+ */
 export interface ApiResponse {
   data?: any;
   success: boolean;
   message: string | [];
   error?: any; 
 }
-
 
 
   
