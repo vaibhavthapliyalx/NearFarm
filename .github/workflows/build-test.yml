@@ -33,8 +33,21 @@ jobs:
       - name: Build
         run: |
           npm run build
-       
+  
+  Automated-API-Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Postman CLI
+        run: |
+          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+      - name: Login to Postman CLI
+        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+      - name: Run API tests
+        run: |
+          postman collection run "30462678-cafdc9db-fd86-461f-aff5-0289751d64d8" -e "30462678-7e209f10-f09a-482e-bdbd-99752db5d6ff"
 
-      
-      
-      
+
+
+
+

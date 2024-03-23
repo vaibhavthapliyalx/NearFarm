@@ -10,7 +10,8 @@ import { OrderMethod, OrderStatus, ProductCategory, UserRole } from "./constants
  * @property {number} id - The id of the product.
  * @property {string} name - The name of the product.
  * @property {string} description - The description of the product.
- * @property {number} price - The price of the product.
+ * @property {number} salePrice - The sale price of the product.
+ * @property {number} marketPrice - The market price of the product.
  * @property {number} quantity - The quantity of the product.
  * @property {string} image - The image of the product.
  * @property {string} sellerId - The id of the seller.
@@ -24,7 +25,8 @@ export interface Product {
   id?: number;
   name: string;
   description: string;
-  price: number;
+  salePrice: number;
+  marketPrice: number;
   quantity: number;
   image: string;
   sellerId: string;

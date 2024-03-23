@@ -123,27 +123,23 @@ export enum AuthenticationStatus {
 /**
  * @enum Categories of products.
  * 
- * @property {string} FRUITS - The fruits category.
- * @property {string} VEGETABLES - The vegetables category.
- * @property {string} DAIRY - The dairy category.
- * @property {string} MEAT - The meat category.
- * @property {string} FISH - The fish category.
- * @property {string} SPICES - The spices category.
- * @property {string} GRAINS - The grains category.
- * @property {string} BEVERAGES - The beverages category.
- * @property {string} SNACKS - The snacks category.
- * @property {string} OTHERS - The others category. 
+ * @property {string} ORGANIC_FRUITS_VEGETABLES - The organic fruits & vegetables category.
+ * @property {string} CUTS_SPROUTS - The cuts & sprouts category.
+ * @property {string} FLOWER_BOUQUETS_BUNCHES - The flower bouquets, bunches category.
+ * @property {string} FRESH_VEGETABLES - The fresh vegetables category.
+ * @property {string} EXOTIC_FRUITS_VEGGIES - The exotic fruits & veggies category.
+ * @property {string} HERBS_SEASONINGS - The herbs & seasonings category.
+ * @property {string} FRESH_FRUITS - The fresh fruits category.
+ * @property {string} OTHERS - The others category.
  */
 export enum ProductCategory {
-  FRUITS = "Fruits",
-  VEGETABLES = "Vegetables",
-  DAIRY = "Dairy",
-  MEAT = "Meat",
-  FISH = "Fish",
-  SPICES = "Spices",
-  GRAINS = "Grains",
-  BEVERAGES = "Beverages",
-  SNACKS = "Snacks",
+  ORGANIC_FRUITS_VEGETABLES = "Organic Fruits & Vegetables",
+  CUTS_SPROUTS = "Cuts & Sprouts",
+  FLOWER_BOUQUETS_BUNCHES = "Flower Bouquets, Bunches",
+  FRESH_VEGETABLES = "Fresh Vegetables",
+  EXOTIC_FRUITS_VEGGIES = "Exotic Fruits & Veggies",
+  HERBS_SEASONINGS = "Herbs & Seasonings",
+  FRESH_FRUITS = "Fresh Fruits",
   OTHERS = "Others",
 }
 
