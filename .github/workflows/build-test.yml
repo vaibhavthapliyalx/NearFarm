@@ -48,7 +48,10 @@ jobs:
         run: npm install
 
       - name: Run application in development mode in the background
-        run: npm run dev &
+        run: nohup npm run dev &
+      
+      - name: Print server logs
+        run: cat nohup.out
       
       - name: Wait for application to boot. (10s)
         run: sleep 10
