@@ -47,8 +47,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run application in development mode
-        run: npm run dev
+      - name: Run application in development mode in the background
+        run: npm run dev &
+      
+      - name: Wait for application to boot. (10s)
+        run: sleep 10
 
       - name: Install Postman CLI
         run: |
