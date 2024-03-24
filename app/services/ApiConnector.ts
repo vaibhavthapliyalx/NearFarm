@@ -444,4 +444,140 @@ export default class ApiConnector {
       })
     })
   }
+
+  async getProductsById(id: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/product', { params: { id: id } })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      })
+    })
+  }
+  
+  async getProductsByName(name: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/product', { params: { name: name } })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      })
+    })
+  }
+
+  async getProductsByCategory(category: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/product', { params: { category: category } })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      })
+    })
+  }
+
+  async getProductsByTags(tags: string[]) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/product', { params: { tags: tags } })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      })
+    })
+  }
+
+  async getProductsByPrice(sortByPrice: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/product', { params: { sortByPrice: sortByPrice } })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      })
+    })
+  }
+
+  async getProductsByAvailableFromDate(availableFromDate: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/product', { params: { availableFromDate: availableFromDate } })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      })
+    })
+  }
+  
+  async getProductsByCollectionAddress(collectionAddress: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/product', { params: { collectionAddress: collectionAddress } })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      })
+    })
+  }
+
+  async getProductsByPage(page: number) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/product', { params: { page: page } })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      })
+    })
+  }
 }
