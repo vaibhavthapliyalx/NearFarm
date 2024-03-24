@@ -11,7 +11,7 @@ on:
     branches:
       - integration
 jobs:
-  BUILD_TEST:
+  BUILD_PIPELINE:
     runs-on: ubuntu-latest
     env:
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
@@ -34,7 +34,7 @@ jobs:
         run: |
           npm run build
   
-  AUTOMATED_API_TESTS:
+  AUTOMATED_API_TEST_PIPELINE:
     runs-on: ubuntu-latest
     env:
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
@@ -52,11 +52,11 @@ jobs:
       - name: Run application in development mode in the background
         run: nohup npm run dev > output.log 2>&1 &
       
-      - name: Print server logs
+      - name: Export server logs
         run: cat output.log
       
-      - name: Wait for application to boot. (10s)
-        run: sleep 10
+      - name: Wait for application to boot. (8s)
+        run: sleep 8
 
       - name: Install Postman CLI
         run: |
