@@ -4,6 +4,7 @@
  */
 import { UserRole } from '@/shared/constants';
 import {Schema, model, models} from 'mongoose';
+import CartItemSchema from './cart.model';
 
 const UserSchema = new Schema({
   id: {
@@ -56,7 +57,7 @@ const UserSchema = new Schema({
     required: false,
   },
   cart: {
-    type: [Schema.Types.String],
+    type: [CartItemSchema],
     required: false,
   },
   image: {

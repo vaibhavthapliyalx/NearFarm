@@ -19,7 +19,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "./LoadingAnimations/loadingSpinner";
 import { AuthenticationStatus, ToastType } from "@/shared/constants";
-import Link from "next/link";
 import ApiConnector from "@/app/services/ApiConnector";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
 import { ToastAction } from "./ui/toast";
@@ -53,7 +52,6 @@ export default function ProfileHeader({user}: IProps) {
   // Gets the user's initials from their name by splitting the name and getting the first letter of each word.
   // This is used as a fallback for the user's profile picture.
   const initials = user?.name?.split(' ').map((n: string) => n[0]).join('');
- 
 
   /**
    * This function is called when the user clicks on the delete account button.
@@ -156,11 +154,12 @@ export default function ProfileHeader({user}: IProps) {
                     align='end'>
 
                       <DropdownMenuItem role="button"
+                        onClick={(e) => {e.stopPropagation()}}
                         className='cursor-pointer block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white'
                       >
-                        <Link href={`/profile/${user.id}/edit`}>
-                          Edit Profile
-                        </Link>
+                        <div onClick={(e)=>{e.stopPropagation(); router.push(`/profile/${user.id}/edit`)}}>
+                          <a>Edit Profile</a>
+                        </div>
                       </DropdownMenuItem>
 
                       <DropdownMenuItem role="button"
@@ -211,6 +210,5 @@ export default function ProfileHeader({user}: IProps) {
         </div>
       </MaxWidthWrapper>
     </>
-    
   );
 }

@@ -17,11 +17,11 @@ const ProductSchema = new Schema({
     type: Schema.Types.String,
     required: false,
   },
-  salePrice:{
+  sale_price:{
     type: Schema.Types.Number,
     required: [true, 'Product sale price is required'],
   },
-  marketPrice: {
+  market_price: {
     type: Schema.Types.Number,
     required: [true, 'Product market price is required'],
   },
@@ -33,19 +33,19 @@ const ProductSchema = new Schema({
     type: Schema.Types.String,
     required: false,
   },
-  sellerId: {
+  seller_id: {
     type: Schema.Types.String,
     required: [true, 'Product seller ID is required'],
   },
-  availableFrom: {
+  available_from: {
     type: Schema.Types.String,
     required: [true, 'Product available from date is required'],
   },
-  listedAt: {
+  listed_at: {
     type: Schema.Types.String,
     required: [true, 'Product listed at date is required'],
   },
-  collectionAddress: {
+  collection_address: {
     type: Schema.Types.String,
     required: [false, 'Product collection address is required'],
   },

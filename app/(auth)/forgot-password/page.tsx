@@ -60,11 +60,12 @@ export default function ForgotPassword() {
         })
       })
       .catch((error) => {
+        console.error(error);
         if (error) {
-          if(typeof error === 'string'){
+          if(typeof error.message === 'string'){
             toast(
               {
-                description: error,
+                description: error.message,
                 variant: ToastType.DESTRUCTIVE,
                 title: "Something went wrong!",
               }

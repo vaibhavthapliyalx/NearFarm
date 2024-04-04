@@ -42,6 +42,9 @@ export default function MobileNav({ user }: IProps) {
           let children = null;
           if(!isObjectEmpty(user) && item.label === "Profile") {
             children = <UserAccountNav user={user}/>;
+          } else if (item.label === "Cart" && !isObjectEmpty(user)) {
+            // Injecting the user id into the cart button.
+            item.route = `/cart/${user.id}`;
           }
           return (
             <NavItem

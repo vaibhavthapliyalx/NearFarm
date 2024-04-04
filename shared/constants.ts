@@ -13,13 +13,18 @@ export const NavbarLinks = [
   },
   {
     imgURL: "/assets/icons/search.svg",
-    route: "/search",
-    label: "Search",
+    route: "/products",
+    label: "Products",
   },
   {
     imgURL: "/assets/icons/heart.svg",
     route: "/activity",
     label: "Activity",
+  },
+  {
+    imgURL: "/assets/icons/cart.svg",
+    route: "/cart",
+    label: "Cart",
   },
   {
     imgURL: "/assets/icons/user.svg",
@@ -29,12 +34,20 @@ export const NavbarLinks = [
 ];
 
 /**
- * @enum The navigation links for the footer.
+ * @enum The navigation links for profile page tabs.
  */
 export const profilePageTabs = [
   { value: "reviews", label: "Reviews", icon: "/assets/reply.svg" },
   { value: "replies", label: "Replies", icon: "/assets/members.svg" },
   { value: "tagged", label: "Tagged", icon: "/assets/tag.svg" },
+];
+
+/**
+ * @enum The navigation links for product page tabs.
+ */
+export const productPageTabs = [
+  { value: "reviews", label: "Reviews", icon: "/assets/reply.svg" },
+  { value: "seller info", label: "Seller Info", icon: "/assets/members.svg" },
 ];
 
 /**
@@ -123,6 +136,7 @@ export enum AuthenticationStatus {
 /**
  * @enum Categories of products.
  * 
+ * @property {string} ALL - All categories.
  * @property {string} ORGANIC_FRUITS_VEGETABLES - The organic fruits & vegetables category.
  * @property {string} CUTS_SPROUTS - The cuts & sprouts category.
  * @property {string} FLOWER_BOUQUETS_BUNCHES - The flower bouquets, bunches category.
@@ -133,6 +147,7 @@ export enum AuthenticationStatus {
  * @property {string} OTHERS - The others category.
  */
 export enum ProductCategory {
+  ALL= "All",
   ORGANIC_FRUITS_VEGETABLES = "Organic Fruits & Vegetables",
   CUTS_SPROUTS = "Cuts & Sprouts",
   FLOWER_BOUQUETS_BUNCHES = "Flower Bouquets, Bunches",
@@ -193,6 +208,38 @@ export const Permissions = {
   EDIT_ORDERS: "editOrders",
   DELETE_ORDERS: "deleteOrders",
   MANAGE_USERS: "manageUsers",
+}
+
+/**
+ * @enum The sort order of the products.
+ * 
+ * @property {string} ASCENDING - The products are sorted in ascending order.
+ * @property {string} DESCENDING - The products are sorted in descending order.
+ */
+export enum SortOrder {
+  ASCENDING = "asc",
+  DESCENDING = "desc",
+}
+
+/**
+ * @enum The sort by filter of the products.
+ * 
+ * @property {string} PRICE_LOW_TO_HIGH - The products are sorted by price in ascending order.
+ * @property {string} PRICE_HIGH_TO_LOW - The products are sorted by price in descending order.
+ * @property {string} NEWEST - The products are sorted by newest.
+ * @property {string} OLDEST - The products are sorted by oldest.
+ * @property {string} RATING_LOW_TO_HIGH - The products are sorted by rating in ascending order.
+ * @property {string} RATING_HIGH_TO_LOW - The products are sorted by rating in descending order.
+ * @property {string} NONE - The products are not sorted.
+ */
+export enum SortByFilter {
+  PRICE_LOW_TO_HIGH = "Price: Low to High",
+  PRICE_HIGH_TO_LOW = "Price: High to Low",
+  NEWEST = "Newest",
+  OLDEST = "Oldest",
+  RATING_LOW_TO_HIGH = "Rating: Low to High",
+  RATING_HIGH_TO_LOW = "Rating: High to Low",
+  NONE = "None",
 }
 // Pseudo-code authorization middleware
 // function checkPermission(user: User, permission: string): boolean {
