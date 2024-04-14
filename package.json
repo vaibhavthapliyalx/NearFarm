@@ -1,6 +1,6 @@
 {
   "name": "nearfarm",
-  "version": "v1.0.0",
+  "version": "v1.1.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
