@@ -92,7 +92,7 @@ export default function SellerProfileCard({sellerId}: IProps) {
   )
 }
 
-function ImageIcon(props) {
+function ImageIcon(props:any) {
   return (
     <svg
       {...props}
@@ -114,7 +114,7 @@ function ImageIcon(props) {
 }
 
 
-function UsersIcon(props) {
+function UsersIcon(props:any) {
   return (
     <svg
       {...props}
