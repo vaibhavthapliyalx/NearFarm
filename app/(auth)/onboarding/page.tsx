@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import ApiConnector from "@/app/services/ApiConnector";
 import AccountProfile from "@/components/AccountProfile";
 import { User } from "@/shared/interfaces";
-import LoadingSpinner from "@/components/LoadingAnimations/loadingSpinner";
+import LoadingSpinner from "@/components/LoadingAnimations/LoadingSpinner";
 import { AuthenticationStatus } from "@/shared/constants";
 
 // Grabs the instance of the ApiConnector Class (Singleton) which connects to the backend endpoints.

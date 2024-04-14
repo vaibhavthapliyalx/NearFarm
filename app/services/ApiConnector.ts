@@ -6,9 +6,10 @@
 // Importing necessary libraries and modules.
 import axios from "axios";
 import { getSession, signIn, signOut } from "next-auth/react";
-import { ApiResponse, ChangePasswordPayload, ResetPasswordPayload, User } from "../../shared/interfaces";
+import { ApiResponse, CartItem, ChangePasswordPayload, Order, OrderItem, Product, QueryParams, ResetPasswordPayload, Review, User } from "../../shared/interfaces";
 import type { NextApiRequest } from "next";
-import { ProviderType } from "@/shared/constants";
+import { LikeAction, OrderStatus, ProviderType } from "@/shared/constants";
+import qs from "qs";
 
 /**
  * @class ApiConnector
@@ -443,5 +444,611 @@ export default class ApiConnector {
         reject(result.response.data);
       })
     })
+  }
+
+  /**
+   * This function sends a GET request to the server to get the products by the filter provided.
+   * 
+   * @param queryParams - The query parameters to be sent to the server.
+   * @returns Promise<ApiResponse> - The promise resolves if the products are fetched successfully, otherwise it rejects.
+   */
+  async getProducts(queryParams: QueryParams) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/product', { 
+        params: {
+          id: queryParams.id,
+          name: queryParams.name,
+          sortByPriceOrder: queryParams.sortByPriceOrder,
+          sortByRatingOrder: queryParams.sortByRatingOrder,
+          sortByNearestLocation: queryParams.sortByNearestLocation,
+          sortByAvailableFromDate: queryParams.sortByAvailableFromDate,
+          tags: queryParams.tags,
+          page: queryParams.page,
+          limit: queryParams.limit
+        },
+        paramsSerializer: params => {
+          // Serialize 'category' array using 'qs' library
+          params.category = qs.stringify({category: queryParams.category}, {arrayFormat: 'brackets'});
+          return qs.stringify(params);
+        }
+      })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          const products: Product[] = 
+          response.data.map((prod: any) => {
+            return {
+              id: prod._id,
+              name: prod.name,
+              description: prod.description,
+              salePrice: prod.sale_price,
+              marketPrice: prod.market_price,
+              quantity: prod.quantity,
+              image: prod.image_url,
+              sellerId: prod.seller_id,
+              availableFrom: prod.available_from,
+              listedAt: prod.listed_at,
+              collectionAddress: prod.collection_address,
+              category: prod.category,
+              notes: prod.notes, 
+              rating: prod.rating
+            }
+          });
+          response.data = products;
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      })
+    })
+  }
+
+  /**
+   *  This function send a GET request to search for products with the name provided.
+   * 
+   * @param name - The name of the product to be searched. 
+   * @returns Promise<ApiResponse> - The promise resolves if the products are fetched successfully, otherwise it rejects.
+   */
+  async searchProductsWithName(name: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/product', { params: { name: name } })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          const products: Product[] = 
+          response.data.map((prod: any) => {
+            return {
+              id: prod._id,
+              name: prod.name,
+              description: prod.description,
+              salePrice: prod.sale_price,
+              marketPrice: prod.market_price,
+              quantity: prod.quantity,
+              image: prod.image_url,
+              sellerId: prod.seller_id,
+              availableFrom: prod.available_from,
+              listedAt: prod.listed_at,
+              collectionAddress: prod.collection_address,
+              category: prod.category,
+              notes: prod.notes, 
+              rating: prod.rating
+            }
+          });
+          response.data = products;
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        console.log(result);
+        reject(result.response.data);
+      })
+    })
+  }
+
+  /**
+   * This function sends a POST request to the server to list a new product.
+   * 
+   * @param product - The product to be listed.
+   * @returns Promise<ApiResponse> - The promise resolves if the product is listed successfully, otherwise it rejects.
+   */
+  async listProduct(product: Product) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.post('/api/product', {
+        name: product.name,
+        description: product.description,
+        salePrice: product.salePrice,
+        marketPrice: product.marketPrice,
+        quantity: product.quantity,
+        image: product.image,
+        sellerId: product.sellerId,
+        availableFrom: product.availableFrom,
+        collectionAddress: product.collectionAddress,
+        category: product.category,
+        notes: product.notes
+      })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      })
+    })
+  }
+
+  /**
+   * This function sends a PUT request to the server to update a product listing.
+   * 
+   * @param product - The product to be updated.
+   * @returns Promise<ApiResponse> - The promise resolves if the product is updated successfully, otherwise it rejects.
+   */
+  async updateProduct(product: Product) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.put('/api/product', {
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        salePrice: product.salePrice,
+        marketPrice: product.marketPrice,
+        quantity: product.quantity,
+        image: product.image,
+        sellerId: product.sellerId,
+        availableFrom: product.availableFrom,
+        collectionAddress: product.collectionAddress,
+        category: product.category,
+        notes: product.notes
+      })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    })
+  }
+
+  /**
+   * This function sends a DELETE request to the server to delete a product listing.
+   * 
+   * @param id - The id of the product to be deleted.
+   * @returns Promise<ApiResponse> - The promise resolves if the product is deleted successfully, otherwise it rejects.
+   */
+  async deleteProduct(id: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.delete('/api/product', { params: { id: id } })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a POST request to the server to add items to the cart.
+   * 
+   * @param userId - The id of the user.
+   * @param productId - The id of the product.
+   * @param quantity - The quantity of the product.
+   * @returns Promise<ApiResponse> - The promise resolves if the items are added to the cart successfully, otherwise it rejects.
+   */
+  async addItemToCart(cartItem: CartItem) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.post('/api/cart', {
+        userId: cartItem.userId,
+        productId: cartItem.productId,
+        quantity: cartItem.quantity,
+        name: cartItem.name,
+        price: cartItem.price,
+        image: cartItem.image
+      })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a DELETE request to the server to remove item from the cart.
+   * 
+   * @param userId - The id of the user.
+   * @param productId - The id of the product.
+   * @returns Promise<ApiResponse> - The promise resolves if the items are removed from the cart successfully, otherwise it rejects.
+   */
+  async removeItemFromCart(userId: string, productId: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.delete('/api/cart', { params: { userId: userId, productId: productId } })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a GET request to the server to get the items in the cart.
+   * 
+   * @param userId - The id of the user.
+   * @returns Promise<ApiResponse> - The promise resolves if the items in the cart are fetched successfully, otherwise it rejects.
+   */
+  async getCartItems(userId: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/cart', { params: { userId: userId } })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a PUT request to the server to update the cart item.
+   * 
+   * @param userId - The id of the user.
+   * @param productId - The id of the product.
+   * @param quantity - The quantity of the product.
+   * @returns Promise<ApiResponse> - The promise resolves if the cart item is updated successfully, otherwise it rejects.
+   */
+  async updateCartItem(userId: string, productId: string, quantity: number) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.put('/api/cart', {
+        userId: userId,
+        productId: productId,
+        quantity: quantity,
+      })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a POST request to the server to place an order.
+   * 
+   * @param userId - The id of the user.
+   * @param OrderItems - The item to be ordered.
+   * @returns Promise<ApiResponse> - The promise resolves if the order is placed successfully, otherwise it rejects.
+   */
+  async placeOrder(userId: string, orderItems: OrderItem[]) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.post('/api/order', { 
+        userId: userId,
+        orderItems: orderItems
+      })
+      .then((res: any) => {
+        const response = res.data.body;
+        const order: Order = {
+          id: response.data._id,
+          userId: response.data.userId,
+          items: response.data.items,
+          status: response.data.status,
+          orderTotal: response.data.orderTotal,
+          placedAt: response.data.placedAt,
+          updatedAt: response.data.updatedAt
+        }
+        response.data = order;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a GET request to the server to get the orders placed by the user.
+   * 
+   * @param userId - The id of the user.
+   * @returns Promise<ApiResponse> - The promise resolves if the orders are fetched successfully, otherwise it rejects.
+   */
+  async getPrevOrders(userId: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/order', { params: { userId: userId } })
+      .then((res: any) => {
+        const response = res.data.body;
+        const orders: Order[] = response.data.map((order: any) => {
+          return {
+            id: order._id,
+            userId: order.userId,
+            items: order.items,
+            status: order.status,
+            orderTotal: order.orderTotal,
+            placedAt: order.placedAt,
+            updatedAt: order.updatedAt
+          }
+        });
+        response.data = orders;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a DELETE request to the server to cancel an order.
+   * 
+   * @param orderId - The id of the order to be cancelled.
+   * @returns Promise<ApiResponse> - The promise resolves if the order is cancelled successfully, otherwise it rejects.
+   */
+  async cancelOrder(orderId: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.delete('/api/order', { params: { orderId: orderId } })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a PUT request to the server to update the status of an order.
+   * 
+   * @param orderId - The id of the order.
+   * @param status - The status of the order.
+   * @returns Promise<ApiResponse> - The promise resolves if the order status is updated successfully, otherwise it rejects.
+   */
+  async updateOrder(orderId: string, status: OrderStatus) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.put('/api/order', { orderId: orderId, status: status })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a GET request to the server to get the orders by the id.
+   * 
+   * @param orderId - The id of the order.
+   * @returns Promise<ApiResponse> - The promise resolves if the orders are fetched successfully, otherwise it rejects.
+   */
+  async getOrderByID(orderId: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/order', { params: { orderId: orderId } })
+      .then((res: any) => {
+        const response = res.data.body;
+        const order: Order = {
+          id: response.data._id,
+          userId: response.data.userId,
+          items: response.data.items,
+          status: response.data.status,
+          orderTotal: response.data.orderTotal,
+          placedAt: response.data.placedAt,
+          updatedAt: response.data.updatedAt
+        }
+        response.data = order;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a POST request to the server to add a review.
+   * 
+   * @param review - The review to be added.
+   * @returns Promise<ApiResponse> - The promise resolves if the review is added successfully, otherwise it rejects.
+   */
+  async getReviews({productId, userId}: {productId?: string, userId?: string}) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/review', { params: { productId: productId, userId: userId } })
+      .then((res: any) => {
+        const response = res.data.body;
+        const reviews: Review[] = response.data.map((review: any) => {
+          return {
+            id: review._id,
+            productId: review.productId,
+            productName: review.productName,
+            userId: review.userId,
+            userName: review.userName,
+            rating: review.rating,
+            review: review.review,
+            edited: review.edited,
+            reviewedAt: review.reviewedAt,
+            likes: review.likes
+          }
+        });
+        response.data = reviews;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a POST request to the server to add a review.
+   * 
+   * @param review - The review to be added.
+   * @returns Promise<ApiResponse> - The promise resolves if the review is added successfully, otherwise it rejects.
+   */
+  async addReview(review: Review) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.post('/api/review', {
+        productId: review.productId,
+        productName: review.productName,
+        userId: review.userId,
+        userName: review.userName,
+        rating: review.rating,
+        review: review.review,
+        likes: review.likes
+      })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a POST request to the server to add a review.
+   * 
+   * @param review - The review to be added.
+   * @returns Promise<ApiResponse> - The promise resolves if the review is added successfully, otherwise it rejects.
+   */
+  async updateReview(review: Review) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.put('/api/review', {
+        id: review.id,
+        rating: review.rating,
+        review: review.review
+      })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a POST request to the server to add a review.
+   * 
+   * @param review - The review to be added.
+   * @returns Promise<ApiResponse> - The promise resolves if the review is added successfully, otherwise it rejects.
+   */
+  async deleteReview(reviewId: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.delete('/api/review', { params: { reviewId: reviewId } })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a POST request to the server to like/unlike a review
+   * based on the action provided.
+   * 
+   * @param reviewId - The id of the review.
+   * @param userId - The id of the user.
+   * @returns Promise<ApiResponse> - The promise resolves if the review is liked successfully, otherwise it rejects.
+   */
+  async updateReviewLike(reviewId: string, userId: string, action: LikeAction) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.post('/api/review/like', {
+        reviewId: reviewId,
+        userId: userId,
+        action: action
+      })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
   }
 }

@@ -28,7 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { onBoardingValidation } from "@/lib/validations/onboarding.validation";
 import ApiConnector from "@/app/services/ApiConnector";
 import { useToast } from "./ui/use-toast";
-import LoadingSpinner from "./LoadingAnimations/loadingSpinner";
+import LoadingSpinner from "./LoadingAnimations/LoadingSpinner";
 import { ToastAction } from "./ui/toast";
 
 // Interface for the props of the AccountProfile component.
@@ -88,7 +88,6 @@ export default function AccountProfile({ user, onOnboardingComplete }: IProps) {
     const hasImageChanged = isBase64Image(blob);
     if (hasImageChanged) {
       const imgRes = await startUpload(files);
-
       if (imgRes && imgRes[0].url) {
         values.image = imgRes[0].url;
       }
@@ -404,7 +403,6 @@ export default function AccountProfile({ user, onOnboardingComplete }: IProps) {
                     placeholder='Upload here'
                     className='border border-dark-4 bg-dark-3 text-light-1'
                     onChange={(e) => {}}
-
                   />
                 </FormControl>
                 <FormDescription> 

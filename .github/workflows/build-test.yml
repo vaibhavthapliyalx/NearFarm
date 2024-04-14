@@ -11,7 +11,7 @@ on:
     branches:
       - integration
 jobs:
-  build_pipeline:
+  BUILD_PIPELINE:
     runs-on: ubuntu-latest
     env:
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
@@ -33,8 +33,43 @@ jobs:
       - name: Build
         run: |
           npm run build
-       
+  
+  AUTOMATED_API_TEST_PIPELINE:
+    runs-on: ubuntu-latest
+    env:
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
+    steps:
+      - uses: actions/checkout@v4
+    
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.8.0'
 
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run application in development mode in the background
+        run: nohup npm run dev > output.log 2>&1 &
       
+      - name: Export server logs
+        run: cat output.log
       
-      
+      - name: Wait for application to boot. (8s)
+        run: sleep 8
+
+      - name: Install Postman CLI
+        run: |
+          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+
+      - name: Login to Postman CLI
+        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+
+      - name: Run API tests
+        run: |
+          postman collection run "30462678-cafdc9db-fd86-461f-aff5-0289751d64d8" -e "30462678-7e209f10-f09a-482e-bdbd-99752db5d6ff"
+
+
+
+
+

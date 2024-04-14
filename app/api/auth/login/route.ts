@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       status: 500, 
       body: {
         success: false,
-        message: 'An error occurred while logging in. Please try again.',
+        message: 'An error occurred while logging in. If you signed up using a third-party service, please login using that service instead.',
         error: error
       }
     });

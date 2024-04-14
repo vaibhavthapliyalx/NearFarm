@@ -4,13 +4,18 @@
 // Please note this is only a temporary workaround,
 // and will be removed once we have a better solution.
 
-import { Session } from "next-auth";
+import { UserRole } from "@/shared/constants";
+import { Session, User } from "next-auth";
 import { DefaultSession } from "next-auth/_next-auth";
+import { JWT } from "next-auth/jwt";
 
 declare module "next-auth" {
   interface Session {
     user?: {
       id: string;
-    } & DefaultSession["user"];
+    } & DefaultSession["user"],
+    // Role has been added for role based access control (RBAC) in the application.
+    role: UserRole
   }
 }
+

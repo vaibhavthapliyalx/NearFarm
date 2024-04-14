@@ -41,19 +41,17 @@ export const options: NextAuthOptions = {
                 }
             },
             async authorize(credentials, req) {
-                //
                 await connectDB();
                 const user = await User.findOne({ email: credentials?.email });
-
-
                 if (user) {
                     // Any object returned will be saved in `user` property of the JWT
                     return {
-                        id: user.id,
+                        id: user._id,
                         email: user.email,
                         name: user.name,
                         image: user.image,
                         isOnBoarded: user.isOnBoarded,
+                        role: user.role
                       }
                 } else {
                     // If you return null or false then the credentials will be rejected
@@ -72,10 +70,15 @@ export const options: NextAuthOptions = {
     ],
     callbacks: {
         jwt: async ({ token, user }) => {
+          await connectDB();
           if (user) {
-            token.id = user.id;
+            // This is done to retrieve the user id from the database and add it to the token.
+            // This is done to ensure that the user id is available in the session.
+            const databaseUser = await User.findOne({ email: user.email });
+            token.id = databaseUser._id;
             token.name = user.name;  // Add user name to token
             token.image = user.image;  // Add user image to token
+            token.role = databaseUser.role;  // Add user role to token
           }
           return token;
         },
@@ -84,6 +87,7 @@ export const options: NextAuthOptions = {
                 session.user.id = token.id;
                 session.user.name = token.name;  // Add user name to session
                 session.user.image = token.image;  // Add user image to session
+                session.user.role = token.role;  // Add user role to session
             }
           return session;
         },      

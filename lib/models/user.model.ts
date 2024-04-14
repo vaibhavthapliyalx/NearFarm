@@ -3,7 +3,8 @@
  * This model is used to define the user schema and the user model.
  */
 import { UserRole } from '@/shared/constants';
-import {Schema, model, models} from 'mongoose';
+import mongoose, {Schema, model, models, mongo} from 'mongoose';
+import CartItemSchema from './cart.model';
 
 const UserSchema = new Schema({
   id: {
@@ -56,7 +57,7 @@ const UserSchema = new Schema({
     required: false,
   },
   cart: {
-    type: [Schema.Types.String],
+    type: [CartItemSchema],
     required: false,
   },
   image: {
@@ -97,6 +98,14 @@ const UserSchema = new Schema({
     required: false,
     default: false,
   },
+  likedReviews: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false,
+  },
+  roleSpecificData: {
+    type: Schema.Types.Mixed,
+    required: false,
+  }
 });
 
 const User = models.User || model('User', UserSchema);

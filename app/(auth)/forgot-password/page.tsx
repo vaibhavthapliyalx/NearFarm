@@ -9,7 +9,7 @@
 // Imports
 import React, { useState } from 'react';
 import { SignupErrorType, ToastType } from '@/shared/constants';
-import LoadingSpinner from '@/components/LoadingAnimations/loadingSpinner';
+import LoadingSpinner from '@/components/LoadingAnimations/LoadingSpinner';
 import ApiConnector from '@/app/services/ApiConnector';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -60,11 +60,12 @@ export default function ForgotPassword() {
         })
       })
       .catch((error) => {
+        console.error(error);
         if (error) {
-          if(typeof error === 'string'){
+          if(typeof error.message === 'string'){
             toast(
               {
-                description: error,
+                description: error.message,
                 variant: ToastType.DESTRUCTIVE,
                 title: "Something went wrong!",
               }

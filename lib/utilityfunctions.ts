@@ -100,8 +100,7 @@ export function calculateAge(dob: string): number {
 export function getYearFromDate(dateString: string): string {
   const date = new Date(dateString);
   const year = date.getFullYear();
-
-  return `${year}`;
+  return year.toString();
 }
 
 /**
@@ -122,3 +121,23 @@ export function isObjectEmpty(object: any): boolean {
     object.constructor === Object
   );
 };
+
+/**
+ * This function returns an array of stars based on the rating.
+ * 
+ * @param rating  Rating of the place
+ * @returns  Array of stars
+ */
+export function getStars(rating: number) {
+  let stars = [];
+  for (let i = 1; i <= 5; i++) {
+    if (i <= rating) {
+      stars.push(1);
+    } else if (i - rating < 1) {
+      stars.push(0.5);
+    } else {
+      stars.push(0);
+    }
+  }
+  return stars;
+}

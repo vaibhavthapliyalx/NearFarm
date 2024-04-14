@@ -8,7 +8,7 @@
 // Imports
 import * as React from 'react';
 import { ToastType, GoogleLogo, SignupErrorType, ProviderType } from '../../../shared/constants';
-import { useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { ApiResponse, User } from '@/shared/interfaces';
 import ApiConnector from '@/app/services/ApiConnector';
 import Image from 'next/image';
@@ -17,7 +17,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import LoadingSpinner from '@/components/LoadingAnimations/loadingSpinner';
+import LoadingSpinner from '@/components/LoadingAnimations/LoadingSpinner';
 import { ToastAction } from '@/components/ui/toast';
 import { useToast } from '@/components/ui/use-toast';
 import { Github } from 'lucide-react';
@@ -38,12 +38,26 @@ export default function Login() {
   // Grabs the toast function from the useToast hook.
   const { toast } = useToast();
 
+  // This hook is used to display the error message when the user is not authorized.
+  // This logic is handled in the middleware.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const message = params.get('error');
+    if (message) {
+      toast({
+        description: message,
+        variant: ToastType.DESTRUCTIVE,
+        title: "Error 401 - Unauthorized",
+      });
+    }
+  }, []);
+
   /**
    *  This function logs the user in when the form is submitted.
    * 
    * @param event The form event object that contains the form data.
    */
-  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function onSubmit(event: FormEvent<HTMLFormElement>) {
     setIsLoading(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
