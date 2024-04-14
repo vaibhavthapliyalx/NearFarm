@@ -98,7 +98,7 @@ export default function UserProfile({params}: any) {
                           size={50} 
                         />
                           <h1 className="font-semibold text-2xl md:text-3xl">
-                            You haven't written any reviews yet.
+                            {"You haven't written any reviews yet."}
                           </h1>
                         </div>
                       </div>
@@ -106,8 +106,9 @@ export default function UserProfile({params}: any) {
                     // If the cart is not empty, render the cart items.
                     reviews.map((review) => (
                         <div 
-                        onClick={() => router.push(`/products/${review.productId}`)}
-                        className="cursor-pointer inline-block border rounded hover:border-gray-200"
+                          key={review.id}
+                          onClick={() => router.push(`/products/${review.productId}`)}
+                          className="cursor-pointer inline-block border rounded hover:border-gray-200"
                         >
                         <ReviewCard key={review.id} review={review} onDelete={()=>{}} onModify={()=>{}} />
                       </div>
