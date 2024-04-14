@@ -9,7 +9,7 @@
 // Imports
 import React, { useState } from 'react';
 import { SignupErrorType, ToastType } from '@/shared/constants';
-import LoadingSpinner from '@/components/LoadingAnimations/loadingSpinner';
+import LoadingSpinner from '@/components/LoadingAnimations/LoadingSpinner';
 import ApiConnector from '@/app/services/ApiConnector';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';

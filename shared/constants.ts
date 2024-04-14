@@ -35,19 +35,41 @@ export const NavbarLinks = [
 
 /**
  * @enum The navigation links for profile page tabs.
+ * 
+ * @property {string} REVIEWS - The reviews tab.
+ * @property {string} Orders - The orders tab.
+ */
+export enum ProfilePageTabType {
+  REVIEWS = "reviews",
+  ORDERS = "orders"
+}
+
+/**
+ * @enum The navigation links for product page tabs.
+ * 
+ * @property {string} REVIEWS - The reviews tab.
+ * @property {string} SELLER_INFO - The seller info tab.
+ */
+export enum ProductDetailsPageTabType {
+  REVIEWS = "reviews",
+  SELLER_INFO = "seller info"
+}
+
+/**
+ * @const The navigation links for profile page tabs.
  */
 export const profilePageTabs = [
-  { value: "reviews", label: "Reviews", icon: "/assets/reply.svg" },
-  { value: "replies", label: "Replies", icon: "/assets/members.svg" },
-  { value: "tagged", label: "Tagged", icon: "/assets/tag.svg" },
+  { value: ProfilePageTabType.REVIEWS, label: "My Reviews" },
+  { value: ProfilePageTabType.ORDERS, label: "My Orders" },
+  // { value: "tagged", label: "Tagged", icon: "/assets/tag.svg" },
 ];
 
 /**
  * @enum The navigation links for product page tabs.
  */
 export const productPageTabs = [
-  { value: "reviews", label: "Reviews", icon: "/assets/reply.svg" },
-  { value: "seller info", label: "Seller Info", icon: "/assets/members.svg" },
+  { value: ProductDetailsPageTabType.REVIEWS, label: "Reviews" },
+  { value: ProductDetailsPageTabType.SELLER_INFO, label: "Seller Information"},
 ];
 
 /**
@@ -240,6 +262,17 @@ export enum SortByFilter {
   RATING_LOW_TO_HIGH = "Rating: Low to High",
   RATING_HIGH_TO_LOW = "Rating: High to Low",
   NONE = "None",
+}
+
+/**
+ * @enum The type of like action.
+ * 
+ * @property {string} LIKE - The user likes the product.
+ * @property {string} UNLIKE - The user dislikes the product.
+ */
+export enum LikeAction {
+  LIKE,
+  UNLIKE
 }
 // Pseudo-code authorization middleware
 // function checkPermission(user: User, permission: string): boolean {

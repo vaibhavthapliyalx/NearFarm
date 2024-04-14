@@ -2,7 +2,7 @@
  * @fileoverview This file contains all the common interfaces used in the application.
  */
 
-import { OrderMethod, OrderStatus, ProductCategory, SortOrder, UserRole } from "./constants";
+import { OrderStatus, ProductCategory, SortOrder, UserRole } from "./constants";
 
 /**
  * @interface Product This interface defines the structure of the product object.
@@ -21,7 +21,8 @@ import { OrderMethod, OrderStatus, ProductCategory, SortOrder, UserRole } from "
  * @property {string} category - The category of the product.
  * @property {string} notes - The notes of the product.
  * @property {number} rating - The rating of the product.
- */
+  * @property {Array<Review>} reviews - The reviews of the product. 
+*/
 export interface Product {
   id?: string;
   name: string;
@@ -33,7 +34,7 @@ export interface Product {
   catalogue?: string[];
   sellerId: string;
   availableFrom: string;
-  listedAt: string; 
+  listedAt: string;
   collectionAddress: string;
   category: ProductCategory;
   notes: string;
@@ -44,33 +45,37 @@ export interface Product {
 /**
  * @interface Order This interface defines the structure of the order object.
  * 
- * @property {number} id - The id of the order.
- * @property {number} customerId - The id of the customer who placed the order.
- * @property {Array<{productId: number, quantity: number}>} products - The products in the order.
- * @property {string} orderDate - The date on which the order was placed.
- * @property {number} totalPrice - The total price of the order.
- * @property {string} deliveryStatus - The delivery status of the order.
- * @property {string | OrderStatus} orderStatus - The order status of the order.
+ * @property {string} id - The id of the order.
+ * @property {number} userId - The id of the user.
+ * @property {Array<OrderItem>} items - The items in the order.
+ * @property {OrderStatus} status - The status of the order.
+ * @property {number} orderTotal - The total amount of the order.
+ * @property {string} placedAt - The date on which the order was placed.
+ * @property {string} updatedAt - The date on which the order was updated.
  */
 export interface Order {
-  id: number;
-  consumerId: number;
-  products: OrderItem[],
-  orderDate: string;
-  totalPrice: number;
-  orderMethod: OrderMethod;
-  orderStatus: OrderStatus;
+  id: string;
+  userId: number;
+  items: OrderItem[],
+  status: OrderStatus,
+  orderTotal: number;
+  placedAt: string;
+  updatedAt: string;
 }
 
 /**
  * @interface This interface defines the structure of the order item.
  * 
- * @property {number} productId - The id of the product.
+ * @property {string} productId - The id of the product.
+ * @property {string} productName - The name of the product.
  * @property {number} quantity - The quantity of the product.
+ * @property {number} orderPrice - The price of the product.
  */
 export interface OrderItem {
-  productId: number;
+  productImage: string;
+  productName: string;
   quantity: number;
+  orderPrice: number;
 }
 
 /**
@@ -92,8 +97,6 @@ export interface CartItem {
   price: number;
   image: string;
 }
-
-
 
 /**
  * @interface This interface defines the structure of the contact details object.
@@ -128,6 +131,8 @@ export interface ContactDetails {
  * @property {Array<string>} documents - The documents of the user.
  * @property {ContactDetails} contactDetails - The contact details of the user.
  * @property {boolean} isVerified - The verification status of the user.
+ * @property {Array<string>} likedReviews - The array of review ids liked by the user.
+ * @property {any} roleSpecificData - The role specific data of the user.
  */
 export interface User {
   id?: string;
@@ -147,6 +152,37 @@ export interface User {
   documents: string[];
   contactDetails: ContactDetails;
   isVerified: boolean;
+  likedReviews?: string[];
+  roleSpecificData?: any;
+}
+
+/**
+ * @interface This interface defines the structure of the review object.
+ * 
+ * @property {number} id - The id of the review.
+ * @property {number} productId - The id of the product.
+ * @property {string} productName - The name of the product.
+ * @property {number} userId - The id of the user.
+ * @property {string} userName - The name of the user.
+ * @property {number} rating - The rating of the review.
+ * @property {string} review - The review of the product.
+ * @property {string} reviewedAt - The date on which the review was posted.
+ * @property {number} likes - The number of likes on the review.
+ * @property {boolean} liked - The liked status of the review.
+ * @property {boolean} edited - The edited status of the review.
+ */
+export interface Review {
+  id?: string;
+  productId: string;
+  productName: string;
+  userId: string;
+  userName: string;
+  rating: number;
+  review: string;
+  reviewedAt?: string;
+  likes?: number;
+  liked?: boolean;
+  edited?: boolean;
 }
 
 /**
@@ -184,7 +220,6 @@ export interface ChangePasswordPayload {
   oldPassword: string;
   newPassword: string;
 }
-
 
 /**
  * @interface This interface defines the structure of response from the server.
@@ -228,4 +263,3 @@ export interface QueryParams {
   page?: number;
   limit?: number;
 }
-  

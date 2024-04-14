@@ -135,6 +135,9 @@ export function ChangePasswordDrawer( {user, setLoadingMessage, displaySpinner}:
                     type='password'
                     className='border border-dark-4  text-light-1'
                     {...field}
+                    // This fixes the Bug where the drawer closes when user presses spacebar.
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
                   />
                   </div>
                 </FormControl>
@@ -158,6 +161,9 @@ export function ChangePasswordDrawer( {user, setLoadingMessage, displaySpinner}:
                     type='password'
                     className='border border-dark-4  text-light-1'
                     {...field}
+                    // This fixes the Bug where the drawer closes when user presses spacebar.
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
                   />
                   </div>
                 </FormControl>

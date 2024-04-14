@@ -7,12 +7,12 @@
 // Imports
 import ApiConnector from "@/app/services/ApiConnector";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { CartItem, User } from "@/shared/interfaces";
+import { CartItem, OrderItem, User } from "@/shared/interfaces";
 import { useEffect, useState } from "react";
 import { TableHead, TableRow, TableHeader, Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button"
 import CartItemComponent from "@/components/CartItemComponent";
-import { ShoppingBag, TrashIcon } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
@@ -38,7 +38,6 @@ export default function CartPage({params}: IProps) {
   
   // Get the router instance.
   const router = useRouter();
-
   // Grabs the toast function from the useToast hook.
   const { toast } = useToast();
 
@@ -47,12 +46,12 @@ export default function CartPage({params}: IProps) {
     fetchData();
   }, [userId]);
 
+  /**
+   * This function fetches the user's cart data from the server.
+   */
   async function fetchData() {
     const response = await apiConnectorInstance.getUserFromId(userId);
-    const user: User = response.data;
-
-    console.log(user.cart);
-    
+    const user: User = response.data;    
     // Now we have the user object, we can set the cart items.
     setCartItems(user.cart);
   }
@@ -112,7 +111,7 @@ export default function CartPage({params}: IProps) {
   }
 
   // If the cart is empty, render the empty cart component.
-  if(cartItems.length === 0) {
+  if (cartItems.length === 0) {
     return (
       <MaxWidthWrapper>
         <div className="flex justify-center items-center h-[50vh]">
@@ -129,6 +128,43 @@ export default function CartPage({params}: IProps) {
         </div>
       </MaxWidthWrapper>
     );
+  }
+
+  /**
+   * This function is called when the user clicks on the place order button.
+   */
+  function placeOrder() {
+    const orderItems: OrderItem[] = cartItems.map((item) => {
+      return {
+        productId: item.productId,
+        quantity: item.quantity,
+        productName: item.name,
+        productImage: item.image,
+        orderPrice: parseInt((item.price * item.quantity).toFixed(2)),
+      }
+    });
+    apiConnectorInstance.placeOrder(userId, orderItems)
+    .then((response) => {
+      toast({
+        title: "Success",
+        description: response.message,
+        variant: ToastType.DEFAULT,
+      })
+      console.log("Order placed info below");
+      console.log(response);
+
+      // After placing the order, redirect the user to the order page.
+      // Here we are using replace to prevent the user from going back to the same page
+      // when they click the back button. This is because we don't want the user to place the same order again.
+      router.replace(`/order/confirmation/${response.data.id}`);
+    })
+    .catch((response) => {
+      toast({
+        title: "Error",
+        description: response.message,
+        variant: ToastType.DESTRUCTIVE,
+      })
+    });
   }
 
   /******************** Render Function *****************/
@@ -164,7 +200,7 @@ export default function CartPage({params}: IProps) {
         </div>
         <div className="flex justify-between items-center">
           <div className="text-2xl font-semibold">Total: £{(cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)).toFixed(2)} /-</div>
-          <Button className="ml-auto" size="lg">
+          <Button className="ml-auto" size="lg" onClick={placeOrder}>
             Proceed to Checkout
           </Button>
         </div>

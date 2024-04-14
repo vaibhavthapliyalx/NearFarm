@@ -1,154 +1,131 @@
-// /**
-//  * @fileoverview This file contains the API routes for the order.
-//  */
+/**
+ * @fileoverview This file conatins the routes for the order API.
+ */
+import { connectDB } from "@/lib/database";
+import Order from "@/lib/models/order.model";
+import User from "@/lib/models/user.model";
+import mongoose from "mongoose";
+import { NextRequest, NextResponse } from "next/server";
 
-// import { connectDB } from "@/lib/database";
-// import Order from "@/lib/models/order.model";
-// import Cart from "@/lib/models/cart.model";
-// import { NextRequest, NextResponse } from "next/server";
+export async function GET(request: NextRequest) {
+  try {
+    const userId = request.nextUrl.searchParams.get('userId');
+    const orderId = request.nextUrl.searchParams.get('orderId');
+    // Connect to MongoDB
+    await connectDB();
 
-// export async function GET(request: NextRequest) {
-//   try {
-//     // Connect to MongoDB
-//     await connectDB();
+    // Convert the id in the query string to ObjectId.
+    const uid = new mongoose.Types.ObjectId(userId!);
+    const oid = new mongoose.Types.ObjectId(orderId!);
 
-//     const id = request.nextUrl.searchParams.get('id');
-//     const user_id = request.nextUrl.searchParams.get('user_id');
+    let query = {};
 
-//     let query = {};
-//     if (id) {
-//       query = { ...query, _id: id };
-//     }
-//     if (user_id) {
-//       query = { ...query, user_id: user_id };
-//     }
-//     // Find the order based on the query.
-//     const order = await Order.findOne(query);
-//     if (order) {
-//       return NextResponse.json({
-//         status: 200,
-//         body: {
-//           success: true,
-//           message: "Order found",
-//           data: order
-//         }
-//       });
-//     } else {
-//       return NextResponse.json({
-//         status: 400,
-//         body: {
-//           success: false,
-//           message: "No order found"
-//         }
-//       });
-//     }
-//   } catch (error) {
-//     return NextResponse.json({
-//       status: 500,
-//       body: {
-//         success: false,
-//         message: 'An error occurred while fetching the order',
-//         error: error
-//       }
-//     });
-//   }
-// }
+    let order;
 
-// export async function POST(request: NextRequest) {
-//   // Connect to MongoDB
-//   await connectDB();
-//   const body = await request.json();
+    if (orderId) {
+      query = { _id: oid };
+      order = await Order.findOne(query);
+    } else if (userId) {
+      query = { userId: uid };
+      order = await Order.find(query);
+    }
 
-//   try {
-//     const order = new Order(body);
-//   await order.save();
+    if (order) {
+      return NextResponse.json({
+        status: 200,
+        body: {
+          success: true,
+          message: "Order found",
+          data: order
+        }
+      })
+    } else {
+      return NextResponse.json({
+        status: 400,
+        body: {
+          success: false,
+          message: "Order not found"
+        }
+      })
+    }
+  } catch (error) {
+    return NextResponse.json({
+      status: 500,
+      body: {
+        success: false,
+        message: "An error occurred while fetching the order",
+        error: error
+      }
+    });
+  }
+}
 
-//   // After order is placed, remove the items from the cart.
-//   const cart = await Cart.findOne({ user_id: order.user });
-//   if (cart) {
-//     cart.items.forEach((item) => {
-//       if (order.items.includes(item.id)) {
-//         cart.items = cart.items.filter((cartItem) => cartItem.id !== item.id) as typeof Cart.prototype.items;
-//       }
-//     });
-//     await cart.save();
-//   }
+export async function POST(request: NextRequest) {
+  try {
+    // Connect to MongoDB
+    await connectDB();
 
-//   return NextResponse.json({
-//     status: 200,
-//     body: {
-//       success: true,
-//       message: "Order created",
-//       data: order
-//     }
-//   });
-//   } catch (error) {
-//     return NextResponse.json({
-//       status: 500,
-//       body: {
-//         success: false,
-//         message: "An error occurred while creating the order",
-//         error: error
-//       }
-//     });
-//   }
-// }
+    const body = await request.json();
+    const userId = body.userId;
+    const orderItems = body.orderItems;
 
-// export async function PUT(request: NextRequest) {
-//   // Connect to MongoDB
-//   await connectDB();
-//   const body = await request.json();
+    // Check if an order with the same userId and items already exists
+    const existingOrder = await Order.findOne({ userId: userId, items: orderItems });
+    if (existingOrder) {
+      return NextResponse.json({
+        status: 400,
+        body: {
+          success: false,
+          message: "Order already exists"
+        }
+      });
+    }
 
-//   const id = body.id;
-//   const status = body.status;
+    // Add the order to the database.
+    const order = await Order.create({
+      userId: userId,
+      items: orderItems,
+      orderTotal: orderItems.reduce((acc: number, item: any) => acc + item.orderPrice, 0)
+    });
 
-//   const order = await Order.findOne({ _id: id });
-//   if (order) {
-//     order.status = status;
-//     await order.save();
-//     return NextResponse.json({
-//       status: 200,
-//       body: {
-//         success: true,
-//         message: "Order updated",
-//         data: order
-//       }
-//     });
-//   } else {
-//     return NextResponse.json({
-//       status: 400,
-//       body: {
-//         success: false,
-//         message: "No order found"
-//       }
-//     });
-//   }
-// }
+    if (!order) {
+      return NextResponse.json({
+        status: 400,
+        body: {
+          success: false,
+          message: "Order not created"
+        }
+      });
+    }
 
-// export async function DELETE(request: NextRequest) {
-//   // Connect to MongoDB
-//   await connectDB();
-//   const body = await request.json();
+    // Clear the cart for the user on successful order creation.
+    const cartUpdated = await User.updateOne({ _id: userId }, { cart: [] });
 
-//   const id = body.id;
-
-//   const order = await Order.findOne({ _id: id });
-//   if (order) {
-//     await order.deleteOne();
-//     return NextResponse.json({
-//       status: 200,
-//       body: {
-//         success: true,
-//         message: "Order deleted"
-//       }
-//     });
-//   } else {
-//     return NextResponse.json({
-//       status: 400,
-//       body: {
-//         success: false,
-//         message: "No order found"
-//       }
-//     });
-//   }
-// }
+    if (!cartUpdated) {
+      return NextResponse.json({
+        status: 400,
+        body: {
+          success: false,
+          message: "Something went wrong while clearing the cart. Order not placed."
+        }
+      });
+    }
+    return NextResponse.json({
+      status: 200,
+      body: {
+        success: true,
+        message: "Order created successfully",
+        data: order
+      }
+    });
+  } catch (error) {
+    return NextResponse.json({
+      status: 500,
+      body: {
+        success: false,
+        message: "An error occurred while creating the order",
+        error: error
+      }
+    });
+  }
+}

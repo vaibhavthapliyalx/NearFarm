@@ -33,7 +33,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ProductCategory, SortByFilter, SortOrder } from "@/shared/constants";
 import { Checkbox } from "@/components/ui/checkbox";
 import { filterValidation } from "@/lib/validations/filter.validation";
-import LoadingSpinner from "@/components/LoadingAnimations/loadingSpinner";
+import LoadingSpinner from "@/components/LoadingAnimations/LoadingSpinner";
 import { Badge } from "@/components/ui/badge";
 
 // Interface for the props of the ProductsPage component.
@@ -183,8 +183,7 @@ export default function ProductsPage({searchParams}: IProps) {
    * @param className The class name.
    * @returns The rendered password change form.
    */
-  function renderFilterOptions({ className }: React.ComponentProps<"form">): React.ReactNode {
-    /*********** Render Function *************/
+  function renderFilterOptions(): React.ReactNode {
     return (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -235,32 +234,6 @@ export default function ProductsPage({searchParams}: IProps) {
                   </FormItem>
               )}
             />
-
-            {/* <div className="flex flex-row space-x-4 items-center ">
-              <FormField
-                control={form.control}
-                name="minPrice"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Minimum Price</FormLabel>
-                    <Input {...field} type="number" min="10"/>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="maxPrice"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Maximum Price</FormLabel>
-                    <Input {...field} type="number"  min="500" max="1000" />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
-            {/* </div> */}
             <FormField
               control={form.control}
               name="sortBy"
@@ -318,7 +291,7 @@ export default function ProductsPage({searchParams}: IProps) {
                 Select your preferred filters.
               </DrawerDescription>
             </DrawerHeader>
-            {renderFilterOptions({ className: "space-y-8" })}    
+            {renderFilterOptions()}    
             <DrawerFooter className="pt-2">
             <DrawerClose asChild>
               <Button variant="outline">Cancel</Button>

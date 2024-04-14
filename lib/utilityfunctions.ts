@@ -100,8 +100,7 @@ export function calculateAge(dob: string): number {
 export function getYearFromDate(dateString: string): string {
   const date = new Date(dateString);
   const year = date.getFullYear();
-
-  return `${year}`;
+  return year.toString();
 }
 
 /**

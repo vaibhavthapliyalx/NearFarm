@@ -77,11 +77,10 @@ export default function PaginationContainer({ path, page, totalPages}: IProps) {
             <PaginationEllipsis />
           </PaginationItem>
         )}
-        {
-          totalPages > visiblePageNumbers[visiblePageNumbers.length - 1] && (
-            <PaginationItem>
-          <PaginationNext onClick={()=> page < totalPages ? onPageChange(page + 1) : onPageChange(totalPages)} />
-        </PaginationItem>
+        {totalPages > visiblePageNumbers[visiblePageNumbers.length - 1] && (
+          <PaginationItem>
+            <PaginationNext onClick={()=> page < totalPages ? onPageChange(page + 1) : onPageChange(totalPages)} />
+          </PaginationItem>
           )
         }
       </PaginationContent>

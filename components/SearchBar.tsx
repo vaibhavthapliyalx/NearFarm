@@ -44,7 +44,7 @@ export default function Searchbar({ searchType }: Props) {
   }, [search, searchType]);
 
   return (
-    <div className='relative flex items-center flex-grow gap-1 rounded-lg bg-dark-3 px-4 py-2 w-18'>
+    <div className='relative flex items-center flex-grow gap-1 rounded-lg bg-inherit px-4 py-2 w-18'>
     <SearchIcon size={23} className='absolute left-6' />
     <Input
       id='text'

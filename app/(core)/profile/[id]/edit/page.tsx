@@ -8,7 +8,7 @@
 // Imports
 import ApiConnector from "@/app/services/ApiConnector";
 import AccountProfile from "@/components/AccountProfile";
-import LoadingSpinner from "@/components/LoadingAnimations/loadingSpinner";
+import LoadingSpinner from "@/components/LoadingAnimations/LoadingSpinner";
 import { ApiResponse, User } from "@/shared/interfaces";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

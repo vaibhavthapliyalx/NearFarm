@@ -51,6 +51,7 @@ export const options: NextAuthOptions = {
                         name: user.name,
                         image: user.image,
                         isOnBoarded: user.isOnBoarded,
+                        role: user.role
                       }
                 } else {
                     // If you return null or false then the credentials will be rejected
@@ -77,6 +78,7 @@ export const options: NextAuthOptions = {
             token.id = databaseUser._id;
             token.name = user.name;  // Add user name to token
             token.image = user.image;  // Add user image to token
+            token.role = databaseUser.role;  // Add user role to token
           }
           return token;
         },
@@ -85,6 +87,7 @@ export const options: NextAuthOptions = {
                 session.user.id = token.id;
                 session.user.name = token.name;  // Add user name to session
                 session.user.image = token.image;  // Add user image to session
+                session.user.role = token.role;  // Add user role to session
             }
           return session;
         },      

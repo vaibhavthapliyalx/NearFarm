@@ -12,7 +12,6 @@ export async function GET(request: NextRequest) {
     await connectDB();
     const user_id = request.nextUrl.searchParams.get('user_id');
 
-
     const user = await User.findOne({ _id: user_id });
     if (!user) {
       return NextResponse.json({
@@ -142,7 +141,6 @@ export async function DELETE(request: NextRequest) {
     await connectDB();
     const user_id = request.nextUrl.searchParams.get('userId');
     const product_id = request.nextUrl.searchParams.get('productId');
-    console.log(user_id, product_id);
 
     const user = await User.findOne({ _id: user_id });
     if (!user) {

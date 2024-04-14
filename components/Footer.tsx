@@ -7,13 +7,14 @@
 
 // Imports.
 import { useEffect, useState } from 'react';
-import { DatabaseIcon, ServerIcon, HeartIcon, InstagramIcon, FacebookIcon, GithubIcon, LinkedinIcon, ChevronDownIcon, ChevronUpIcon, Facebook, Instagram, Github, Moon, Sun, Dot } from 'lucide-react';
+import { DatabaseIcon, ServerIcon, HeartIcon, FacebookIcon, ChevronDownIcon, Moon, Sun, Dot } from 'lucide-react';
 import { Button } from './ui/button';
 import { useTheme } from 'next-themes';
 import ApiConnector from '@/app/services/ApiConnector';
 import { ApiResponse } from '@/shared/interfaces';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import Image from 'next/image';
+import { GitHubLogoIcon, InstagramLogoIcon, LinkedInLogoIcon } from '@radix-ui/react-icons';
 
 // Grabs the instance of the ApiConnector Class (Singleton) which connects to the backend endpoints.
 const apiConnectorInstance = ApiConnector.getInstance();
@@ -145,7 +146,7 @@ export default function Footer() {
       <div className='sm:flex sm:items-center sm:justify-between'>
         <ul className="flex  items-center justify-start text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
           <li>
-            <a href="#" className="hover:underline me-4 md:me-6">About</a>
+            <a href="#" className="hover:underline me-4 md:me-6">Changelog</a>
           </li>
           <li>
             <a href="#" className="hover:underline me-4 md:me-6">Privacy Policy</a>
@@ -153,23 +154,32 @@ export default function Footer() {
           <li>
             <a href="#" className="hover:underline me-4 md:me-6">Licensing</a>
           </li>
-          <li>
-            <a href="#" className="hover:underline">Contact</a>
-          </li>
         </ul>
           {/* Social media links */}
+          {/*
+            The "noopener" value prevents the new page from being able to access the window that opened it.
+            The "noreferrer" value prevents the new page from knowing where the traffic came from.
+            This is a security measure when linking to external sites in a new tab.
+          */}
           <div className="flex justify-end items-center space-x-4 mt-0">
-          <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
-            <LinkedinIcon />
+          <span className="text-sm text-gray-500 dark:text-gray-400">Follow us:</span>
+          <a href={process.env.LINKEDIN_URI} target="_blank" rel="noopener noreferrer">
+            <LinkedInLogoIcon 
+              className='h-6 w-6 dark:text-white cursor-pointer'
+            />
           </a>
-          <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
-            <Facebook />
+          <a href={process.env.FACEBOOK_URI} target="_blank" rel="noopener noreferrer">
+            <FacebookIcon/>
           </a>
-          <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
-            <Instagram />
+          <a href={process.env.INSTAGRAM_URI} target="_blank" rel="noopener noreferrer">
+          <InstagramLogoIcon 
+            className='h-6 w-6 dark:text-white cursor-pointer'
+          />
           </a>
-          <a href="https://www.github.com" target="_blank" rel="noopener noreferrer">
-            <Github />
+          <a href={process.env.GITHUB_URI} target="_blank" rel="noopener noreferrer">
+            <GitHubLogoIcon
+              className='h-6 w-6 dark:text-white cursor-pointer'
+            />
           </a>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

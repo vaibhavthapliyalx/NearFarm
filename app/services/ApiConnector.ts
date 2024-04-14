@@ -6,9 +6,9 @@
 // Importing necessary libraries and modules.
 import axios from "axios";
 import { getSession, signIn, signOut } from "next-auth/react";
-import { ApiResponse, CartItem, ChangePasswordPayload, Product, QueryParams, ResetPasswordPayload, User } from "../../shared/interfaces";
+import { ApiResponse, CartItem, ChangePasswordPayload, Order, OrderItem, Product, QueryParams, ResetPasswordPayload, Review, User } from "../../shared/interfaces";
 import type { NextApiRequest } from "next";
-import { ProviderType } from "@/shared/constants";
+import { LikeAction, OrderStatus, ProviderType } from "@/shared/constants";
 import qs from "qs";
 
 /**
@@ -456,6 +456,7 @@ export default class ApiConnector {
     return new Promise<ApiResponse>((resolve, reject) => {
       axios.get('/api/product', { 
         params: {
+          id: queryParams.id,
           name: queryParams.name,
           sortByPriceOrder: queryParams.sortByPriceOrder,
           sortByRatingOrder: queryParams.sortByRatingOrder,
@@ -472,8 +473,6 @@ export default class ApiConnector {
         }
       })
       .then((res: any) => {
-        console.log(queryParams);
-        console.log(res);
         const response = res.data.body;
         if (!response.success) {
           reject(response);
@@ -546,7 +545,7 @@ export default class ApiConnector {
       })
       .catch((result: any) => {
         console.log(result);
-        // reject(result.response.data);
+        reject(result.response.data);
       })
     })
   }
@@ -571,10 +570,6 @@ export default class ApiConnector {
         collectionAddress: product.collectionAddress,
         category: product.category,
         notes: product.notes
-      },{
-        headers: {
-          'x-access-token': localStorage.getItem('token')
-        }
       })
       .then((res: any) => {
         const response = res.data.body;
@@ -611,10 +606,6 @@ export default class ApiConnector {
         collectionAddress: product.collectionAddress,
         category: product.category,
         notes: product.notes
-      },{
-        headers: {
-          'x-access-token': localStorage.getItem('token')
-        }
       })
       .then((res: any) => {
         const response = res.data.body;
@@ -765,17 +756,27 @@ export default class ApiConnector {
    * This function sends a POST request to the server to place an order.
    * 
    * @param userId - The id of the user.
-   * @param products - The products to be ordered.
+   * @param OrderItems - The item to be ordered.
    * @returns Promise<ApiResponse> - The promise resolves if the order is placed successfully, otherwise it rejects.
    */
-  async placeOrder(userId: string, products: Product[]) {
+  async placeOrder(userId: string, orderItems: OrderItem[]) {
     return new Promise<ApiResponse>((resolve, reject) => {
-      axios.post('/api/order', {
+      axios.post('/api/order', { 
         userId: userId,
-        products: products
+        orderItems: orderItems
       })
       .then((res: any) => {
         const response = res.data.body;
+        const order: Order = {
+          id: response.data._id,
+          userId: response.data.userId,
+          items: response.data.items,
+          status: response.data.status,
+          orderTotal: response.data.orderTotal,
+          placedAt: response.data.placedAt,
+          updatedAt: response.data.updatedAt
+        }
+        response.data = order;
         if (!response.success) {
           reject(response);
         } else {
@@ -797,6 +798,246 @@ export default class ApiConnector {
   async getPrevOrders(userId: string) {
     return new Promise<ApiResponse>((resolve, reject) => {
       axios.get('/api/order', { params: { userId: userId } })
+      .then((res: any) => {
+        const response = res.data.body;
+        const orders: Order[] = response.data.map((order: any) => {
+          return {
+            id: order._id,
+            userId: order.userId,
+            items: order.items,
+            status: order.status,
+            orderTotal: order.orderTotal,
+            placedAt: order.placedAt,
+            updatedAt: order.updatedAt
+          }
+        });
+        response.data = orders;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a DELETE request to the server to cancel an order.
+   * 
+   * @param orderId - The id of the order to be cancelled.
+   * @returns Promise<ApiResponse> - The promise resolves if the order is cancelled successfully, otherwise it rejects.
+   */
+  async cancelOrder(orderId: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.delete('/api/order', { params: { orderId: orderId } })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a PUT request to the server to update the status of an order.
+   * 
+   * @param orderId - The id of the order.
+   * @param status - The status of the order.
+   * @returns Promise<ApiResponse> - The promise resolves if the order status is updated successfully, otherwise it rejects.
+   */
+  async updateOrder(orderId: string, status: OrderStatus) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.put('/api/order', { orderId: orderId, status: status })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a GET request to the server to get the orders by the id.
+   * 
+   * @param orderId - The id of the order.
+   * @returns Promise<ApiResponse> - The promise resolves if the orders are fetched successfully, otherwise it rejects.
+   */
+  async getOrderByID(orderId: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/order', { params: { orderId: orderId } })
+      .then((res: any) => {
+        const response = res.data.body;
+        const order: Order = {
+          id: response.data._id,
+          userId: response.data.userId,
+          items: response.data.items,
+          status: response.data.status,
+          orderTotal: response.data.orderTotal,
+          placedAt: response.data.placedAt,
+          updatedAt: response.data.updatedAt
+        }
+        response.data = order;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a POST request to the server to add a review.
+   * 
+   * @param review - The review to be added.
+   * @returns Promise<ApiResponse> - The promise resolves if the review is added successfully, otherwise it rejects.
+   */
+  async getReviews({productId, userId}: {productId?: string, userId?: string}) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/review', { params: { productId: productId, userId: userId } })
+      .then((res: any) => {
+        const response = res.data.body;
+        const reviews: Review[] = response.data.map((review: any) => {
+          return {
+            id: review._id,
+            productId: review.productId,
+            productName: review.productName,
+            userId: review.userId,
+            userName: review.userName,
+            rating: review.rating,
+            review: review.review,
+            edited: review.edited,
+            reviewedAt: review.reviewedAt,
+            likes: review.likes
+          }
+        });
+        response.data = reviews;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a POST request to the server to add a review.
+   * 
+   * @param review - The review to be added.
+   * @returns Promise<ApiResponse> - The promise resolves if the review is added successfully, otherwise it rejects.
+   */
+  async addReview(review: Review) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.post('/api/review', {
+        productId: review.productId,
+        productName: review.productName,
+        userId: review.userId,
+        userName: review.userName,
+        rating: review.rating,
+        review: review.review,
+        likes: review.likes
+      })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a POST request to the server to add a review.
+   * 
+   * @param review - The review to be added.
+   * @returns Promise<ApiResponse> - The promise resolves if the review is added successfully, otherwise it rejects.
+   */
+  async updateReview(review: Review) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.put('/api/review', {
+        id: review.id,
+        rating: review.rating,
+        review: review.review
+      })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a POST request to the server to add a review.
+   * 
+   * @param review - The review to be added.
+   * @returns Promise<ApiResponse> - The promise resolves if the review is added successfully, otherwise it rejects.
+   */
+  async deleteReview(reviewId: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.delete('/api/review', { params: { reviewId: reviewId } })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a POST request to the server to like/unlike a review
+   * based on the action provided.
+   * 
+   * @param reviewId - The id of the review.
+   * @param userId - The id of the user.
+   * @returns Promise<ApiResponse> - The promise resolves if the review is liked successfully, otherwise it rejects.
+   */
+  async updateReviewLike(reviewId: string, userId: string, action: LikeAction) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.post('/api/review/like', {
+        reviewId: reviewId,
+        userId: userId,
+        action: action
+      })
       .then((res: any) => {
         const response = res.data.body;
         if (!response.success) {

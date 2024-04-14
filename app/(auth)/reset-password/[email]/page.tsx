@@ -5,7 +5,7 @@
 'use client';
 import React, { useState } from 'react';
 import {useRouter, useSearchParams} from "next/navigation" 
-import LoadingSpinner from '@/components/LoadingAnimations/loadingSpinner';
+import LoadingSpinner from '@/components/LoadingAnimations/LoadingSpinner';
 import ApiConnector from '@/app/services/ApiConnector';
 import { ResetPasswordPayload } from '@/shared/interfaces';
 import { ToastType } from '@/shared/constants';

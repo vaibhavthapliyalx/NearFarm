@@ -4,18 +4,13 @@
 
 // Imports.
 import { CartItem, Product } from '@/shared/interfaces';
-import Link from 'next/link';
-import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { useRouter } from 'next/navigation';
-import { Badge, MapIcon, MapPin, ShoppingCart, Star, StarHalf, StarHalfIcon } from 'lucide-react';
-import { StarFilledIcon } from '@radix-ui/react-icons';
-import { getStars } from '@/lib/utilityfunctions';
+import { MapPin, ShoppingCart, Star, StarHalf } from 'lucide-react';
 import CarouselRenderer from './CarouselRenderer';
 import { Button } from './ui/button';
 import ApiConnector from '@/app/services/ApiConnector';
 import { useToast } from './ui/use-toast';
-import { Toast } from '@radix-ui/react-toast';
 import { ToastType } from '@/shared/constants';
 import { ToastAction } from './ui/toast';
 
@@ -47,8 +42,6 @@ export default function ProductCard({ product }: IProps) {
   async function onAddToCartClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
     const user = await apiConnectorInstance.getCurrentUserFromSession();
-    console.log("User")
-    console.log(user);
     const cartItem: CartItem = {
       userId: user.id,
       productId: product.id as string,
@@ -107,23 +100,23 @@ export default function ProductCard({ product }: IProps) {
       </CardHeader>
       <CardContent className="p-2 w-full">
         <CardTitle className="flex flex-row items-start">
-          <h1
+          <span
             className="font-semibold text-black-900 truncate w-full text-clamp"
           >
             {product.name}
-          </h1>
+          </span>
         </CardTitle>
         <section className="flex flex-row items-center mt-1">
           <div className="text-primary mr-2 text-clamp text-2xl font-bold">
-          ₹{product.salePrice}
+          £{product.salePrice}
           </div>
           <div className="text-black-200 line-through text-clamp">
-          ₹{product.marketPrice}
+          £{product.marketPrice}
           </div>
         </section>
         <section className="flex flex-row items-center mb-1">
           <span className="text-xs text-gray-600 font-medium">
-            You Save ₹{product.marketPrice - product.salePrice}
+            You Save £{product.marketPrice - product.salePrice}
           </span>
           <span className="text-xs text-green-900 ml-1 font-medium">
             {(((product.marketPrice - product.salePrice) / product.marketPrice) * 100).toFixed(0)}% off

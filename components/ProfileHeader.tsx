@@ -17,12 +17,13 @@ import { ChangePasswordDrawer } from "./ChangePassword";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { useRouter } from "next/navigation";
-import LoadingSpinner from "./LoadingAnimations/loadingSpinner";
+import LoadingSpinner from "./LoadingAnimations/LoadingSpinner";
 import { AuthenticationStatus, ToastType } from "@/shared/constants";
 import ApiConnector from "@/app/services/ApiConnector";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
 import { ToastAction } from "./ui/toast";
 import { useToast } from "./ui/use-toast";
+import { Badge } from "./ui/badge";
 
 // Interface for the props that the ProfileHeader component accepts.
 interface IProps {
@@ -112,11 +113,13 @@ export default function ProfileHeader({user}: IProps) {
                   <AvatarFallback> {initials ?? user.name}</AvatarFallback>
                 </Avatar>
               </div>
-
               <div className='flex-1 ml-16'>
+                <div className="flex items-center gap-2">
                 <h2 className='text-4xl  font-bold tracking-tight text-gray-900 dark:text-gray-100'>
                   {user.name}
                 </h2>
+                <Badge variant='default'  className='hover:bg-primary'>{user.role}</Badge>
+                </div>
                 <p className='text-xl tracking-tight text-gray-700 dark:text-gray-400'>@{user.username}</p>
                 <div className='flex items-center mt-2'>
               <Mail className='w-5 h-5 mr-2' />
@@ -157,7 +160,9 @@ export default function ProfileHeader({user}: IProps) {
                         onClick={(e) => {e.stopPropagation()}}
                         className='cursor-pointer block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white'
                       >
-                        <div onClick={(e)=>{e.stopPropagation(); router.push(`/profile/${user.id}/edit`)}}>
+                        <div onClick={() => {
+                          router.push(`/profile/${user.id}/edit`);
+                        }}>
                           <a>Edit Profile</a>
                         </div>
                       </DropdownMenuItem>

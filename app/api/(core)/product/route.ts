@@ -12,10 +12,8 @@ export async function GET(request: NextRequest) {
   try {
     // Connect to MongoDB
     await connectDB();
-
     // Extract query parameters from the URL.
     const params: QueryParams = Object.fromEntries(request.nextUrl.searchParams);
-    console.log(params);
     const id = params.id;
     const name = params.name;
     const sortByPrice = params.sortByPriceOrder; // 'asc' or 'desc'
@@ -36,14 +34,14 @@ export async function GET(request: NextRequest) {
     }
 
     // If categories are provided, filter the products based on the categories.
-    // Here, we decode the query string and extract the category parameter.
+    // Here, we parse the query string and extract the category parameter.
     // If the category is 'all', we don't filter based on category.
     if (categories) {
-      const decodedCategories = categories.map(queryString => qs.parse(queryString).category).flat();
+      const parsedCategories = categories.map(queryString => qs.parse(queryString).category).flat();
 
       // If we receive undefined or empty categories, this means that the user has not selected any category.
       // In this case, we apply ALL as the default category.
-      const filteredCategories = decodedCategories.map(category => category|| ProductCategory.ALL);
+      const filteredCategories = parsedCategories.map(category => category|| ProductCategory.ALL);
       if (filteredCategories.length > 0 && !filteredCategories.includes(ProductCategory.ALL)) {
         query = { ...query, category: filteredCategories };
       }
