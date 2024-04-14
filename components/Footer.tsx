@@ -1,25 +1,42 @@
+/**
+ * @fileoverview This file contains the footer component.
+ */
+
+// Directive to use client side rendering.
 'use client';
+
+// Imports.
 import { useEffect, useState } from 'react';
-import MaxWidthWrapper from './MaxWidthWrapper';
-import { DatabaseIcon, ServerIcon, MoonIcon, SunIcon, HeartIcon, InstagramIcon, FacebookIcon, GithubIcon, LinkedinIcon, ChevronDownIcon, ChevronUpIcon, Facebook, Instagram, Github, Moon, Sun, Dot } from 'lucide-react';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
+import { DatabaseIcon, ServerIcon, HeartIcon, FacebookIcon, ChevronDownIcon, Moon, Sun, Dot } from 'lucide-react';
 import { Button } from './ui/button';
 import { useTheme } from 'next-themes';
 import ApiConnector from '@/app/services/ApiConnector';
 import { ApiResponse } from '@/shared/interfaces';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
+import Image from 'next/image';
+import { GitHubLogoIcon, InstagramLogoIcon, LinkedInLogoIcon } from '@radix-ui/react-icons';
 
+// Grabs the instance of the ApiConnector Class (Singleton) which connects to the backend endpoints.
 const apiConnectorInstance = ApiConnector.getInstance();
 
+/**
+ * This function renders the footer component.
+ * 
+ * @returns The rendered footer component.
+ */
 export default function Footer() {
+  // State variables.
   const [isDatabaseConnected, setIsDatabaseConnected] = useState(false);
   const [isServerConnected, setIsServerConnected] = useState(false);
   const [appVersion, setAppVersion] = useState('');
   const [isDropdownIconUp, setIsDropdownIconUp] = useState(false);
   const [isConnectionDropdownOpen, setIsConnectionDropdownOpen] = useState(false);
 
-
+  // Grabs the setTheme function from the useTheme hook.
+  // This function is used to change the theme of the application.
   const { setTheme } = useTheme();
 
+  // UseEffect to get the app version, database and server connection status.
   useEffect(() => {
     // Get the database connection status
     apiConnectorInstance.getDatabaseConnectionStatus()
@@ -29,7 +46,6 @@ export default function Footer() {
     .catch((response: ApiResponse) => {
       setIsDatabaseConnected(response.success);
     });
-
     // Get the server connection status 
     apiConnectorInstance.getServerConnectionStatus()
     .then((response: ApiResponse) => {
@@ -48,22 +64,30 @@ export default function Footer() {
     });
   }, []);
 
+  // Function to toggle the connection dropdown.
   const toggleConnectionDropdown = () => {
     setIsConnectionDropdownOpen(!isConnectionDropdownOpen);
     setIsDropdownIconUp(!isDropdownIconUp);
   };
 
-
+  /************************ Render Function ****************/
   return (
-    <footer className="bg-white rounded-lg shadow dark:bg-gray-900 m-4">
+    <footer className="bg-inherit rounded-lg shadow dark:bg-gray-900 m-4">
       <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
         <div className="sm:flex sm:items-center sm:justify-between">
         {/* Brand logo */}
         <a href="/" className="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
-          <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo" />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">NearFarm</span>
+          <Image
+            src="/assets/logos/app/logo.png"
+            alt="Logo"
+            width={100}
+            height={100}
+          />
+          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white leading-tight">NearFarm
+            <br/>
+            <span className="text-xs font-semibold text-gray-400 dark:text-gray-300 mt-[-0.1em] block">Harvesting local goodness for you</span>
+          </span>
         </a>
-        
         {/* Connection status dropdown */}
         <div className="relative inline-block text-left">
           <DropdownMenu>
@@ -98,24 +122,20 @@ export default function Footer() {
           </DropdownMenu>
         </div>
       </div>
-
         {/* Divider */}
         <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
-
       {/* Made with heart */}
       <div className="mt-4 flex items-center space-x-2">
         <span className="text-gray-500">Made with</span>
         <HeartIcon className="text-red-500" />
         <span className="text-gray-500">by Vaibhav Thapliyal</span>
       </div>
-
       {/* Footer text */}
       <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
         <p>Thank you for visiting NearFarm! We are committed to providing you with the best experience.</p>
         <p>If you have any questions or feedback, feel free to reach out to our support team at support@nearfarm.com.</p>
         <p>Stay updated with the latest news and updates by following us on social media:</p>
       </div>
-
       {/* Copyright */}
       <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
         <p>© 2024 NearFarm. All rights reserved.</p>
@@ -126,7 +146,7 @@ export default function Footer() {
       <div className='sm:flex sm:items-center sm:justify-between'>
         <ul className="flex  items-center justify-start text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
           <li>
-            <a href="#" className="hover:underline me-4 md:me-6">About</a>
+            <a href="#" className="hover:underline me-4 md:me-6">Changelog</a>
           </li>
           <li>
             <a href="#" className="hover:underline me-4 md:me-6">Privacy Policy</a>
@@ -134,24 +154,32 @@ export default function Footer() {
           <li>
             <a href="#" className="hover:underline me-4 md:me-6">Licensing</a>
           </li>
-          <li>
-            <a href="#" className="hover:underline">Contact</a>
-          </li>
         </ul>
-
           {/* Social media links */}
+          {/*
+            The "noopener" value prevents the new page from being able to access the window that opened it.
+            The "noreferrer" value prevents the new page from knowing where the traffic came from.
+            This is a security measure when linking to external sites in a new tab.
+          */}
           <div className="flex justify-end items-center space-x-4 mt-0">
-          <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
-            <LinkedinIcon />
+          <span className="text-sm text-gray-500 dark:text-gray-400">Follow us:</span>
+          <a href={process.env.LINKEDIN_URI} target="_blank" rel="noopener noreferrer">
+            <LinkedInLogoIcon 
+              className='h-6 w-6 dark:text-white cursor-pointer'
+            />
           </a>
-          <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
-            <Facebook />
+          <a href={process.env.FACEBOOK_URI} target="_blank" rel="noopener noreferrer">
+            <FacebookIcon/>
           </a>
-          <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
-            <Instagram />
+          <a href={process.env.INSTAGRAM_URI} target="_blank" rel="noopener noreferrer">
+          <InstagramLogoIcon 
+            className='h-6 w-6 dark:text-white cursor-pointer'
+          />
           </a>
-          <a href="https://www.github.com" target="_blank" rel="noopener noreferrer">
-            <Github />
+          <a href={process.env.GITHUB_URI} target="_blank" rel="noopener noreferrer">
+            <GitHubLogoIcon
+              className='h-6 w-6 dark:text-white cursor-pointer'
+            />
           </a>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

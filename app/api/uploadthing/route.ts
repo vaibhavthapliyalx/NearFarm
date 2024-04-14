@@ -1,3 +1,6 @@
+/**
+ * @fileoverview This file contains the API route for uploading files.
+ */
 import { createRouteHandler } from "uploadthing/next";
  
 import { ourFileRouter } from "./core";

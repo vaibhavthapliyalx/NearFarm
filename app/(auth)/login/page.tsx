@@ -1,8 +1,14 @@
-'use client';
-import * as React from 'react';
+/**
+ * @fileoverview This file contains the login page of the application.
+ */
 
-import { ToastType, GithubLogoVariant, GoogleLogo, SignupErrorType, PROVIDER_TYPE } from '../../../shared/constants';
-import { useState } from 'react';
+// Directive to use client side rendering.
+'use client';
+
+// Imports
+import * as React from 'react';
+import { ToastType, GoogleLogo, SignupErrorType, ProviderType } from '../../../shared/constants';
+import { FormEvent, useEffect, useState } from 'react';
 import { ApiResponse, User } from '@/shared/interfaces';
 import ApiConnector from '@/app/services/ApiConnector';
 import Image from 'next/image';
@@ -11,22 +17,47 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import LoadingSpinner from '@/components/ui/loadingSpinner';
+import LoadingSpinner from '@/components/LoadingAnimations/LoadingSpinner';
 import { ToastAction } from '@/components/ui/toast';
 import { useToast } from '@/components/ui/use-toast';
+import { Github } from 'lucide-react';
 
+// Grabs the instance of the ApiConnector Class (Singleton) which connects to the backend endpoints.
 const apiConnectorInstance = ApiConnector.getInstance();
 
-
+/**
+ * This function renders the login page component.
+ * 
+ * @returns The rendered login page component.
+ */
 export default function Login() {
-
+  // State variables.
   const [error, setError] = useState<SignupErrorType>({});
-
   const [isLoading, setIsLoading] = useState(false);
 
+  // Grabs the toast function from the useToast hook.
   const { toast } = useToast();
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  // This hook is used to display the error message when the user is not authorized.
+  // This logic is handled in the middleware.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const message = params.get('error');
+    if (message) {
+      toast({
+        description: message,
+        variant: ToastType.DESTRUCTIVE,
+        title: "Error 401 - Unauthorized",
+      });
+    }
+  }, []);
+
+  /**
+   *  This function logs the user in when the form is submitted.
+   * 
+   * @param event The form event object that contains the form data.
+   */
+  function onSubmit(event: FormEvent<HTMLFormElement>) {
     setIsLoading(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -39,7 +70,7 @@ export default function Login() {
     userData.email = data.get('email') as string;
     userData.password = data.get('password') as string;
 
-    apiConnectorInstance.login(PROVIDER_TYPE.CREDENTIALS, userData)
+    apiConnectorInstance.login(ProviderType.CREDENTIALS, userData)
     .then((response: ApiResponse) => {
       // Callback redirects the user automatically to the home page.
       // We don't need to handle that here.
@@ -76,9 +107,10 @@ export default function Login() {
     });
   };
 
+  /************************ Render Function ************************/
   return (
     <>
-    <LoadingSpinner display={isLoading} message='Please be patient ! We are working on it!'/>
+      <LoadingSpinner display={isLoading} message='Please be patient ! We are working on it!'/>
       <div className="container mt-10 lg:mt-0 relative  h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r border-r-2 border-gray-200">
           <div className="absolute inset-0 bg-auto" />
@@ -162,22 +194,16 @@ export default function Login() {
             <Button variant="outline"
               type="button" 
               disabled={isLoading}
-              onClick={() => apiConnectorInstance.login(PROVIDER_TYPE.GITHUB)}
+              onClick={() => apiConnectorInstance.login(ProviderType.GITHUB)}
              >
-              <Image
-                src={GithubLogoVariant.BLACK}
-                alt="Github Logo"
-                width={20}
-                height={20}
-                className="mr-2"
-              />
+              <Github className="w-5 h-5 mr-2" />
               GitHub
             </Button>
             <Button 
               variant="outline" 
               type="button" 
               disabled={isLoading}
-              onClick={() => apiConnectorInstance.login(PROVIDER_TYPE.GOOGLE)}
+              onClick={() => apiConnectorInstance.login(ProviderType.GOOGLE)}
             >
               <Image
                 src={GoogleLogo.DEFAULT}

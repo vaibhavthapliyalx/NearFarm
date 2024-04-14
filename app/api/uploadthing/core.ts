@@ -1,45 +1,43 @@
-import ApiConnector from "@/app/services/ApiConnector";
+/**
+ * @fileoverview This file contains the API route for uploading files.
+ * We use the uploadthing library to handle file uploads.
+ * We have two file upload modules: userPhotoUploader and catalogueUploader.
+ */
+import { getServerSession } from "next-auth";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 
 const f = createUploadthing();
 
-// Gets the instance of ApiConnector class that is used to connect to the backend.
-const apiConnectorInstance = ApiConnector.getInstance();
-
-const auth = async(req: any) => await apiConnectorInstance.getCurrentUserFromSession();
+const auth = async() => await getServerSession();
 
 export const ourFileRouter = {
-//   imageUploader: f({ image: { maxFileSize: "4MB" } })
-//     .middleware(async ({ req }) => {
-//       if (!user) throw new Error("Unauthorized");
-//       return { userId: user.id };
-//     })
-//     .onUploadComplete(async ({ metadata, file }) => {
-//       console.log("Upload complete for userId:", metadata.userId);
-//       console.log("file url", file.url);
-//       return { uploadedBy: metadata.userId };
-//     }),
+  // User photo uploader module.
   userPhotoUploader: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
     .middleware(async ({ req }) => {
-      const user = await auth(req);
+      const session = await auth();
+      const user = session?.user;
       if (!user) throw new Error("Unauthorized");
-      return { userId: user.id };
+      return { email: user.email };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("User photo upload complete for userId:", metadata.userId);
+      console.log("User photo upload complete for userId:", metadata.email);
       console.log("file url", file.url);
-      return { uploadedBy: metadata.userId };
+      return { uploadedBy: metadata.email };
     }),
+  // Catalogue uploader module.
+  // This module allows the user to upload multiple images and videos.
+  // This is used when farmers want to upload their product catalogues.
   catalogueUploader: f({ image: { maxFileSize: "4MB", maxFileCount: 10 }, video: { maxFileSize: "32MB", maxFileCount: 10 } })
     .middleware(async ({ req }) => {
-      const user = await auth(req);
+      const session = await auth();
+      const user = session?.user;
       if (!user) throw new Error("Unauthorized");
-      return { userId: user.id };
+      return { email: user.email };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Catalogue upload complete for userId:", metadata.userId);
+      console.log("Catalogue upload complete for userId:", metadata.email);
       console.log("file url", file.url);
-      return { uploadedBy: metadata.userId };
+      return { uploadedBy: metadata.email };
     }),
 } satisfies FileRouter;
 
