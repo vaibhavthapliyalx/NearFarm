@@ -14,6 +14,7 @@ import { classMerge } from '@/lib/utilityfunctions';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import ProgressBar from '@/components/LoadingAnimations/ProgressBar';
 import Footer from '@/components/Footer';
+import { Analytics } from "@vercel/analytics/react";
 
 // Gets the instance of the Inter font.
 const inter  = Inter({subsets: ['latin']});
@@ -52,6 +53,8 @@ export default function RootLayout({ children }: IProps){
               <main className="relative flex flex-col min-h-screen">
                 <div className="flex-grow flex-1">
                 {children}
+                {/** Here we have integrated we analytics in the application */}
+                <Analytics/>
                  </div>
                  <Toaster/>
               </main>
