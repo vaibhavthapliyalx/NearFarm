@@ -15,6 +15,7 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import ProgressBar from '@/components/LoadingAnimations/ProgressBar';
 import Footer from '@/components/Footer';
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 // Gets the instance of the Inter font.
 const inter  = Inter({subsets: ['latin']});
@@ -55,6 +56,9 @@ export default function RootLayout({ children }: IProps){
                 {children}
                 {/** Here we have integrated we analytics in the application */}
                 <Analytics/>
+
+                {/** Here we have integrated speed insights in the application */}
+                <SpeedInsights/>
                  </div>
                  <Toaster/>
               </main>

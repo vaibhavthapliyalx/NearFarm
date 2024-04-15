@@ -28,6 +28,7 @@
     "@react-email/components": "0.0.14",
     "@uploadthing/react": "^6.2.2",
     "@vercel/analytics": "^1.2.2",
+    "@vercel/speed-insights": "^1.0.10",
     "@vinejs/vine": "^1.7.0",
     "axios": "^1.6.5",
     "bcryptjs": "^2.4.3",
