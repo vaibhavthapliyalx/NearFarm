@@ -15,30 +15,24 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useUploadThing } from "@/lib/uploadthing";
-import { classMerge, isBase64Image, isObjectEmpty } from "@/lib/utilityfunctions";
+import { classMerge, isBase64Image } from "@/lib/utilityfunctions";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, XCircle } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductCategory, ToastType, UserRole } from "@/shared/constants";
-import { ApiResponse, Product, User } from "@/shared/interfaces";
+import {  Product, User } from "@/shared/interfaces";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { onBoardingValidation } from "@/lib/validations/onboarding.validation";
 import ApiConnector from "@/app/services/ApiConnector";
 import { useToast } from "@/components/ui/use-toast";
 import LoadingSpinner from "@/components/LoadingAnimations/LoadingSpinner";
-import { ToastAction } from "@/components/ui/toast";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import CarouselRenderer from "@/components/CarouselRenderer";
-import { Fallback } from "@radix-ui/react-avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { productValidation } from "@/lib/validations/product.validation";
 import { useRouter } from "next/navigation";
-import { parseImage } from "@/lib/parser/image-parser";
-import { resizeImage } from "@/lib/preprocessor/image-preprocessor";
-import { set } from "mongoose";
 import axios from "axios";
 
 // Grabs the instance of the ApiConnector Class (Singleton) which connects to the backend endpoints.
@@ -55,11 +49,9 @@ export default function AddProduct() {
   const [isLoading, setIsLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
 
-  // Grabs the query parameters from the URL.
-  const queryParams = new URLSearchParams(window.location.search);
-  const edit = queryParams.get("edit");
-  const listingId = queryParams.get("product_id");
-  const inEditMode = (edit === "true" && listingId !== null) ? true : false;
+  let edit: string | null = null;
+  let listingId: string | null = null;
+  let inEditMode = false;
 
   // Grabs the toast function from the useToast hook.
   const {toast} = useToast();
@@ -80,6 +72,12 @@ export default function AddProduct() {
 
   // On component mount, fetch the seller's data from the server.
   useEffect(() => {
+    // Grabs the query parameters from the URL.
+    const queryParams = new URLSearchParams(window.location.search);
+    edit = queryParams.get("edit");
+    listingId = queryParams.get("product_id");
+    inEditMode = (edit === "true" && listingId !== null) ? true : false;
+
     async function fetchSellerData() {
       const seller = await apiConnectorInstance.getCurrentUserFromSession();
       // Fetch the seller's data from the server.
@@ -106,7 +104,6 @@ export default function AddProduct() {
   // This is done by fetching the product data from the server using the listingId.
   // The listingId is passed as a query parameter in the URL when the user clicks on the edit button.
   useEffect(() => {
-    console.log("inEditMode", inEditMode);
     if (!inEditMode) {
       return;
     }
@@ -114,12 +111,16 @@ export default function AddProduct() {
       const res = await apiConnectorInstance.getProducts({ id: listingId as string});
       if (res.success) {
         const product = res.data[0];
+
+        // Check if product has catalogue. If not we set catalogue to its image.
+        if (!product.catalogue || product.catalogue.length === 0) {
+          product.catalogue = [product.image];
+        }
         form.setValue("name", product.name);
         form.setValue("description", product.description);
         form.setValue("salePrice", product.salePrice.toString());
         form.setValue("marketPrice", product.marketPrice.toString());
         form.setValue("quantity", product.quantity.toString());
-        form.setValue("images", product.catalogue);
 
         // Now we pre-fetch the images and set them to the form value.
         // This is done by converting the image urls to image files.
@@ -131,6 +132,7 @@ export default function AddProduct() {
         }));
         // Set the image files to the form value.
         setFiles(imageFiles);
+        form.setValue("images", product.catalogue);
         form.setValue("availableFrom", new Date(product.availableFrom as string));
         form.setValue("collectionAddress", product.collectionAddress);
         form.setValue("category", product.category);
@@ -196,7 +198,7 @@ export default function AddProduct() {
       await uploadImage(files, values);
     }
     // Package the product data.
-    const productData:Product = {
+    const productData: Product = {
       id: listingId as string,
       name: values.name,
       description: values.description,
@@ -562,7 +564,7 @@ export default function AddProduct() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Product Category</FormLabel>
-                <Select  onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Please choose your account type" />
