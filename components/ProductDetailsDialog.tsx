@@ -12,6 +12,7 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle} from '
 import { Product, User } from '@/shared/interfaces';
 import ApiConnector from '@/app/services/ApiConnector';
 import { Table, TableBody, TableCell, TableHead, TableRow } from './ui/table';
+import { formatDistanceToNow } from 'date-fns';
 
 // Interface for the props of the ProductDetailsDialog component.
 interface IProps {
@@ -68,11 +69,11 @@ export default function ProductDetailsDialog({ product }: IProps) {
               </TableRow>
               <TableRow>
                 <TableHead>Available From</TableHead>
-                <TableCell>{product.availableFrom || "N/A"}</TableCell>
+                <TableCell>{product.availableFrom ? new Date(product.availableFrom).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : "N/A"}</TableCell>
               </TableRow>
               <TableRow>
-                <TableHead>Listed At</TableHead>
-                <TableCell>{product.listedAt || "N/A"}</TableCell>
+                <TableHead>Listed</TableHead>
+                <TableCell>{product.listedAt ? formatDistanceToNow(product.listedAt, {addSuffix: true}) : "N/A"}</TableCell>
               </TableRow>
               <TableRow>
                 <TableHead>Market Price</TableHead>

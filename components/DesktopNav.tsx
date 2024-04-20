@@ -36,6 +36,15 @@ export default function DesktopNav ({user}: IProps) {
   // Grabs the resolved theme from the useTheme hook.
   const {resolvedTheme} = useTheme();
 
+  // Now we dynamically render the nav items based on the user's role.
+  const visibleLinks = NavbarLinks.filter(link => 
+    link.label === "Home" || 
+    link.label === "Products" ||
+    link.label === "Profile" ||
+    link.label === "Cart" ||
+    (user && link.role.includes(user.role))
+  );
+      
   /********************** Render Function******************/
   return (
     <MaxWidthWrapper>
@@ -53,7 +62,7 @@ export default function DesktopNav ({user}: IProps) {
           </div>
           <div className='hidden z-50 lg:ml-8 lg:block lg:self-stretch'>
             <div className='flex gap-4 h-full'>
-              {NavbarLinks.map((item) => {
+              {visibleLinks.map((item) => {
                 const isActive =
                 (pathname.includes(item.route) && item.route.length > 1) ||
                 pathname === item.route;

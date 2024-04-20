@@ -22,6 +22,8 @@ import { reviewValidation } from "@/lib/validations/review.validation";
 import { ProductDetailsPageTabType, ProfilePageTabType, ToastType, productPageTabs } from "@/shared/constants";
 import { CartItem, Product, Review } from "@/shared/interfaces";
 import { ShoppingCart, Star, StarHalf } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import * as z from "zod";
 
@@ -46,6 +48,10 @@ export default function ProductDetailsPage({params}: IProps) {
   const id = params.id;
   // Grabs the toast function from the useToast hook.
   const {toast} = useToast();
+  const router = useRouter();
+
+  // Grabs the user session.
+  const {data: session} = useSession();
 
    /**
    * This function fetches the reviews for the product.
@@ -93,10 +99,23 @@ export default function ProductDetailsPage({params}: IProps) {
   async function onAddToCartClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
     const user = await apiConnectorInstance.getCurrentUserFromSession();
-    console.log("User")
-    console.log(user);
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to add items to cart.",
+        variant: ToastType.DESTRUCTIVE,
+        action: <ToastAction 
+          altText='Login' 
+          onClick={() =>router.push("/login")}
+        > 
+          Login 
+        </ToastAction>
+      });
+      return;
+    }
     const cartItem: CartItem = {
       userId: user.id,
+      sellerId: product.sellerId,
       productId: product.id as string,
       quantity: 1,
       name: product.name,
@@ -182,10 +201,7 @@ export default function ProductDetailsPage({params}: IProps) {
   }
 
   async function onReviewEdit(newInput: z.infer<typeof reviewValidation>) {
-    console.log(newInput);
-
     const reviewer = await apiConnectorInstance.getCurrentUserFromSession();
-
     // Package the review object.
     const review: Review = {
       id: newInput.id,
@@ -222,7 +238,7 @@ export default function ProductDetailsPage({params}: IProps) {
       <div className="grid gap-6 items-start max-w-6xl px-4 mx-auto py-6">
         <div className="grid md:grid-cols-2 gap-6 lg:gap-12 items-start">
           <CarouselRenderer
-            images={product?.catalogue ? product.catalogue : [product.image]}
+            images={product.catalogue && product.catalogue.length > 0 ? product.catalogue : [product?.image]}
             imageHeight={900}
             imageWidth={900}
             className="w-full rounded-lg dark:border-gray-800"           
@@ -243,7 +259,7 @@ export default function ProductDetailsPage({params}: IProps) {
                   {product.rating % 1 !== 0 && <StarHalf fill="#ea580b" strokeWidth={0} className='h-5 w-5' />}
                 </div>
                 <span className="text-sm text-black-200 ml-2">{reviews.length} reviews</span>
-                <AddReviewDrawer onReviewSubmit={onReviewSubmit}/>
+                <AddReviewDrawer onReviewSubmit={onReviewSubmit} disabled={session?.user.id === product.sellerId }/>
               </div>
               <div className="text-sm text-black-200">
                 {product.quantity >= 1 ? (
@@ -267,7 +283,7 @@ export default function ProductDetailsPage({params}: IProps) {
                 />
               </div>
             </div>
-            <Button size="lg" onClick={onAddToCartClick} disabled={product.quantity < 1}>
+            <Button size="lg" onClick={onAddToCartClick} disabled={product.quantity < 1 || session?.user.id === product.sellerId}>
             <ShoppingCart size={20} className="mr-1"/>
               Add to Cart
             </Button>
@@ -308,8 +324,7 @@ export default function ProductDetailsPage({params}: IProps) {
                 </div>
               )}
               {tab.value === ProductDetailsPageTabType.SELLER_INFO && (
-                <SellerProfileCard sellerId={"6613c3aecec4e279286123aa"}/>
-                
+                <SellerProfileCard sellerId={product.sellerId}/>
               )}
             </TabsContent>
           ))}

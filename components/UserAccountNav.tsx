@@ -19,6 +19,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
 import { User } from '@/shared/interfaces';
+import { UserRole } from '@/shared/constants';
 
 // Interface for the props that the UserAccountNav component accepts.
 interface IProps {
@@ -74,6 +75,20 @@ export default function UserAccountNav({ user }: IProps) {
             >
               <Link href={`/profile/${user.id}`}>My Profile</Link>
             </DropdownMenuItem>
+            {user.role === UserRole.FARMER && (
+              <>
+                <DropdownMenuItem asChild
+                  className='cursor-pointer block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white'
+                >
+                  <Link href={`/listings`}>Manage Listings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild
+                  className='cursor-pointer block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white'
+                >
+                  <Link href={`/orders`}>Manage Orders</Link>
+                </DropdownMenuItem>
+              </>
+            )}
             <DropdownMenuItem
               onClick={apiConnectorInstance.logout}
               className='cursor-pointer block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white'

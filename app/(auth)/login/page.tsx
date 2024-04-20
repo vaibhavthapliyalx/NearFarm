@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import LoadingSpinner from '@/components/LoadingAnimations/LoadingSpinner';
 import { ToastAction } from '@/components/ui/toast';
 import { useToast } from '@/components/ui/use-toast';
-import { Github } from 'lucide-react';
+import { GitHubLogoIcon } from '@radix-ui/react-icons';
 
 // Grabs the instance of the ApiConnector Class (Singleton) which connects to the backend endpoints.
 const apiConnectorInstance = ApiConnector.getInstance();
@@ -42,13 +42,18 @@ export default function Login() {
   // This logic is handled in the middleware.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    console.log(params.get('error'));
     const message = params.get('error');
     if (message) {
-      toast({
-        description: message,
-        variant: ToastType.DESTRUCTIVE,
-        title: "Error 401 - Unauthorized",
-      });
+      // Display toast after 500ms to avoid SSR issues.
+      // This fixes the bug where the toast is not displayed on the client side.
+      setTimeout(() => {
+        toast({
+          description: message,
+          variant: ToastType.DESTRUCTIVE,
+          title: "Error 401 - Unauthorized",
+        });
+      }, 500);
     }
   }, []);
 
@@ -110,7 +115,7 @@ export default function Login() {
   /************************ Render Function ************************/
   return (
     <>
-      <LoadingSpinner display={isLoading} message='Please be patient ! We are working on it!'/>
+      <LoadingSpinner display={isLoading} message='Logging you in...' />
       <div className="container mt-10 lg:mt-0 relative  h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r border-r-2 border-gray-200">
           <div className="absolute inset-0 bg-auto" />
@@ -149,7 +154,7 @@ export default function Login() {
                         ...error,
                         email: ""
                       })}
-                      type="email"
+                      type="text"
                       autoCapitalize="none"
                       autoComplete="email"
                       autoCorrect="off"
@@ -196,7 +201,7 @@ export default function Login() {
               disabled={isLoading}
               onClick={() => apiConnectorInstance.login(ProviderType.GITHUB)}
              >
-              <Github className="w-5 h-5 mr-2" />
+              <GitHubLogoIcon className="w-5 h-5 mr-2" />
               GitHub
             </Button>
             <Button 
@@ -218,14 +223,7 @@ export default function Login() {
             <p className="px-8 text-center text-sm text-muted-foreground">
               By clicking continue, you agree to our{" "}
               <Link
-                href="/terms"
-                className="underline underline-offset-4 hover:text-primary"
-              >
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link
-                href="/privacy"
+                href="https://utfs.io/f/9020d4d0-5be3-49b0-a630-6c16485b6242-1yb1t7.pdf"
                 className="underline underline-offset-4 hover:text-primary"
               >
                 Privacy Policy

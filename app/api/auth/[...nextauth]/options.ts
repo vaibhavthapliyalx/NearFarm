@@ -79,6 +79,7 @@ export const options: NextAuthOptions = {
             token.name = user.name;  // Add user name to token
             token.image = user.image;  // Add user image to token
             token.role = databaseUser.role;  // Add user role to token
+            token.isOnBoarded = databaseUser.isOnBoarded;  // Add user onboarding status to token
           }
           return token;
         },
@@ -88,6 +89,7 @@ export const options: NextAuthOptions = {
                 session.user.name = token.name;  // Add user name to session
                 session.user.image = token.image;  // Add user image to session
                 session.user.role = token.role;  // Add user role to session
+                session.user.isOnBoarded = token.isOnBoarded;  // Add user onboarding status to session
             }
           return session;
         },      

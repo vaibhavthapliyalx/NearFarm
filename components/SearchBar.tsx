@@ -27,16 +27,19 @@ export default function Searchbar({ searchType }: Props) {
   // query after 0.3s of no input
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      // Parse the current URL query string
       const params = new URLSearchParams(window.location.search);
-    
-      // Check if the URL already contains the 'page' parameter
-      if (params.has('page')) {
-        // If it does, append the search query
-        router.push(`/${searchType}?page=${params.get('page')}&q=${search}`);
+      if (search !== "") {
+        if (params.has('page')) {
+          router.push(`/${searchType}?page=${params.get('page')}&q=${search}`);
+        } else {
+          router.push(`/${searchType}?q=${search}`);
+        }
       } else {
-        // If it doesn't, set the search query
-        router.push(`/${searchType}?q=${search}`);
+        if (params.has('page')) {
+          router.push(`/${searchType}?page=${params.get('page')}`);
+        } else {
+          router.push(`/${searchType}`);
+        }
       }
     }, 300);
 

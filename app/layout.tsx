@@ -16,6 +16,7 @@ import ProgressBar from '@/components/LoadingAnimations/ProgressBar';
 import Footer from '@/components/Footer';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { useEffect } from 'react';
 
 // Gets the instance of the Inter font.
 const inter  = Inter({subsets: ['latin']});

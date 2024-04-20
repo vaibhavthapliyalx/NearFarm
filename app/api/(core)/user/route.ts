@@ -2,8 +2,10 @@
  * @fileoverview This file contains the API routes for the user.
  */
 
+import MapApiService from "@/app/services/MapApiService";
 import { connectDB } from "@/lib/database";
 import User from "@/lib/models/user.model";
+import { UserRole } from "@/shared/constants";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET( request: NextRequest ) {
@@ -13,8 +15,64 @@ export async function GET( request: NextRequest ) {
 
     const id = request.nextUrl.searchParams.get('id');
     const email = request.nextUrl.searchParams.get('email');
-
+    const role = request.nextUrl.searchParams.get('role');
+    const returnPayload = request.nextUrl.searchParams.get('query');
     let query = {};
+
+    // This is done to return the coordinates of all the farmers in the database.
+    // This helps to render the location of all the farmers on the map.
+    if (returnPayload === 'location' && role === UserRole.FARMER) {
+      const users = await User.find({ role: role, contactDetails: { $exists: true } });
+      const addresses = users.map(user => user.contactDetails.address);
+      console.log(addresses);
+    
+      // Create a new instance of the MapApiService
+      const mapApiInstance = MapApiService.getInstance();
+    
+      // Convert the addresses to coordinates
+      const coordinates = await Promise.all(users.map(async user => {
+        const coords = await mapApiInstance.getCoordinatesFromAddress(user.contactDetails.address);
+        return {
+          userId: user._id,
+          coordinates: coords
+        };
+      }));
+      return NextResponse.json({
+        status: 200, 
+        body : {
+          success: true,
+          message: "Coordinates found", 
+          data: coordinates
+        }
+      });
+    }
+
+    if (returnPayload === 'city' && role === UserRole.CONSUMER) {
+      console.log('Fetching city of all consumers');
+      const users = await User.find({ role: role, contactDetails: { $exists: true } });
+      const mapApiInstance = MapApiService.getInstance();
+      // Convert the addresses to coordinates and then to city.
+      const cities = await Promise.all(users.map(async user => {
+        const coords = await mapApiInstance.getCoordinatesFromAddress(user.contactDetails.address);
+        const response = await mapApiInstance.getCityFromCoordinates(coords?.lat as number, coords?.lng as number);
+        return {
+          userId: user._id,
+          city: response,
+          coordinates: coords
+        };
+      }));
+
+      console.log(cities);
+
+      return NextResponse.json({
+        status: 200, 
+        body : {
+          success: true,
+          message: "Cities found", 
+          data: cities
+        }
+      });
+    }
 
     if(id) {
       query = { ...query, _id: id };

@@ -17,12 +17,20 @@ export async function POST(request: NextRequest) {
     const validator = vine.compile(loginValidation);
     
     const output = await validator.validate(body);
+    
+    let query = {};
+    console.log(output.email, output.password);
+    if (output.email.includes('@')) {
+      query = { email: output.email };
+    } else {
+      query = { username: output.email };
+    }
+
     // Check if user exists.
     // Here we use the select method to include the password field in the query.
-    const user = await User.findOne({ email: output.email }).select('+password');
+    const user = await User.findOne(query).select('+password');
     if (user) {
       const validPassword = bcrypt.compareSync(output.password!, user.password);
-      
       if (!validPassword) {
           return NextResponse.json({ 
             status: 400,
@@ -32,11 +40,13 @@ export async function POST(request: NextRequest) {
             }
           });
       }
+      // If the password is valid, we return a success message.
       return NextResponse.json({ 
           status: 200,  
           body: {
             success: true,
-            message: "User logged in successfully"
+            message: "User logged in successfully",
+            data: user
           }
       });
     } else {

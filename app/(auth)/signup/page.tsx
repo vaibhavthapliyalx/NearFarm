@@ -21,7 +21,7 @@ import LoadingSpinner from '@/components/LoadingAnimations/LoadingSpinner';
 import { useToast } from '@/components/ui/use-toast';
 import { ToastAction } from '@radix-ui/react-toast';
 import { useRouter } from 'next/navigation';
-import { Github } from 'lucide-react';
+import { GitHubLogoIcon } from '@radix-ui/react-icons';
 
 // Grabs the instance of the ApiConnector Class (Singleton) which connects to the backend endpoints.
 const apiConnectorInstance = ApiConnector.getInstance();
@@ -105,7 +105,7 @@ export default function SignUp() {
   /************************ Render Function ************************/
   return (
     <>
-    <LoadingSpinner display={isLoading} message='Please be patient ! We are working on it!'/>
+    <LoadingSpinner display={isLoading} message='Creating new entry in our database...' />
     <div className="container mt-10 lg:mt-0 relative h-[800px] max-h-full flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:grid dark:border-r border-r-2 border-gray-200">
         <div className="absolue inset-0 bg-zinc-900" />
@@ -224,7 +224,7 @@ export default function SignUp() {
             <Button variant="outline" type="button" disabled={isLoading}
               onClick={() => apiConnectorInstance.login(ProviderType.GITHUB)}
             >
-              <Github className="w-5 h-5 mr-2" />
+              <GitHubLogoIcon className="w-5 h-5 mr-2" />
               GitHub
             </Button>
             <Button variant="outline" type="button" disabled={isLoading} 
@@ -243,14 +243,7 @@ export default function SignUp() {
           <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking continue, you agree to our{" "}
             <Link
-              href="/terms"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link
-              href="/privacy"
+              href="https://utfs.io/f/9020d4d0-5be3-49b0-a630-6c16485b6242-1yb1t7.pdf"
               className="underline underline-offset-4 hover:text-primary"
             >
               Privacy Policy
