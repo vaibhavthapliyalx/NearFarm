@@ -21,7 +21,8 @@ import { OrderStatus, ProductCategory, SortOrder, UserRole } from "./constants";
  * @property {string} category - The category of the product.
  * @property {string} notes - The notes of the product.
  * @property {number} rating - The rating of the product.
-  * @property {Array<Review>} reviews - The reviews of the product. 
+ * @property {Array<Review>} reviews - The reviews of the product.
+ * @property {number} soldTillDate - The number of products sold till date. 
 */
 export interface Product {
   id?: string;
@@ -34,13 +35,13 @@ export interface Product {
   catalogue?: string[];
   sellerId: string;
   availableFrom: string;
-  listedAt: string;
+  listedAt?: string;
   collectionAddress: string;
   category: ProductCategory;
   notes: string;
   rating: number;
+  soldTillDate: number;
 }
-
 
 /**
  * @interface Order This interface defines the structure of the order object.
@@ -55,7 +56,7 @@ export interface Product {
  */
 export interface Order {
   id: string;
-  userId: number;
+  userId: string;
   items: OrderItem[],
   status: OrderStatus,
   orderTotal: number;
@@ -72,6 +73,8 @@ export interface Order {
  * @property {number} orderPrice - The price of the product.
  */
 export interface OrderItem {
+  sellerId?: string;
+  productId: string;
   productImage: string;
   productName: string;
   quantity: number;
@@ -84,6 +87,7 @@ export interface OrderItem {
  * @property {string} id - The id of the cart item.
  * @property {string} productId - The id of the product.
  * @property {string} userId - The id of the user.
+ * @property {string} sellerId - The id of the seller.
  * @property {string} name - The name of the product.
  * @property {number} quantity - The quantity of the product.
  * @property {number} price - The price of the product.
@@ -92,10 +96,38 @@ export interface OrderItem {
 export interface CartItem {
   productId: string;
   userId: string;
+  sellerId: string;
   name: string;
   quantity: number;
   price: number;
   image: string;
+}
+
+/**
+ * @interface This interface defines the structure of the listing item.
+ * 
+ * @property {string} sellerId - The id of the seller.
+ * @property {string} productId - The id of the product.
+ * @property {number} quantity - The quantity of the product.
+ * @property {string} name - The name of the product.
+ * @property {string} image - The image of the product.
+ * @property {string} availableFrom - The date from which the product is available.
+ * @property {string} listedAt - The date/time on which the product was listed.
+ * @property {number} salePrice - The sale price of the product.
+ * @property {number} marketPrice - The market price of the product.
+ * @property {ProductCategory} category - The category of the product.
+ */
+export interface ListingsItem {
+  sellerId: string;
+  productId: string;
+  quantity: number;
+  name: string;
+  image: string;
+  availableFrom: string;
+  listedAt: string;
+  salePrice: number;
+  marketPrice: number;
+  category: ProductCategory;
 }
 
 /**
@@ -133,6 +165,7 @@ export interface ContactDetails {
  * @property {boolean} isVerified - The verification status of the user.
  * @property {Array<string>} likedReviews - The array of review ids liked by the user.
  * @property {any} roleSpecificData - The role specific data of the user.
+ * @property {number} totalSpent - The total amount spent by the user on the platform.
  */
 export interface User {
   id?: string;
@@ -153,7 +186,29 @@ export interface User {
   contactDetails: ContactDetails;
   isVerified: boolean;
   likedReviews?: string[];
-  roleSpecificData?: any;
+  roleSpecificData?: SellerData;
+  totalSpent?: number;
+}
+
+/**
+ * @interface This interface defines the structure of the seller data object.
+ * 
+ * @property {number} customersServed - The number of customers served.
+ * @property {number} productsSold - The number of products sold.
+ * @property {number} currentListings - The number of current listings.
+ * @property {number} totalRevenue - The total revenue earned by the seller.
+ * @property {Array<string>} myProducts - The products listed by the seller.
+ * @property {Array<string>} myCustomers - The customers served by the seller.
+ * @property {Array<string>} myOrders - The orders placed by the seller.
+ */
+export interface SellerData {
+  customersServed: number;
+  productsSold: number;
+  currentListings: number;
+  totalRevenue: number;
+  myProducts: Array<string>;
+  myCustomers: Array<string>;
+  myOrders: Array<string>;
 }
 
 /**
@@ -243,6 +298,7 @@ export interface ApiResponse {
  * 
  * @property {string} id - The id of the product.
  * @property {string} name - The name of the product.
+ * @property {boolean} bestSellers - The best selling of the product.
  * @property {Array<string>} category - The category of the product.
  * @property {string} sortByPriceOrder - The order in which the products are sorted by price.
  * @property {string} sortByRatingOrder - The order in which the products are sorted by rating.
@@ -254,6 +310,8 @@ export interface ApiResponse {
 export interface QueryParams {
   id?: string;
   name?: string;
+  bestSelling?: boolean | string;
+  sellerId?: string;
   category?: ProductCategory[] ;
   sortByPriceOrder?: SortOrder;
   sortByRatingOrder?: SortOrder;
@@ -263,3 +321,26 @@ export interface QueryParams {
   page?: number;
   limit?: number;
 }
+
+/**
+ * @interface This interface defines the structure of the location object.
+ * 
+ * @property {number} lat - The latitude of the location.
+ * @property {number} lng - The longitude of the location.
+ */
+export interface Location {
+  lat: number;
+  lng: number;
+}
+
+/**
+ * @interface This interface defines the structure of the user location object.
+ * 
+ * @property {Location} coordinates - The coordinates of the location.
+ * @property {string} userId - The id of the user.
+ */
+export interface UserLocation {
+  coordinates: Location;
+  userId: string;
+}
+

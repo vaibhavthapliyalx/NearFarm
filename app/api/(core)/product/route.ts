@@ -3,6 +3,7 @@
  */
 import { connectDB } from "@/lib/database";
 import Product from "@/lib/models/product.model";
+import User from "@/lib/models/user.model";
 import { ProductCategory, SortOrder } from "@/shared/constants";
 import { QueryParams } from "@/shared/interfaces";
 import { NextRequest, NextResponse } from "next/server";
@@ -15,6 +16,8 @@ export async function GET(request: NextRequest) {
     // Extract query parameters from the URL.
     const params: QueryParams = Object.fromEntries(request.nextUrl.searchParams);
     const id = params.id;
+    const sellerId = params.sellerId;
+    const bestSelling = params.bestSelling;
     const name = params.name;
     const sortByPrice = params.sortByPriceOrder; // 'asc' or 'desc'
     const availableFromDate = params.sortByAvailableFromDate; // expects a date string
@@ -23,7 +26,6 @@ export async function GET(request: NextRequest) {
     const limit = Number(params.limit); // number of documents per page
     // Extract all 'category' parameters from the URL.
     const categories = request.nextUrl.searchParams.getAll('category');
-
     // Construct the query object based on the query parameters.
     let query = {};
     if (id) {
@@ -31,6 +33,9 @@ export async function GET(request: NextRequest) {
     }
     if (name) { 
       query = { ...query, name: { $regex: name, $options: 'i' } };
+    }
+    if (sellerId) {
+      query = { ...query, seller_id: sellerId };
     }
 
     // If categories are provided, filter the products based on the categories.
@@ -55,6 +60,9 @@ export async function GET(request: NextRequest) {
     if (availableFromDate) {
       sort = { ...sort, available_from: 1 };
       query = { ...query, available_from: { $gte: new Date(availableFromDate) } };
+    }
+    if (bestSelling === "true") {
+      sort = { ...sort, soldTillDate: -1 };
     }
     // If collectionAddress is provided, sort products based on the distance from the collection address
     if (collectionAddress) {
@@ -145,22 +153,49 @@ export async function POST(request: NextRequest) {
       market_price: body.marketPrice,
       quantity: body.quantity,
       image: body.image,
+      catalogue: body.catalogue,
       seller_id: body.sellerId,
       available_from: body.availableFrom,
-      listed_at: new Date().toISOString(),
       collection_address: body.collectionAddress,
       category: body.category,
-      notes: body.notes
+      notes: body.notes,
+      rating: body.rating
     };
     // Create product
     const product = await Product.create(newProduct);
 
+    
+    // After the product is created, Updated the seller's product list.
+    const sellerUpdated = await User.updateOne(
+      { _id: body.sellerId },
+      { 
+        $push: { 
+          myProducts: product._id,
+          'roleSpecificData.myProducts': product._id 
+        },
+        $inc: { 
+          currentListings: 1,
+          'roleSpecificData.currentListings': 1 
+        }
+      },
+      { upsert: true }
+    );
+    
+    if(!product || !sellerUpdated) {
+      return NextResponse.json({
+        status: 400,
+        body: {
+          success: false,
+          message: "An error occurred while creating the product. Please try again."
+        }
+      });
+    }
     return NextResponse.json(
       {
         status: 200,
         body: {
           success: true,
-          message: "Product created successfully",
+          message: "Product created successfully.",
           data: product._id
         }
       }
@@ -243,23 +278,37 @@ export async function DELETE(request: NextRequest) {
       _id: id
     });
 
-    if (product) {
-      return NextResponse.json({
-        status: 200,
-        body: {
-          success: true,
-          message: "Product deleted successfully",
-        }
-      });
-    } else {
+    
+  // After the product is deleted, update the seller's product list.
+  const sellerUpdated = await User.updateOne(
+    { _id: product.seller_id },
+    { 
+      $pull: { 
+        myProducts: product._id,
+        'roleSpecificData.myProducts': product._id 
+      },
+      $inc: { 
+        currentListings: -1,
+        'roleSpecificData.currentListings': -1 
+      }
+    }
+  );
+    if (!product || !sellerUpdated) {
       return NextResponse.json({
         status: 404,
         body: {
           success: false,
-          message: "Couldn't delete the product. Product not found.",
+          message: "Couldn't delete the product. Please try again.",
         }
       });
     }
+    return NextResponse.json({
+      status: 200,
+      body: {
+        success: true,
+        message: "Product deleted successfully.",
+      }
+    });
   } catch (error) {
     return NextResponse.json({
       status: 400,

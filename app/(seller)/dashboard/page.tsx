@@ -1,241 +1,294 @@
 /**
  * @fileoverview This file contains the seller dashboard page component.
+ * 
+ * Note: This is a middleware protected route. Only authenticated sellers can access this page.
  */
 
-import { CardTitle, CardHeader, CardContent, Card, CardDescription } from "@/components/ui/card"
-import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
+'use client';
+// Imports.
+import ApiConnector from "@/app/services/ApiConnector";
+import LoadingSpinner from "@/components/LoadingAnimations/LoadingSpinner";
+import MapRenderer from "@/components/MapRenderer";
+import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+import { Badge } from "@/components/ui/badge";
+import { CardTitle, CardHeader, CardContent, Card, CardDescription } from "@/components/ui/card";
+import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table";
+import { MapType, ToastType } from "@/shared/constants";
+import { Product, User } from "@/shared/interfaces";
+import { ServerCrash } from "lucide-react";
+import Image from 'next/image'
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default function Component() {
-  return (
-    <div className="flex flex-col w-full min-h-screen">
-      
-      <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10">
-        <div className="grid md:grid-cols-2 gap-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-              <DollarSignIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">$45,231.89</div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">+20.1% from last month</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Subscriptions</CardTitle>
-              <UsersIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">+2350</div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">+180.1% from last month</p>
-            </CardContent>
-          </Card>
+// Grabs the instance of the ApiConnector Class (Singleton) which connects to the backend endpoints.
+const apiConnectorInstance = ApiConnector.getInstance();
+
+export default function Dashboard() {
+  const [seller, setSeller] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [message, setMessage] = useState<string>("");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [customers, setCustomers] = useState<User[]>([]);
+  const [cities, setCities] = useState<string[]>([]);
+  const router = useRouter();
+
+  // This fetches the seller details and the best selling products when the component mounts
+  useEffect(() => {
+    // Fetch the seller details
+    async function fetchSeller() {
+      const session =  await apiConnectorInstance.getCurrentUserFromSession();
+      const sellerId = session.id;
+      // Now we fetch the seller details from the server using the sellerId.
+      const res = await apiConnectorInstance.getUserFromId(sellerId);
+      if(res.success) {
+        setSeller(res.data);
+        const customerPromises = res.data.roleSpecificData?.myCustomers?.map(async (customerId: string) => {
+          const res = await apiConnectorInstance.getUserFromId(customerId);
+          if(res.success) {
+            return res.data;
+          }
+        });
+        const customerArray = await Promise.all(customerPromises);
+        setCustomers(customerArray);
+      }
+    }
+
+    // Fetch all the listed products.
+    async function fetchAllListedProducts() {
+      const res = await apiConnectorInstance.getProducts({
+        sellerId: seller?.id,
+        limit: 4,
+        bestSelling: true
+      });
+      if(res.success) {
+        console.log(res.data)
+        setProducts(res.data);
+      }
+    }
+
+    async function fetchCustomerCities() {
+      const res = await apiConnectorInstance.fetchAllCustomerCities();
+      setCities(res.data);
+    }
+
+    // Fetch the seller details.
+    Promise.all([simulateCalculationAndDeepAnalysis(),fetchSeller(), fetchAllListedProducts(), fetchCustomerCities()])
+    .finally(() => {
+      setIsLoading(false);
+    });
+
+    // Cleanup function on unmount.
+    return function cleanup() {
+      setSeller(null);
+      setProducts([]);
+      setCustomers([]);
+    }
+  },[]);
+
+  async function simulateCalculationAndDeepAnalysis() {
+    return new Promise<void>((resolve) => {
+    setIsLoading(true)
+    setMessage("Gathering information...");
+  
+    // After a delay of one second, 
+    setTimeout(() => {
+      setMessage("Calculating revenue...");
+  
+      // After another delay of one second, display analyzing sales data.
+      setTimeout(() => {
+        setMessage("Analyzing sales data...");
+  
+        // After another delay of one second, display analyzing customer data.
+        setTimeout(() => {
+          setMessage(" Analyzing customer data...");
+  
+            // After another delay of two seconds, display gathering customer locations.
+            setTimeout(() => {
+              setMessage("Gathering customer locations...");
+  
+              setTimeout(() => {
+                setMessage("Preparing Insights...");
+                // After another delay of two seconds, display finishing up analysis.
+                setTimeout(() => {
+                  setMessage("Finishing up analysis. Exciting insights ahead. Stay tuned!");
+                  // After another delay of one second, resolve the promise.
+                  setTimeout(() => {
+                    resolve();
+                  }, 2000);
+                }, 2000);
+              }, 2000);
+            }, 2000);
+          }, 1500);
+        }, 2000);
+      }, 2000);
+    })
+  }
+
+  // If the order is empty, render the empty order component.
+  if ((!products || !customers || !cities || products.length === 0 || 
+    customers.length === 0 || cities.length === 0)&& !isLoading) {
+    return (
+      <MaxWidthWrapper>
+        <div className="flex justify-center items-center h-[50vh]">
+          <div className="flex flex-col items-center gap-4">
+            <ServerCrash
+              size={80}
+              className="text-dark-3"
+            />
+            <h1 className="font-semibold text-2xl md:text-3xl">
+              {"Not enough data available to get insights at the moment."}
+            </h1>
+            <h1 className="font-semibold text-2xl md:text-3xl">
+              {"Please check back later."}
+            </h1>
+          </div>
         </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Best Selling Products</CardTitle>
-            <CardDescription>{"This month's top selling products by revenue"}</CardDescription>
-          </CardHeader>
-          <CardContent>
+      </MaxWidthWrapper>
+    );
+  }
+
+  return (
+    <MaxWidthWrapper>
+      <LoadingSpinner display={isLoading} message={message} /> 
+      <div className="flex flex-col w-full min-h-screen">
+        <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10">
+          <div className="grid md:grid-cols-2 gap-4">
+            <Card className="bg-inherit border border-orange-200">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">£{seller?.roleSpecificData?.totalRevenue}/-</div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">+20.1% from last month</p>
+              </CardContent>
+            </Card>
+            <Card className="bg-inherit border border-orange-200">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-sm font-medium">Products Sold</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{seller?.roleSpecificData?.productsSold}</div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">in last month</p>
+              </CardContent>
+            </Card>
+          </div>
+          <Card className="bg-inherit border border-orange-200">
+            <CardHeader>
+              <CardTitle>Best Selling Products</CardTitle>
+              <CardDescription>{"This month's top selling products by number"}</CardDescription>
+            </CardHeader>
+            <CardContent>
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              <div className="flex items-center">
-                <img
-                  alt="Thumbnail"
-                  className="rounded-lg"
-                  height="80"
-                  src="/placeholder.svg"
-                  style={{
-                    aspectRatio: "80/80",
-                    objectFit: "cover",
-                  }}
-                  width="80"
-                />
-                <div className="ml-4">
-                  <h3 className="font-semibold">Organic Tomatoes</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Vine-ripened, hand-picked, and absolutely delicious.
-                  </p>
-                </div>
-                <div className="ml-auto font-semibold">$2500</div>
-              </div>
-              <div className="flex items-center">
-                <img
-                  alt="Thumbnail"
-                  className="rounded-lg"
-                  height="80"
-                  src="/placeholder.svg"
-                  style={{
-                    aspectRatio: "80/80",
-                    objectFit: "cover",
-                  }}
-                  width="80"
-                />
-                <div className="ml-4">
-                  <h3 className="font-semibold">Grass-fed Beef</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Lean, tender, and perfect for grilling.</p>
-                </div>
-                <div className="ml-auto font-semibold">$1800</div>
-              </div>
-              <div className="flex items-center">
-                <img
-                  alt="Thumbnail"
-                  className="rounded-lg"
-                  height="80"
-                  src="/placeholder.svg"
-                  style={{
-                    aspectRatio: "80/80",
-                    objectFit: "cover",
-                  }}
-                  width="80"
-                />
-                <div className="ml-4">
-                  <h3 className="font-semibold">Blueberry Bliss Smoothie</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    A refreshing blend of fresh blueberries, Greek yogurt, and honey.
-                  </p>
-                </div>
-                <div className="ml-auto font-semibold">$1250</div>
-              </div>
-              <div className="flex items-center">
-                <img
-                  alt="Thumbnail"
-                  className="rounded-lg"
-                  height="80"
-                  src="/placeholder.svg"
-                  style={{
-                    aspectRatio: "80/80",
-                    objectFit: "cover",
-                  }}
-                  width="80"
-                />
-                <div className="ml-4">
-                  <h3 className="font-semibold">Artisanal Sourdough Bread</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Crispy crust, chewy texture, and the perfect holes.
-                  </p>
-                </div>
-                <div className="ml-auto font-semibold">$950</div>
-              </div>
+              {products.map((product: Product) => (
+                <Card className="flex border-transparent space-x-6 justify-center 
+                  bg-inherit hover:border-orange-300 hover:border-2 hover:scale-105 
+                  transition-all duration-200 transform hover:cursor-pointer" 
+                  key={product.id}
+                >
+                  <CardContent 
+                    className="flex space-x-6 items-center w-full"
+                    onClick={() => router.push(`/products/${product.id}`)}
+                  >
+                    <Image
+                      src={product.image}
+                      alt="Thumbnail"
+                      height={60}
+                      width={60}
+                      className="rounded-full"
+                      objectFit="cover"
+                    />
+                    <div className="flex flex-col space-y-2">
+                      <h3 className="font-semibold">{product.name.slice(0,20).trim()}</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {product.description.slice(0, 60).trim()}...
+                      </p>
+                      <div className="mt-auto font-semibold">£{(product.salePrice * product.soldTillDate).toFixed(2)}</div>
+                      <Badge variant={'outline'} className="w-20 bg-green-300 dark:bg-green-800" > {product.soldTillDate} Sold</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-          </CardContent>
-        </Card>
-        <div className="grid md:grid-cols-2 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Sales Predictions</CardTitle>
-              <CardDescription>Estimated sales for the next quarter</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {/* <LineChart className="w-full aspect-[1.25]" /> */}
             </CardContent>
-          </Card>
-          <Card>
+            </Card>
+            {/** Dynamically render the results after all data is fetched */}
+          {!isLoading && seller && (
+            <>
+              <div className="grid md:grid-cols-2 gap-4">
+                <Card className="bg-inherit border border-orange-200">
+                  <CardHeader>
+                    <CardTitle>Customer Traffic</CardTitle>
+                    <CardDescription> A map showing the geographic distribution of your customers</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <MapRenderer
+                      onDismiss={()=>{}}
+                      containerStyle={{height: '500px', width: '100%'}}
+                      type={MapType.NEARBY_CUSTOMERS}
+                      customCoordinates={cities.map((city: any) => {
+                        console.log({
+                          coordinates: {
+                            lat: city.coordinates.lat as number,
+                            lng: city.coordinates.lng as number
+                          },
+                          userId: city.userId as string
+                        })
+                        return {
+                          coordinates: {
+                            lat: city.coordinates.lat as number,
+                            lng: city.coordinates.lng as number
+                          },
+                          userId: city.userId as string
+                        }
+                      })}
+                    />
+                  </CardContent>
+                </Card>
+                <Card className="bg-inherit border border-orange-200">
+                  <CardHeader>
+                    <CardTitle>Top Customers</CardTitle>
+                    <CardDescription>Customers who have spent the most in your store</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Customer</TableHead>
+                          <TableHead className="text-right">Spent</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {customers.map((customer: User, index) => (
+                          <TableRow key={index}>
+                            <TableCell className="font-medium">{customer.name}</TableCell>
+                            <TableCell className="text-right">£{customer.totalSpent || 0}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              </div>
+            </>
+          )}
+          <Card className="bg-inherit border border-orange-200">
             <CardHeader>
-              <CardTitle>Top Customers</CardTitle>
-              <CardDescription>Customers who have spent the most in your store</CardDescription>
+              <CardTitle>Top Locations</CardTitle>
+              <CardDescription>Cities with the most orders</CardDescription>
             </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Customer</TableHead>
-                    <TableHead className="text-right">Spent</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell className="font-medium">Alice Johnson</TableCell>
-                    <TableCell className="text-right">$250.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">Michael Smith</TableCell>
-                    <TableCell className="text-right">$150.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">Emily Davis</TableCell>
-                    <TableCell className="text-right">$350.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">David Wilson</TableCell>
-                    <TableCell className="text-right">$450.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">Emma Lee</TableCell>
-                    <TableCell className="text-right">$550.00</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </CardContent>
+            {cities.map((city:any) => {
+              return (
+                <CardContent className="grid gap-4" key={city.userId}>
+                  <div className="flex items-center">
+                    <div className="font-semibold">{city.city ?? "N/A"}</div>
+                    {/* <div className="font-semibold ml-auto">{}</div> */}
+                  </div>
+                </CardContent>
+              )
+            })}
           </Card>
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Locations</CardTitle>
-            <CardDescription>Cities with the most orders from your store</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4">
-            <div className="flex items-center">
-              <div>New York</div>
-              <div className="font-semibold ml-auto">3K</div>
-            </div>
-            <div className="flex items-center">
-              <div>Los Angeles</div>
-              <div className="font-semibold ml-auto">1.2K</div>
-            </div>
-            <div className="flex items-center">
-              <div>Chicago</div>
-              <div className="font-semibold ml-auto">1.1K</div>
-            </div>
-          </CardContent>
-        </Card>
-      </main>
-    </div>
-  )
-}
-
-function DollarSignIcon(props:any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="12" x2="12" y1="2" y2="22" />
-      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-    </svg>
-  )
-}
-
-
-
-
-
-function UsersIcon(props:any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    </svg>
+        </main>
+      </div>
+    </MaxWidthWrapper>
   )
 }

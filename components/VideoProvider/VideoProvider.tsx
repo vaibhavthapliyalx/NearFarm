@@ -30,42 +30,58 @@ export default function VideoProvider({className}: IProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   // Array of video file names.
   // These videos are stored in the assets directory.
-  const videos = ['video1.mp4', 'video2.mp4', 'video3.mp4', 'video4.mp4'];
-
-  useEffect(() => {
-    selectRandomVideo();
-  }, []);
-
-  /**
-   * Selects a random video from the videos array.
-   */
-  function selectRandomVideo() {
-    let selectedVideo = videos[Math.floor(Math.random() * videos.length)];
-    // If the selected video is the same as the current video, select a different video
-    while (selectedVideo === randomVideo) {
-      selectedVideo = videos[Math.floor(Math.random() * videos.length)];
-    }
-    setRandomVideo(selectedVideo);
-  };
+  const videos = ['video1.mp4', 'video2.mp4', 'video3.mp4'];
 
   /**
    * Handles the video end event.
    * When the video ends, a new random video is selected.
    */
   const handleVideoEnd = () => {
-    selectRandomVideo();
-    if (videoRef.current) {
-      videoRef.current.load();
-    }
+    selectRandomVideo((selectedVideo) => {
+      if (videoRef.current) {
+        const source = videoRef.current.getElementsByTagName('source')[0];
+        source.src = `/assets/videos/farming/${selectedVideo}`;
+        videoRef.current.load();
+        videoRef.current.onloadeddata = () => {
+          videoRef.current?.play();
+        };
+      }
+    });
   };
 
+  /**
+   * Selects a random video from the videos array.
+   * 
+   * @param callback The callback function to be called after selecting the video.
+   */
+  function selectRandomVideo(callback: (selectedVideo: string) => void) {
+    if (videos.length === 1) {
+      callback(videos[0]);
+      return;
+    }
+    let selectedVideo = videos[Math.floor(Math.random() * videos.length)];
+    // If the selected video is the same as the current video, select a different video
+    while (selectedVideo === randomVideo) {
+      selectedVideo = videos[Math.floor(Math.random() * videos.length)];
+    }
+    setRandomVideo(selectedVideo);
+    callback(selectedVideo);
+  };
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.load();
+      videoRef.current.play();
+    }
+  }, [randomVideo]);
+  
   /***************************** Render Function *****************/
   return (
     <video 
       ref={videoRef}
       className={className}
       preload='auto'
-      autoPlay  
+      autoPlay
+      controls={false}
       muted
       onEnded={handleVideoEnd}
       style={{

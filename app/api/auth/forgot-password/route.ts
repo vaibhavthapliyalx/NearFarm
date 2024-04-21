@@ -6,7 +6,7 @@ import { encrypt, generateRandomString } from "@/lib/utilityfunctions";
 import { ForgotPasswordPayload } from "@/shared/interfaces";
 import { NextRequest, NextResponse } from "next/server";
 import { render } from "@react-email/render";
-import ForgotPasswordEmail from "@/app/emails/forgot-password.email";
+import ForgotPasswordEmail from "@/components/emails/forgot-password.email";
 import { sendEmail } from "@/lib/nodemailer/mail";
 import { connectDB } from "@/lib/database";
 

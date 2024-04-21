@@ -2,8 +2,12 @@
 const nextConfig = {
   images: {
     domains: [
+      // Google image domains (for Google Sign-In profile image)
       'lh3.googleusercontent.com',
-      'www.bigbasket.com'
+      // Product image domain (for BigBasket product images used in the app)
+      'www.bigbasket.com',
+      // Image server domain (for images uploaded into the app)
+      'utfs.io'
     ],
   },
   // Here we are disabling eslint validation during build,

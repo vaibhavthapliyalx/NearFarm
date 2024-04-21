@@ -3,6 +3,17 @@
  */
 
 /**
+ * @enum The type of user role.
+ * 
+ * @property {string} CONSUMER - The consumer role.
+ * @property {string} FARMER - The farmer role.
+ */
+export enum UserRole {
+  CONSUMER = "consumer",
+  FARMER = "farmer",
+}
+
+/**
  * @enum The navigation links for the navbar.
  */
 export const NavbarLinks = [
@@ -10,26 +21,31 @@ export const NavbarLinks = [
     imgURL: "/assets/icons/home.svg",
     route: "/",
     label: "Home",
+    role: [UserRole.CONSUMER, UserRole.FARMER],
   },
   {
     imgURL: "/assets/icons/search.svg",
     route: "/products",
     label: "Products",
+    role: [UserRole.CONSUMER, UserRole.FARMER],
   },
   {
-    imgURL: "/assets/icons/heart.svg",
-    route: "/activity",
-    label: "Activity",
+    imgURL: "/assets/icons/dashboard-dark.svg",
+    route: "/dashboard",
+    label: "Dashboard",
+    role: [UserRole.FARMER],
   },
   {
     imgURL: "/assets/icons/cart.svg",
     route: "/cart",
     label: "Cart",
+    role: [UserRole.CONSUMER, UserRole.FARMER],
   },
   {
     imgURL: "/assets/icons/user.svg",
     route: "/profile",
     label: "Profile",
+    role: [UserRole.CONSUMER, UserRole.FARMER],
   },
 ];
 
@@ -59,8 +75,8 @@ export enum ProductDetailsPageTabType {
  * @const The navigation links for profile page tabs.
  */
 export const profilePageTabs = [
-  { value: ProfilePageTabType.REVIEWS, label: "My Reviews" },
-  { value: ProfilePageTabType.ORDERS, label: "My Orders" },
+  { value: ProfilePageTabType.REVIEWS, label: "Reviews I've Written" },
+  { value: ProfilePageTabType.ORDERS, label: "Orders I've Placed" },
   // { value: "tagged", label: "Tagged", icon: "/assets/tag.svg" },
 ];
 
@@ -132,17 +148,6 @@ export enum ProviderType {
 }
 
 /**
- * @enum The type of user role.
- * 
- * @property {string} CONSUMER - The consumer role.
- * @property {string} FARMER - The farmer role.
- */
-export enum UserRole {
-  CONSUMER = "consumer",
-  FARMER = "farmer",
-}
-
-/**
  * @enum The authentication status of the user.
  * 
  * @property {string} AUTHENTICATED - The user is authenticated.
@@ -200,6 +205,7 @@ export enum OrderMethod {
  * @property {string} DELIVERED - The order is delivered.
  * @property {string} RETURNED - The order is returned.
  * @property {string} REFUNDED - The order is refunded.
+ * @property {string} IN_TRANSIT - The order is in transit.
  * @property {string} COMPLETED - The order is completed.
  */
 export enum OrderStatus {
@@ -209,27 +215,8 @@ export enum OrderStatus {
   DELIVERED = "Delivered",
   RETURNED = "Returned",
   REFUNDED = "Refunded",
+  IN_TRANSIT = "In Transit",
   COMPLETED = "Completed",
-}
-
-/**
- * @enum The permissions of the user.
- * 
- * @property {string} LIST_PRODUCTS - The permission to list products.
- * @property {string} EDIT_LISTINGS - The permission to edit listings.
- * @property {string} DELETE_LISTINGS - The permission to delete listings.
- * @property {string} VIEW_ORDERS - The permission to view orders.
- * @property {string} EDIT_ORDERS - The permission to edit orders.
- * @property {string} DELETE_ORDERS - The permission to delete orders.
- */
-export const Permissions = {
-  LIST_PRODUCTS: "listProducts",
-  EDIT_LISTINGS: "editListings",
-  DELETE_LISTINGS: "deleteListings",
-  VIEW_ORDERS: "viewOrders",
-  EDIT_ORDERS: "editOrders",
-  DELETE_ORDERS: "deleteOrders",
-  MANAGE_USERS: "manageUsers",
 }
 
 /**
@@ -274,22 +261,15 @@ export enum LikeAction {
   LIKE,
   UNLIKE
 }
-// Pseudo-code authorization middleware
-// function checkPermission(user: User, permission: string): boolean {
-//   // Get the user's role and check if it has the required permission
-//   switch (user.role) {
-//     case UserRole.FARMER:
-//       return permission === Permissions.ADD_PRODUCT || permission === Permissions.EDIT_PRODUCT;
-//     case UserRole.ADMIN:
-//       return permission === Permissions.VIEW_ORDERS;
-//     case UserRole.CUSTOMER:
-//       return permission === Permissions.PLACE_ORDER;
-//     default:
-//       return false; // Unknown role
-//   }
-// }
 
-// // Example usage
-// const loggedInUser: User = /* Fetch user from authentication */;
-// const canAddProduct = checkPermission(loggedInUser, Permissions.ADD_PRODUCT);
-// console.log(`Can add product? ${canAddProduct}`); // Output: Can add product? true
+/**
+ * @enum The type of map.
+ * 
+ * @property {string} SELLER_LOCATION - The seller location map.
+ * @property {string} CUSTOMER_TRAFFIC - The customer traffic map.
+ */
+export enum MapType {
+  NEARBY_SELLERS = "farmer",
+  NEARBY_CUSTOMERS = "customer"
+}
+

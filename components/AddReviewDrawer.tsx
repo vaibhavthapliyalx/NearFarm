@@ -27,15 +27,17 @@ import RateStars from "./RateStars";
 // Interface for the props of the component.
 interface IProps {
   onReviewSubmit: (formInput: z.infer<typeof reviewValidation>) => void;
+  disabled: boolean;
 }
 
 /**
  * This function renders the AddReviewDrawer component.
  *
  * @param onReviewSubmit The function to submit the review.
+ * @param disabled The flag to disable the button.
  * @returns The rendered AddReviewDrawer component.
  */
-export default function AddReviewDrawer({ onReviewSubmit }: IProps) {
+export default function AddReviewDrawer({ onReviewSubmit, disabled }: IProps) {
   // State variables.
   const [open, setOpen] = useState(false);
 
@@ -116,6 +118,7 @@ export default function AddReviewDrawer({ onReviewSubmit }: IProps) {
               e.stopPropagation();
               setOpen(true);
             }}
+            disabled={disabled}
           >
             Write a review
           </Button>

@@ -32,11 +32,21 @@ export default function MobileNav({ user }: IProps) {
   // Keeps tracks of current page being active.
   let isActive = false;
 
+  // Now we dynamically render the nav items based on the user's role.
+  const visibleLinks = NavbarLinks.filter(link => 
+    link.label === "Home" || 
+    link.label === "Products" ||
+    link.label === "Profile" ||
+    link.label === "Cart" ||
+    (user && link.role.includes(user.role))
+  );
+
+
   /************************* Render Function **********************/
   return (
     <section className='fixed bottom-0 z-10 w-full rounded-t-3xl bg-gray-50 dark:bg-inherit p-4 backdrop-blur-lg xs:px-7 lg:hidden'>
       <div className='flex items-center justify-between gap-3 xs:gap-5'>
-        {NavbarLinks.map((item) => {
+        {visibleLinks.map((item) => {
           isActive =
           (pathname.includes(item.route) && item.route.length > 1) || pathname === item.route;
           let children = null;

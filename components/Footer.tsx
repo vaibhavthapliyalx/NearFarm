@@ -133,7 +133,8 @@ export default function Footer() {
       {/* Footer text */}
       <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
         <p>Thank you for visiting NearFarm! We are committed to providing you with the best experience.</p>
-        <p>If you have any questions or feedback, feel free to reach out to our support team at support@nearfarm.com.</p>
+        <p>If you encounter any issues, please report them to us by clicking on the report issue link below.</p>
+        <br/>
         <p>Stay updated with the latest news and updates by following us on social media:</p>
       </div>
       {/* Copyright */}
@@ -146,13 +147,19 @@ export default function Footer() {
       <div className='sm:flex sm:items-center sm:justify-between'>
         <ul className="flex  items-center justify-start text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
           <li>
-            <a href="#" className="hover:underline me-4 md:me-6">Changelog</a>
+            <a href="https://github.com/vaibhavthapliyalx/NearFarm/releases" className="hover:underline me-4 md:me-6">Releases</a>
           </li>
           <li>
-            <a href="#" className="hover:underline me-4 md:me-6">Privacy Policy</a>
+            <a href="https://utfs.io/f/9020d4d0-5be3-49b0-a630-6c16485b6242-1yb1t7.pdf" className="hover:underline me-4 md:me-6">Privacy Policy</a>
           </li>
           <li>
-            <a href="#" className="hover:underline me-4 md:me-6">Licensing</a>
+            <a href="https://github.com/vaibhavthapliyalx/NearFarm" className="hover:underline me-4 md:me-6">Licensing</a>
+          </li>
+          <li>
+            <a href='https://github.com/vaibhavthapliyalx/NearFarm/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=' className='hover:underline me-4 md:me-6'>Report Issue</a>
+          </li>
+          <li>
+            <a href='https://github.com/vaibhavthapliyalx/NearFarm/issues/new?assignees=&labels=&projects=&template=feature_request.md&title=' className='hover:underline me-4 md:me-6'>Request Feature</a>
           </li>
         </ul>
           {/* Social media links */}

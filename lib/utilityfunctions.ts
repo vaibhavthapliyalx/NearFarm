@@ -7,6 +7,7 @@ import { type ClassValue, clsx } from "clsx";
 import { randomBytes } from 'crypto';
 import { twMerge } from "tailwind-merge";
 import Cryptr from "cryptr";
+import { Location } from "@/shared/interfaces";
 
 /**
  * This function merges the classes using the clsx and tailwind-merge libraries.
@@ -140,4 +141,35 @@ export function getStars(rating: number) {
     }
   }
   return stars;
+}
+
+/**
+ * This function calculates the distance between two coordinates.
+ * 
+ * @param p1  The first location
+ * @param p2  The second location
+ * @returns  The distance between the two locations in meters
+ * 
+ * @source https://www.movable-type.co.uk/scripts/latlong.html
+ * @reference https://en.wikipedia.org/wiki/Haversine_formula
+ * 
+ * This function uses the Haversine formula to calculate the distance between two coordinates.
+ * It uses the formula d = R * c, where R is the radius of the Earth and c is the central angle.
+ * then it calculates the central angle using the formula a = sin²(Δφ/2) + cos φ1 ⋅ cos φ2 ⋅ sin²(Δλ/2)
+ * and the distance using the formula c = 2 ⋅ atan2( √a, √(1−a) )
+ */
+export function calculateDistanceBetweenTwoCoordinates(p1: Location, p2: Location): number{
+  const R = 6371e3; // metres
+  const φ1 = p1.lat * Math.PI / 180; // φ, λ in radians
+  const φ2 = p2.lat * Math.PI / 180;
+  const Δφ = (p2.lat - p1.lat) * Math.PI / 180;
+  const Δλ = (p2.lng - p1.lng) * Math.PI / 180;
+
+  const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+    Math.cos(φ1) * Math.cos(φ2) *
+    Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  const d = R * c;
+  return d;
 }

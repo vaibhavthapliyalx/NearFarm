@@ -89,7 +89,6 @@ export default function OrdersTable({userId}: IProps) {
     );
   }
 
- 
   /******************** Render Function *****************/
   return (
     <MaxWidthWrapper>
@@ -99,9 +98,9 @@ export default function OrdersTable({userId}: IProps) {
             <TableHeader>
               <TableRow className="m-4">
                 <TableHead className="p-4"> Order #</TableHead>
-                <TableHead className="p-4"> Placed </TableHead>
+                <TableHead className="p-4"> Placed On </TableHead>
                 <TableHead className="p-4"> Status </TableHead>
-                <TableHead className="p-4"> Updated </TableHead>
+                <TableHead className="p-4"> Last Updated </TableHead>
                 <TableHead className="p-4"> Items </TableHead>
                 <TableHead className="p-4"> Total </TableHead>
               </TableRow>
