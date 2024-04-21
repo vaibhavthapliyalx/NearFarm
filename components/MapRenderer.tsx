@@ -81,6 +81,7 @@ export default function MapRenderer({onDismiss, containerStyle, type, customCoor
       }
     } else {
       setLocations(customCoordinates || []);
+      setIsLoading(false);
     }
     // Cleanup function.
     return function cleanup() {
@@ -90,7 +91,7 @@ export default function MapRenderer({onDismiss, containerStyle, type, customCoor
   }, [customCoordinates]);
 
   // If the map is still loading, show a loading message.
-  if (isLoading) {
+  if (isLoading && !isLoaded) {
     return (
       <div className="flex justify-center items-center h-[50vh]">
         <p>Loading...</p>
