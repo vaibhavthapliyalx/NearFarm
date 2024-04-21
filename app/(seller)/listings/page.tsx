@@ -36,18 +36,8 @@ export default function Listings() {
     setLoading(true);
     try {
       const session = await apiConnectorInstance.getCurrentUserFromSession();
-      const response = await apiConnectorInstance.getUserFromId(session.id);
-      const listingIds = response.data.roleSpecificData?.myProducts;
-      // If the user has no listings, then return.
-      if(!listingIds) {
-        setLoading(false);
-        return;
-      }
-      if(!listingIds) return;
-      const listingsPromises = listingIds.map((id: string) => apiConnectorInstance.getProducts({id: id}));
-      const listings = await Promise.all(listingsPromises);
-      const listingsData = listings.map(listing => listing.data[0]);
-      setListings(listingsData);
+      const listings = await apiConnectorInstance.getProducts({sellerId: session.id});
+      setListings(listings.data);
     } catch (error) {
       console.error(error);
       toast({
@@ -75,7 +65,7 @@ export default function Listings() {
   }, []);
 
   // If there are no listings, then display this message.
-  if (!listings || listings.length === 0 && !loading) {
+  if ((!listings || listings.length === 0) && !loading) {
     return (
       <MaxWidthWrapper>
         <div className="flex justify-center items-center h-[50vh]">

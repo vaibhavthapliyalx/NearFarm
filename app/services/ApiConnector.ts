@@ -510,6 +510,56 @@ export default class ApiConnector {
     })
   }
 
+  async getSellerListings(sellerId: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/product', { 
+        params: {
+          sellerId: sellerId,
+        },
+      })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          const products: Product[] = 
+          response.data.map((prod: any) => {
+            return {
+              id: prod._id,
+              name: prod.name,
+              description: prod.description,
+              salePrice: prod.sale_price,
+              marketPrice: prod.market_price,
+              quantity: prod.quantity,
+              image: prod.image_url ? prod.image_url : prod.catalogue[0],
+              catalogue: prod.catalogue,
+              sellerId: prod.seller_id,
+              availableFrom: prod.available_from,
+              listedAt: prod.listed_at,
+              collectionAddress: prod.collection_address,
+              category: prod.category,
+              notes: prod.notes, 
+              rating: prod.rating,
+              soldTillDate: prod.soldTillDate
+            }
+          });
+          response.data = products;
+          resolve(response);
+        }
+      })
+      .catch((error: any) => {
+        reject({
+          status: 500,
+          body: {
+            success: false,
+            message: 'An error occurred while fetching the products',
+            error: error
+          }
+        });
+      });
+    });
+  }
+
   /**
    *  This function send a GET request to search for products with the name provided.
    * 
