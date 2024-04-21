@@ -38,8 +38,6 @@ interface IProps {
  * @returns The rendered map component.
  */
 export default function MapRenderer({onDismiss, containerStyle, type, customCoordinates}: IProps) {
-  console.log("Look below")
-  console.log(customCoordinates);
   const [currentLocation, setCurrentLocation] = useState<Location>();
   const [locations, setLocations] = useState<UserLocation[]>(customCoordinates || []);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,7 +53,6 @@ export default function MapRenderer({onDismiss, containerStyle, type, customCoor
   useEffect(() => {
     async function fetchCurrentLocation() {
       const location = await mapApiInstance.getCurrentLocation();
-      console.log(location);
       setCurrentLocation({
         lat: location.coords.latitude,
         lng: location.coords.longitude
@@ -67,9 +64,7 @@ export default function MapRenderer({onDismiss, containerStyle, type, customCoor
      */
     async function fetchCoordinates() {
       const response = await apiConnectorInstance.fetchAllSellerLocations();
-      console.log(response);
       if (!response.success) {
-        console.log(response.message)
         return;
       } 
       setLocations(response.data);

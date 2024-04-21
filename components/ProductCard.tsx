@@ -71,7 +71,6 @@ export default function ProductCard({ product }: IProps) {
     }
     apiConnectorInstance.addItemToCart(cartItem)
     .then((response) => {
-      console.log(response);
       toast({
         title: "Success",
         description: response.message,

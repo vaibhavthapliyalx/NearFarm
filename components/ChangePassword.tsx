@@ -73,8 +73,6 @@ export function ChangePasswordDrawer( {user, setLoadingMessage, displaySpinner}:
    * @returns void
    */
   async function onSumbit(formData: any) {
-    console.log("Form submitted")
-    console.log(formData);
     // Close the drawer.
     setOpen(false);
     // Display the loading spinner.
