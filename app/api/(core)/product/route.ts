@@ -180,7 +180,6 @@ export async function POST(request: NextRequest) {
       },
       { upsert: true }
     );
-    console.log(sellerUpdated);
     
     if(!product || !sellerUpdated) {
       return NextResponse.json({

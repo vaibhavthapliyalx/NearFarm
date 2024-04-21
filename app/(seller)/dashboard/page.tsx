@@ -44,8 +44,6 @@ export default function Dashboard() {
         setSeller(res.data);
         const customerPromises = res.data.roleSpecificData?.myCustomers?.map(async (customerId: string) => {
           const res = await apiConnectorInstance.getUserFromId(customerId);
-          const resw = await apiConnectorInstance.fetchAllCustomerCities();
-          console.log(resw)
           if(res.success) {
             return res.data;
           }
@@ -73,12 +71,11 @@ export default function Dashboard() {
       setCities(res.data);
     }
 
-
-      // Fetch the seller details.
-      Promise.all([simulateCalculationAndDeepAnalysis(),fetchSeller(), fetchAllListedProducts(), fetchCustomerCities()])
-      .finally(() => {
-        setIsLoading(false);
-      });
+    // Fetch the seller details.
+    Promise.all([simulateCalculationAndDeepAnalysis(),fetchSeller(), fetchAllListedProducts(), fetchCustomerCities()])
+    .finally(() => {
+      setIsLoading(false);
+    });
 
     // Cleanup function on unmount.
     return function cleanup() {

@@ -21,9 +21,14 @@ const apiConnectorInstance = ApiConnector.getInstance();
 // Grabs the instance of the MapApi Class (Singleton) which connects to the Google Maps API.
 const mapApiInstance = MapApi.getInstance();
 
+/**
+ * This function renders the NearbySellers component.
+ * 
+ * @returns The rendered NearbySellers component.
+ */
 export default function NearbySellers() {
   const [sellers, setSellers] = useState<{ seller: User; location: string; distance: number}[]>([]);
-
+  const [isLoading, setIsLoading] = useState(true);
   // Get the router instance.
   const router = useRouter();
 
@@ -53,6 +58,8 @@ export default function NearbySellers() {
             }
           } catch (error) {
             console.error('Error fetching seller or current location:', error);
+          } finally {
+            setIsLoading(false);
           }
         });
         const sellerResults = await Promise.all(sellerPromises);
@@ -71,6 +78,25 @@ export default function NearbySellers() {
     }
   }, []);
 
+  /**
+   * If there are no sellers or the sellers array is empty and the data is not loading,
+   * display a message indicating that no nearby sellers were found.
+   * This is a fallback UI in case the data is not available.
+   */
+  if (!sellers || sellers.length === 0 && !isLoading) {
+    return (
+      <Card className="bg-inherit border border-orange-200 mt-6">
+        <CardHeader>
+          <CardTitle>Nearby Farmers</CardTitle>
+          <CardDescription>View products from farmers in your local area.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-center text-lg font-medium">No nearby sellers found.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   /********************** Render Function *******************/
   return (
     <Card className="bg-inherit border border-orange-200 mt-6">
@@ -79,6 +105,9 @@ export default function NearbySellers() {
         <CardDescription>View products from farmers in your local area.</CardDescription>
       </CardHeader>
       <CardContent>
+        {isLoading && (
+          <p className="text-center text-lg font-medium">Loading nearby sellers...</p>
+        )}
         {sellers.map((item) => (
           <div className=" gap-6 mb-4" key={item.seller.id}>
             <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4">

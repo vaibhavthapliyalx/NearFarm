@@ -138,7 +138,6 @@ export default function AddProduct() {
         form.setValue("category", product.category);
         form.setValue("notes", product.notes);
       }
-      console.log(res);
     }
     fetchProductData();
   }, [edit, listingId]);

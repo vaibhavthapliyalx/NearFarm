@@ -42,7 +42,6 @@ export default function Login() {
   // This logic is handled in the middleware.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    console.log(params.get('error'));
     const message = params.get('error');
     if (message) {
       // Display toast after 500ms to avoid SSR issues.
@@ -66,11 +65,6 @@ export default function Login() {
     setIsLoading(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-
     const userData = {} as User;
     userData.email = data.get('email') as string;
     userData.password = data.get('password') as string;

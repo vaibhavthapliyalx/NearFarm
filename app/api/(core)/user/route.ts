@@ -48,7 +48,6 @@ export async function GET( request: NextRequest ) {
     }
 
     if (returnPayload === 'city' && role === UserRole.CONSUMER) {
-      console.log('Fetching city of all consumers');
       const users = await User.find({ role: role, contactDetails: { $exists: true } });
       const mapApiInstance = MapApiService.getInstance();
       // Convert the addresses to coordinates and then to city.

@@ -275,7 +275,7 @@ export default function ProductsPage({searchParams}: IProps) {
                 </FormItem>
               )}
             />
-            <Button type="submit" variant="default" onClick={()=>console.log(form.formState.errors)}>Apply Filters</Button>
+            <Button type="submit" variant="default">Apply Filters</Button>
         </form>
       </Form>
     )

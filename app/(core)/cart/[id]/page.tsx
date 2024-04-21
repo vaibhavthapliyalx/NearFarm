@@ -71,7 +71,6 @@ export default function CartPage({params}: IProps) {
    * @param productId The id of the product.
    */
   function onQuantityChange(quantity: number, productId: string) {
-    console.log('Updating quantity:', quantity, 'for product:', productId);
     apiConnectorInstance.updateCartItem(userId, productId ,quantity)
     .then((response) => {
       toast({
