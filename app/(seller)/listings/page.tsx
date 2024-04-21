@@ -20,7 +20,6 @@ import { Frown, Plus } from "lucide-react";
 import LoadingSpinner from "@/components/LoadingAnimations/LoadingSpinner";
 import { useToast } from "@/components/ui/use-toast";
 import { ToastType } from "@/shared/constants";
-import { set } from "mongoose";
 
 const apiConnectorInstance = ApiConnector.getInstance();
 
@@ -35,21 +34,29 @@ export default function Listings() {
    */
   async function fetchData() {
     setLoading(true);
-    const session = await apiConnectorInstance.getCurrentUserFromSession();
-    const response = await apiConnectorInstance.getUserFromId(session.id);
-    const listingIds = response.data.roleSpecificData?.myProducts;
-    // If the user has no listings, then return.
-    if(!listingIds) return;
-    const listingsPromises = listingIds.map((id: string) => apiConnectorInstance.getProducts({id: id}));
-    const listings = await Promise.all(listingsPromises);
-    const listingsData = listings.map(listing => listing.data[0]);
-    setListings(listingsData);
-    setLoading(false);
+    try {
+      const session = await apiConnectorInstance.getCurrentUserFromSession();
+      const listings = await apiConnectorInstance.getProducts({sellerId: session.id});
+      setListings(listings.data);
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: "An error occurred while fetching the data. Please try again later.",
+        variant: ToastType.DESTRUCTIVE,
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
   // On component mount, fetch the data.
   useEffect(() => {
-    fetchData();
+    try {
+     fetchData();
+    } finally {
+      setLoading(false);
+    }
     // Cleanup function.
     return function cleanup() {
       setListings([]);
@@ -58,7 +65,7 @@ export default function Listings() {
   }, []);
 
   // If there are no listings, then display this message.
-  if (!listings || listings.length === 0 && !loading) {
+  if ((!listings || listings.length === 0) && !loading) {
     return (
       <MaxWidthWrapper>
         <div className="flex justify-center items-center h-[50vh]">
@@ -146,7 +153,6 @@ export default function Listings() {
         <div className="flex justify-between items-center">
           <div className="text-2xl font-semibold">Estimated Revenue: £{(listings.reduce((acc, item) => acc + item.salePrice * item.quantity, 0)).toFixed(2)} /-</div>
           <Button className="ml-auto" size="lg" onClick={()=>{
-            setLoading(true);
             router.push("/listings/create")
           }}>
             <Plus size={24} className="mr-2" />
