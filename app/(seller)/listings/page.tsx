@@ -44,12 +44,15 @@ export default function Listings() {
     const listings = await Promise.all(listingsPromises);
     const listingsData = listings.map(listing => listing.data[0]);
     setListings(listingsData);
-    setLoading(false);
   }
 
   // On component mount, fetch the data.
   useEffect(() => {
-    fetchData();
+    try {
+     fetchData();
+    } finally {
+      setLoading(false);
+    }
     // Cleanup function.
     return function cleanup() {
       setListings([]);
