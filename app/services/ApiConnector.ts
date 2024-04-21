@@ -8,7 +8,7 @@ import axios from "axios";
 import { getSession, signIn, signOut } from "next-auth/react";
 import { ApiResponse, CartItem, ChangePasswordPayload, Order, OrderItem, Product, QueryParams, ResetPasswordPayload, Review, User } from "../../shared/interfaces";
 import type { NextApiRequest } from "next";
-import { LikeAction, OrderStatus, ProviderType } from "@/shared/constants";
+import { LikeAction, OrderStatus, ProviderType, UserRole } from "@/shared/constants";
 import qs from "qs";
 
 /**
@@ -177,8 +177,8 @@ export default class ApiConnector {
           } else {
             // Sign in the user.
             signIn(provider, {
-              id: response._id,
-              email: data.email,
+              id: response.data._id,
+              email: response.data.email,
               password: data.password,
               callbackUrl: "/",
               redirect: true
@@ -458,6 +458,8 @@ export default class ApiConnector {
         params: {
           id: queryParams.id,
           name: queryParams.name,
+          sellerId: queryParams.sellerId,
+          bestSelling: queryParams.bestSelling,
           sortByPriceOrder: queryParams.sortByPriceOrder,
           sortByRatingOrder: queryParams.sortByRatingOrder,
           sortByNearestLocation: queryParams.sortByNearestLocation,
@@ -486,14 +488,16 @@ export default class ApiConnector {
               salePrice: prod.sale_price,
               marketPrice: prod.market_price,
               quantity: prod.quantity,
-              image: prod.image_url,
+              image: prod.image_url ? prod.image_url : prod.catalogue[0],
+              catalogue: prod.catalogue,
               sellerId: prod.seller_id,
               availableFrom: prod.available_from,
               listedAt: prod.listed_at,
               collectionAddress: prod.collection_address,
               category: prod.category,
               notes: prod.notes, 
-              rating: prod.rating
+              rating: prod.rating,
+              soldTillDate: prod.soldTillDate
             }
           });
           response.data = products;
@@ -565,7 +569,9 @@ export default class ApiConnector {
         marketPrice: product.marketPrice,
         quantity: product.quantity,
         image: product.image,
+        catalogue: product.catalogue,
         sellerId: product.sellerId,
+        rating: product.rating,
         availableFrom: product.availableFrom,
         collectionAddress: product.collectionAddress,
         category: product.category,
@@ -656,6 +662,7 @@ export default class ApiConnector {
     return new Promise<ApiResponse>((resolve, reject) => {
       axios.post('/api/cart', {
         userId: cartItem.userId,
+        sellerId: cartItem.sellerId,
         productId: cartItem.productId,
         quantity: cartItem.quantity,
         name: cartItem.name,
@@ -766,6 +773,7 @@ export default class ApiConnector {
         orderItems: orderItems
       })
       .then((res: any) => {
+        console.log(res);
         const response = res.data.body;
         const order: Order = {
           id: response.data._id,
@@ -784,6 +792,7 @@ export default class ApiConnector {
         }
       })
       .catch((result: any) => {
+        console.log(result);
         reject(result.response.data);
       });
     });
@@ -1051,4 +1060,128 @@ export default class ApiConnector {
       });
     });
   }
+
+  /**
+   * This function sends a POST request to the server to apply pre-processing to an image.
+   * The purpose of pre-processing is to resize and compress the image to the target width and height.
+   * This solves the issue of irregular image sizes and speeds up the loading time of the image.
+   * This also fixes a bug where the larger image size overrides the container size in some devices.
+   * 
+   * @param imageUrl - The url of the image.
+   * @param targetWidth - The target width of the image.
+   * @param targetHeight - The target height of the image.
+   * @returns Promise<ApiResponse> - The promise resolves if the pre-processing is applied successfully, otherwise it rejects.
+   */
+  async applyPreProcessingToImage(imageUrl: any, targetWidth: number, targetHeight: number) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.post('/api/image/preprocess', {
+        imageUrl: imageUrl,
+        targetWidth: targetWidth,
+        targetHeight: targetHeight 
+      })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+  
+  /**
+   * This function sends a GET request to the server to get the orders placed by the user.
+   * 
+   * @param sellerId  - The id of the seller.
+   * @returns Promise<ApiResponse> - The promise resolves if the orders are fetched successfully, otherwise it rejects.
+   */
+  async getOrdersForSeller(sellerId: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/order', { params: { sellerId: sellerId } })
+      .then((res: any) => {
+        const response = res.data.body;
+        const orders: Order[] = response.data.map((order: any) => {
+          return {
+            id: order._id,
+            userId: order.userId,
+            items: order.items,
+            status: order.status,
+            orderTotal: order.orderTotal,
+            placedAt: order.placedAt,
+            updatedAt: order.updatedAt
+          }
+        });
+        response.data = orders;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a GET request to the server to get the orders placed by the user.
+   * 
+   * @param sellerId  - The id of the seller.
+   * @returns Promise<ApiResponse> - The promise resolves if the orders are fetched successfully, otherwise it rejects.
+   */
+  async fetchAllSellerLocations() {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/user',{
+        params:{
+          role: UserRole.FARMER,
+          query: "location",
+        }
+      })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a GET request to the server to get the orders placed by the user.
+   * 
+   * @param sellerId  - The id of the seller.
+   * @returns Promise<ApiResponse> - The promise resolves if the orders are fetched successfully, otherwise it rejects.
+   */
+  async fetchAllCustomerCities() {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/user',{
+        params:{
+          role: UserRole.CONSUMER,
+          query: "city",
+        }
+      })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
 }

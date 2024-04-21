@@ -56,7 +56,6 @@ export async function POST(request: NextRequest) {
       userName: body.userName,
       rating: body.rating,
       review: body.review,
-      reviewedAt: body.reviewedAt,
       likes: body.likes
     };
 

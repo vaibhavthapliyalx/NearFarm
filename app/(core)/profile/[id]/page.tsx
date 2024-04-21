@@ -92,15 +92,13 @@ export default function UserProfile({params}: any) {
                 <div className='flex flex-col w-full p-8 gap-6 justify-center items-center'>
                   {reviews.length === 0 ? (
                       // If the cart is empty, render the empty cart component.
-                      <div className=" mt-10">
-                        <div className=" items-center gap-4">
-                        <Frown 
-                          size={50} 
-                        />
-                          <h1 className="font-semibold text-2xl md:text-3xl">
-                            {"You haven't written any reviews yet."}
-                          </h1>
-                        </div>
+                      <div className="flex flex-col justify-center items-center mt-10 h-full">  
+                      <Frown 
+                        size={50} 
+                      />
+                        <h1 className="font-semibold text-2xl mt-2 md:text-3xl">
+                          {"You haven't written any reviews yet."}
+                        </h1>
                       </div>
                   ) : (
                     // If the cart is not empty, render the cart items.

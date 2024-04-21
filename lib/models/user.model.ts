@@ -3,7 +3,7 @@
  * This model is used to define the user schema and the user model.
  */
 import { UserRole } from '@/shared/constants';
-import mongoose, {Schema, model, models, mongo} from 'mongoose';
+import mongoose, {Schema, model, models } from 'mongoose';
 import CartItemSchema from './cart.model';
 
 const UserSchema = new Schema({
@@ -105,6 +105,11 @@ const UserSchema = new Schema({
   roleSpecificData: {
     type: Schema.Types.Mixed,
     required: false,
+  },
+  totalSpent: {
+    type: Schema.Types.Number,
+    required: false,
+    default: 0,
   }
 });
 

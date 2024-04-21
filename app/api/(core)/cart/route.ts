@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
     await connectDB();
     const body = await request.json();
     const user_id = body.userId;
+    const seller_id = body.sellerId;
     const product_id = body.productId;
     const quantity = body.quantity;
     const name = body.name;
@@ -104,7 +105,8 @@ export async function POST(request: NextRequest) {
     // Update the cart items
     await User.updateOne({ _id: user_id }, { 
       $push: {cart: 
-        {productId: product_id, 
+        {productId: product_id,
+         sellerId: seller_id,
          quantity: quantity, 
          name: name, 
          price: price, 

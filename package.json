@@ -1,6 +1,6 @@
 {
   "name": "nearfarm",
-  "version": "v1.1.1",
+  "version": "v2.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -26,8 +26,10 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.1.5",
     "@react-email/components": "0.0.14",
+    "@react-google-maps/api": "^2.19.3",
     "@uploadthing/react": "^6.2.2",
     "@vercel/analytics": "^1.2.2",
+    "@vercel/speed-insights": "^1.0.10",
     "@vinejs/vine": "^1.7.0",
     "axios": "^1.6.5",
     "bcryptjs": "^2.4.3",
@@ -51,6 +53,7 @@
     "react-dom": "^18.2.0",
     "react-email": "2.0.0",
     "react-hook-form": "^7.50.1",
+    "sharp": "^0.33.3",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "uploadthing": "^6.3.1",

@@ -69,7 +69,6 @@ export default function ProfileHeader({user}: IProps) {
     if (user.id && status === AuthenticationStatus.AUTHENTICATED) {
       apiConnectorInstance.deleteUserAccount(user.id)
       .then((response) => {
-        console.log(response);
         router.push('/login');
       })
       .catch((error) => {

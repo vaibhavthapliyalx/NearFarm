@@ -20,6 +20,6 @@ export const signupValidation = vine.object({
 
 // Validation schema for login route.
 export const loginValidation = vine.object({
-  email: vine.string().email(),
+  email: vine.string(),
   password: vine.string().minLength(8).maxLength(20)
 })

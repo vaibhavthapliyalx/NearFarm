@@ -15,6 +15,7 @@ import { Product, QueryParams } from "@/shared/interfaces";
 import { useEffect, useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import { Button } from "@/components/ui/button"
+import * as DialogPrimitive from "@radix-ui/react-dialog"
 import {
   Drawer,
   DrawerClose,
@@ -28,13 +29,17 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Filter } from "lucide-react";
+import { Filter, Frown, MapPinnedIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ProductCategory, SortByFilter, SortOrder } from "@/shared/constants";
+import { MapType, ProductCategory, SortByFilter, SortOrder } from "@/shared/constants";
 import { Checkbox } from "@/components/ui/checkbox";
 import { filterValidation } from "@/lib/validations/filter.validation";
 import LoadingSpinner from "@/components/LoadingAnimations/LoadingSpinner";
 import { Badge } from "@/components/ui/badge";
+import NearbySellers from "@/components/NearbySellers";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import MapRenderer from "@/components/MapRenderer";
+import { Cross2Icon } from "@radix-ui/react-icons";
 
 // Interface for the props of the ProductsPage component.
 interface IProps {
@@ -43,6 +48,7 @@ interface IProps {
 
 // Grabs the instance of the ApiConnector Class (Singleton) which connects to the backend endpoints.
 const apiConnectorInstance = ApiConnector.getInstance();
+
 
 /**
  * This function renders the products page.
@@ -53,12 +59,18 @@ const apiConnectorInstance = ApiConnector.getInstance();
 export default function ProductsPage({searchParams}: IProps) {
   const [result, setResult] = useState<Product[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // Add a new state variable to track whether the dialog is open
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   // Add a new state variable to keep track of the applied filters
   const [appliedFilters, setAppliedFilters] = useState<string>('');
 
   // Get the search query from the URL.
   const search = searchParams.q;
+
+  // Get the seller ID from the URL.
+  // This is used to fetch the products of a specific seller.
+  const sellerId = searchParams.seller;
 
   // Form validation.
   const form = useForm<z.infer<typeof filterValidation>>({
@@ -80,6 +92,7 @@ export default function ProductsPage({searchParams}: IProps) {
       form.setValue('category', Object.values(ProductCategory));
     }
     apiConnectorInstance.getProducts({
+      sellerId: sellerId,
       name: search,
       page: searchParams.page ? +searchParams.page : 1,
       limit: 12,
@@ -94,6 +107,9 @@ export default function ProductsPage({searchParams}: IProps) {
     .catch((error) => {
       console.error(error);
       setResult([]);
+    })
+    .finally(() => {
+      setIsLoading(false);
     });
 
   return function cleanup() {
@@ -259,7 +275,7 @@ export default function ProductsPage({searchParams}: IProps) {
                 </FormItem>
               )}
             />
-            <Button type="submit" variant="default" onClick={()=>console.log(form.formState.errors)}>Apply Filters</Button>
+            <Button type="submit" variant="default">Apply Filters</Button>
         </form>
       </Form>
     )
@@ -268,7 +284,7 @@ export default function ProductsPage({searchParams}: IProps) {
   /***************** Render Function **************/
   return (
     <MaxWidthWrapper>
-      <LoadingSpinner display={isLoading} message='Finding the best products for you!'/>   
+      <LoadingSpinner display={isLoading} message='Finding the best products for you!'/>
       <div className="flex flex-row mt-4">
         <div className=" flex-col space-y-4 w-full">
           <Searchbar searchType="products"/>
@@ -281,7 +297,7 @@ export default function ProductsPage({searchParams}: IProps) {
         <Drawer open={open} onOpenChange={setOpen}>
           <DrawerTrigger asChild>
             <Button variant={"outline"} className="mt-2" onClick={()=> setOpen(true)}>
-              <Filter className="h-4 w-4" />
+              <Filter className="h-6 w-6" />
             </Button>
           </DrawerTrigger>
           <DrawerContent className={"p-4"}>
@@ -293,12 +309,43 @@ export default function ProductsPage({searchParams}: IProps) {
             </DrawerHeader>
             {renderFilterOptions()}    
             <DrawerFooter className="pt-2">
-            <DrawerClose asChild>
+            <DrawerClose asChild >
               <Button variant="outline">Cancel</Button>
             </DrawerClose>
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
+        <div>
+          <Dialog open={isDialogOpen}>
+            <DialogTrigger>
+              <Button variant={"outline"} className="mt-2 ml-2" onClick={() => setIsDialogOpen(true)}>
+                <MapPinnedIcon className="h-6 w-6" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent 
+              onInteractOutside={()=> setIsDialogOpen(false)}
+              className="w-full h-full max-w-3xl max-h-[80vh]"
+            >
+              <DialogHeader>
+                <DialogTitle>Map</DialogTitle>
+              </DialogHeader>
+              <DialogPrimitive.Close 
+                className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+                onClick={() => setIsDialogOpen(false)}
+              >
+                <Cross2Icon className="h-4 w-4" />
+                <span className="sr-only">Close</span>
+              </DialogPrimitive.Close>
+              <div>
+                <MapRenderer 
+                  onDismiss={() => setIsDialogOpen(false)}
+                  type={MapType.NEARBY_SELLERS}
+                  containerStyle={{width: "45rem", height: '70vh'}}
+                /> 
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
         </div>
         {appliedFilters && (
             <div className="flex flex-col items-center justify-center h-full">
@@ -307,9 +354,24 @@ export default function ProductsPage({searchParams}: IProps) {
             </h1>
           </div>
         )}
-        <div className='mt-14 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-9'>
+        {sellerId && (
+          <div className="flex flex-col items-center justify-center h-full">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mt-20">
+              Showing products sold by the seller
+            </h1>
+          </div>
+        )}
+        <div className='mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-9'>
           {result?.length === 0 ? (
-            <p className='text-center text-base-regular text-light-3'>No Result</p>
+            <div className="col-span-full flex items-center justify-center ">
+            <div className="flex flex-col items-center gap-4">
+              <Frown
+                size={80}
+                className="text-dark-3"
+              />
+              <h1 className="font-semibold text-2xl md:text-3xl"> No products found</h1>
+            </div>
+          </div>
           ) : (
             <>
               {result?.map((product: Product) => (
@@ -326,6 +388,7 @@ export default function ProductsPage({searchParams}: IProps) {
           page={searchParams.page ? +searchParams.page : 1}
           totalPages={totalPages}
         />
+        <NearbySellers/>  
     </MaxWidthWrapper>
   );
 }

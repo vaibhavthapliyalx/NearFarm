@@ -13,6 +13,8 @@ import ApiConnector from '@/app/services/ApiConnector';
 import { useToast } from './ui/use-toast';
 import { ToastType } from '@/shared/constants';
 import { ToastAction } from './ui/toast';
+import { isObjectEmpty } from '@/lib/utilityfunctions';
+import { useSession } from 'next-auth/react';
 
 // Interface for the props of the ProductCard component.
 interface IProps {
@@ -33,17 +35,34 @@ export default function ProductCard({ product }: IProps) {
   // Get the router instance.
   const router = useRouter();
 
+  // Grabs the user session.
+  const {data: session} = useSession();
+
   /**
    * This function is called when the user clicks on the add to cart button.
    * This adds the product to the user's cart.
    * 
    * @param e The click event object.
    */
-  async function onAddToCartClick(e: React.MouseEvent<HTMLButtonElement>) {
+  function onAddToCartClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
-    const user = await apiConnectorInstance.getCurrentUserFromSession();
+    if (!session || isObjectEmpty(session)) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to add items to cart.",
+        variant: ToastType.DESTRUCTIVE,
+        action: <ToastAction 
+          altText='Login' 
+          onClick={() =>router.push("/login")}
+        > 
+          Login 
+        </ToastAction>
+      });
+      return;
+    }
     const cartItem: CartItem = {
-      userId: user.id,
+      userId: session?.user?.id as string,
+      sellerId: product.sellerId,
       productId: product.id as string,
       quantity: 1,
       name: product.name,
@@ -52,7 +71,6 @@ export default function ProductCard({ product }: IProps) {
     }
     apiConnectorInstance.addItemToCart(cartItem)
     .then((response) => {
-      console.log(response);
       toast({
         title: "Success",
         description: response.message,
@@ -78,7 +96,7 @@ export default function ProductCard({ product }: IProps) {
       <CardHeader className="mx-auto flex relative w-full border-b">
         <CarouselRenderer
           key={product.id}
-          images={product?.catalogue ? product.catalogue : [product?.image]}
+          images={product.catalogue && product.catalogue.length > 0 ? product.catalogue : [product?.image]}
           imageHeight={350}
           imageWidth={350}
           className="lg:hover:scale-110 transform transition duration-500 ml-[3px]"           
@@ -95,7 +113,7 @@ export default function ProductCard({ product }: IProps) {
             ))}
             {product.rating % 1 !== 0 && <StarHalf fill="#ea580b" strokeWidth={0} className='h-5 w-5' />}
           </div>
-          {product.rating.toFixed(1)}
+          {product.rating?.toFixed(1)}
         </div>
       </CardHeader>
       <CardContent className="p-2 w-full">
@@ -116,14 +134,15 @@ export default function ProductCard({ product }: IProps) {
         </section>
         <section className="flex flex-row items-center mb-1">
           <span className="text-xs text-gray-600 font-medium">
-            You Save £{product.marketPrice - product.salePrice}
+            You Save £{(product.marketPrice - product.salePrice).toFixed(2)}
           </span>
           <span className="text-xs text-green-900 ml-1 font-medium">
             {(((product.marketPrice - product.salePrice) / product.marketPrice) * 100).toFixed(0)}% off
           </span>
         </section>
         <Button 
-          onClick={onAddToCartClick} 
+          onClick={onAddToCartClick}
+          disabled={product.quantity < 1 || product.sellerId === session?.user?.id}
           className="bg-primary text-white text-sm font-semibold rounded-md w-full py-1 mt-2 border border-transparent transition-all duration-200 hover:outline-none hover:ring-2 hover:ring-offset-2 hover:ring-orange-500 dark:hover:ring-gray-500"
         >
           <ShoppingCart size={20} className="mr-1"/>

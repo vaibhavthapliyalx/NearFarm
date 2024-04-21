@@ -22,17 +22,18 @@ export const metadata: Metadata = {
 export default function NotFound() {
   /**************** Render Function *****************/
   return (
-    <div className="flex flex-col gap-4 items-center justify-center min-h-[calc(100vh-64px)]">
+    <div className="flex flex-col gap-4 items-center justify-center min-h-[calc(100vh-64px)] text-center">
       <Image
         src="/assets/logos/app/full-logo.png"
         alt="404"
-        width={300}
-        height={300}
+        width={400}
+        height={400}
       />
-      404 Hello there! It seems you are lost. <br />
-      
+      <h1 className="text-xl">Oops! The page you're looking for doesn't exist.</h1>
+      <p>It seems you've hit a roadblock. Don't worry, we'll help you get back on track.</p>
+      <p> If you think this is in error, please report it to us via the report issue link in the footer.</p>
       <Link href="/" passHref>
-        <Button variant="link">Go back to homepage?</Button>
+        <Button variant="link">Return to Homepage?</Button>
       </Link>
     </div>
   )

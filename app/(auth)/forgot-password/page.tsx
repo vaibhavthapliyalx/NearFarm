@@ -99,7 +99,7 @@ export default function ForgotPassword() {
   /******************* Render Function ********************/
   return (
     <>
-      <LoadingSpinner display={isLoading} message='Please be patient ! We are working on it!'/>
+      <LoadingSpinner display={isLoading} message='Preparing your password reset link...' />
       <div className="container relative h-screen w-screen overflow-hidden flex flex-col items-center justify-center md:flex md:items-center md:justify-center lg:max-w-none lg:grid-cols-2 lg:items-center lg:justify-center ">
       <Card className="lg:p-8 p-4 rounded-lg sm:w-[450px] sm:h-[450px] lg:w-[500px] lg:h-[500px]  bg-inherit border-2 w-full h-auto">
         <Image 

@@ -2,11 +2,11 @@
  * @fileoverview This file contains the model for the product.
  * This model is used to define the product schema and the products.
  */
-import { Schema, model, models } from 'mongoose';
+import { Schema, model, models, mongo } from 'mongoose';
 
 const ProductSchema = new Schema({
   id: {
-    type: Schema.Types.String,
+    type: Schema.Types.ObjectId,
     required: false,
   },
   name: {
@@ -33,17 +33,24 @@ const ProductSchema = new Schema({
     type: Schema.Types.String,
     required: false,
   },
+  catalogue: {
+    type: [Schema.Types.String],
+    required: false,
+  },
   seller_id: {
-    type: Schema.Types.String,
+    type: Schema.Types.ObjectId,
+    ref: 'User',
     required: [true, 'Product seller ID is required'],
   },
   available_from: {
-    type: Schema.Types.String,
-    required: [true, 'Product available from date is required'],
+    type: Date,
+    required: [true],
+    default: Date.now,
   },
   listed_at: {
-    type: Schema.Types.String,
-    required: [true, 'Product listed at date is required'],
+    type: Date,
+    required: [true],
+    default: Date.now,
   },
   collection_address: {
     type: Schema.Types.String,
@@ -56,7 +63,17 @@ const ProductSchema = new Schema({
   notes: {
     type: Schema.Types.String,
     required: false,
-  }
+  },
+  rating: {
+    type: Schema.Types.Number,
+    required: false,
+    default: 5,
+  },
+  soldTillDate: {
+    type: Schema.Types.Number,
+    required: false,
+    default: 0,
+  },
 });
 
 const Product = models.Product || model('Product', ProductSchema);

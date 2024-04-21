@@ -81,7 +81,7 @@ export default function OrderPage({params}: IProps) {
             </div>
             <div className="grid gap-2 items-center">
               <h2 className="font-semibold light:text-gray-600 mr-4">Order Status</h2>
-              <Badge className="w-[67px]">{order.status}</Badge>
+              <Badge className="w-[80px]">{order.status}</Badge>
             </div>
           </div>
         </CardContent>
