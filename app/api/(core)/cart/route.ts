@@ -4,6 +4,7 @@
 
 import { connectDB } from "@/lib/database";
 import User from "@/lib/models/user.model";
+import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
       });
     }
     // Check if the same product already exists. If it does, increment the quantity.
-    const existingProduct = user.cart.find((item: { productId: any; }) => item.productId === product_id);
+    const existingProduct = user.cart.find((item:any) => item.productId.equals(new mongoose.Types.ObjectId(product_id)));
     if (existingProduct) {
       if (existingProduct.quantity + quantity > 20) {
         return NextResponse.json({

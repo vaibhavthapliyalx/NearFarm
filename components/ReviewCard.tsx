@@ -4,7 +4,7 @@
 
 // Imports.
 import { Review, User } from '@/shared/interfaces';
-import { Star, MoreHorizontal, StarHalf, Heart } from 'lucide-react';
+import { Star, MoreHorizontal, StarHalf, Heart, Reply } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useEffect, useState } from 'react';
@@ -17,12 +17,13 @@ import EditReviewDrawer from './ModifyReviewDrawer';
 import { reviewValidation } from '@/lib/validations/review.validation';
 import * as z from 'zod';
 import { usePathname } from 'next/navigation';
+import ReplyDrawer from './ReplyDrawer';
 
 // Interface for the props of the ReviewCard component.
 interface IProps {
   review: Review;
   onDelete: (reviewId: string) => void;
-  onModify: (newInput: z.infer<typeof reviewValidation>) => void
+  onModify: (newInput: z.infer<typeof reviewValidation>) => void,
 }
 
 // Grabs the instance of the ApiConnector Class (Singleton) which connects to the backend endpoints.
@@ -212,8 +213,10 @@ export default function ReviewCard({ review, onDelete, onModify }: IProps) {
           }
           <span className='ml-2'>{likes}</span>   
         </div>
-    </div>
+        <div className="bg-inherit hover:bg-inherit flex justify-start hover:cursor-pointer" onClick={(e) => { e.stopPropagation()}}>
+          <ReplyDrawer reviewId={review.id as string}/>
+        </div>
+      </div>
   </div>
-  
   );
 } 

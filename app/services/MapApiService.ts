@@ -132,7 +132,6 @@ export default class MapApi {
         }
       })
       .then((response) => {
-        console.log(response.data);
         if (response.data.status === 'OK') {
           const results = response.data.results;
           for (let i = 0; i < results.length; i++) {

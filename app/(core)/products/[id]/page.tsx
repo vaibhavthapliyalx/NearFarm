@@ -127,7 +127,7 @@ export default function ProductDetailsPage({params}: IProps) {
       toast({
         title: "Success",
         description: response.message,
-        variant: ToastType.DEFAULT,
+        variant: ToastType.SUCCESS,
       })
     })
     .catch((error) => {
@@ -163,7 +163,7 @@ export default function ProductDetailsPage({params}: IProps) {
       toast({
         title: "Success",
         description: res.message,
-        variant: ToastType.DEFAULT,
+        variant: ToastType.SUCCESS,
       });
       fetchReviews(product.id as string);
     } else {
@@ -187,7 +187,7 @@ export default function ProductDetailsPage({params}: IProps) {
       toast({
         title: "Success",
         description: res.message,
-        variant: ToastType.DEFAULT,
+        variant: ToastType.SUCCESS,
       });
       fetchReviews(product.id as string);
     } else {
@@ -219,7 +219,7 @@ export default function ProductDetailsPage({params}: IProps) {
       toast({
         title: "Success",
         description: res.message,
-        variant: ToastType.DEFAULT,
+        variant: ToastType.SUCCESS,
       });
       fetchReviews(product.id as string);
     } else {

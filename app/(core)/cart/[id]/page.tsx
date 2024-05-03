@@ -76,7 +76,7 @@ export default function CartPage({params}: IProps) {
       toast({
         title: "Success",
         description: response.message,
-        variant: ToastType.DEFAULT,
+        variant: ToastType.SUCCESS,
       })
     })
     .catch((response) => {
@@ -102,7 +102,7 @@ export default function CartPage({params}: IProps) {
       toast({
         title: "Success",
         description: response.message,
-        variant: ToastType.DEFAULT,
+        variant: ToastType.SUCCESS,
       })
     })
     .catch((response) => {
@@ -181,7 +181,7 @@ export default function CartPage({params}: IProps) {
                     toast({
                       title: "Success",
                       description: response.message,
-                      variant: ToastType.DEFAULT,
+                      variant: ToastType.SUCCESS,
                     })
                 
                     // After placing the order, redirect the user to the order page.

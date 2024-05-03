@@ -935,7 +935,8 @@ export default class ApiConnector {
             review: review.review,
             edited: review.edited,
             reviewedAt: review.reviewedAt,
-            likes: review.likes
+            likes: review.likes,
+            replies: review.replies
           }
         });
         response.data = reviews;
@@ -1172,6 +1173,73 @@ export default class ApiConnector {
       })
       .then((res: any) => {
         const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function send a POST request to the server to add a reply to a review.
+   * 
+   * @param reviewId - The id of the review.
+   * @param reply - The reply to be added.
+   * @param userId - The id of the user.
+   * @returns Promise<ApiResponse> - The promise resolves if the reply is added successfully, otherwise it rejects.
+   */
+  async addReplyToReview({reviewId, reply, userId}: {reviewId: string, reply: string, userId: string}) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.post('/api/review/reply', {
+        reviewId: reviewId,
+        reply: reply,
+        userId: userId
+      })
+      .then((res: any) => {
+        const response = res.data.body;
+        if (!response.success) {
+          reject(response);
+        } else {
+          resolve(response);
+        }
+      })
+      .catch((result: any) => {
+        reject(result.response.data);
+      });
+    });
+  }
+
+  /**
+   * This function sends a DELETE request to the server to delete a reply to a review.
+   * 
+   * @param reviewId - The id of the review.
+   * @param replyId - The id of the reply.
+   * @returns Promise<ApiResponse> - The promise resolves if the reply is deleted successfully, otherwise it rejects.
+   */
+  async getReviewById(reviewId: string) {
+    return new Promise<ApiResponse>((resolve, reject) => {
+      axios.get('/api/review', { params: { reviewId: reviewId } })
+      .then((res: any) => {
+        const response = res.data.body;
+        const review: Review = {
+          id: response.data[0]._id,
+          productId: response.data[0].productId,
+          productName: response.data[0].productName,
+          userId: response.data[0].userId,
+          userName: response.data[0].userName,
+          rating: response.data[0].rating,
+          review: response.data[0].review,
+          edited: response.data[0].edited,
+          reviewedAt: response.data[0].reviewedAt,
+          likes: response.data[0].likes,
+          replies: response.data[0].replies
+        }
+        response.data = review;
         if (!response.success) {
           reject(response);
         } else {

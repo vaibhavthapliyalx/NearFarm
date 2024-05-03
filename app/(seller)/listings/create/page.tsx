@@ -299,7 +299,7 @@ export default function AddProduct() {
             toast({
               title: "Success",
               description: res.message,
-              variant: ToastType.DEFAULT,
+              variant: ToastType.SUCCESS,
             });
             setIsLoading(false);
             setMessage("");

@@ -61,8 +61,6 @@ export async function GET( request: NextRequest ) {
         };
       }));
 
-      console.log(cities);
-
       return NextResponse.json({
         status: 200, 
         body : {

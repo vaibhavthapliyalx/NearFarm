@@ -106,10 +106,12 @@ export type SignupErrorType = {
  * 
  * @property {string} DEFAULT - The default toast message.
  * @property {string} DESTRUCTIVE - The destructive toast message.
+ * @property {string} SUCCESS - The success toast message.
  */
 export enum ToastType {
   DEFAULT = "default",
   DESTRUCTIVE = "destructive",
+  SUCCESS = "success"
 }
 
 /**
