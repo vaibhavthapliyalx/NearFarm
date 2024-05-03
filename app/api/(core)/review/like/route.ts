@@ -40,14 +40,14 @@ export async function POST(request: NextRequest) {
           }
         });
       }
-
+    
       // Update the review and user
       review.likes++;
-      user.likedReviews.push(review._id);
-
       await review.save();
-      await user.save();
-
+    
+      // Using the $push operator to add the review ID to the likedReviews array
+      await User.updateOne({ _id: body.userId }, { $push: { likedReviews: review._id } });
+    
       return NextResponse.json({
         status: 200,
         body: {
@@ -66,23 +66,21 @@ export async function POST(request: NextRequest) {
           }
         });
       }
-
+    
       // Update the review and user
-      review.likes = Math.max(0, review.likes - 1); // Ensure the likes count doesn't go below 0
-      
+      review.likes = Math.max(0, review.likes - 1); //  We ensure the likes count doesn't go below 0
+      await review.save();
+    
       // Using the $pull operator to remove the review ID from the likedReviews array
       await User.updateOne({ _id: body.userId }, { $pull: { likedReviews: review._id } });
-
-      await review.save();
-      await user.save();
-
+    
       return NextResponse.json({
         status: 200,
         body: {
           success: true,
           message: "Review unliked successfully"
         }
-  });
+      });
     } else {
       return NextResponse.json({
         status: 400,

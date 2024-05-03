@@ -238,6 +238,24 @@ export interface Review {
   likes?: number;
   liked?: boolean;
   edited?: boolean;
+  replies?: Reply[];
+}
+
+/**
+ * @interface This interface defines the structure of the reply object.
+ * 
+ * @property {string} user - The name of the user.
+ * @property {string} username - The username of the user.
+ * @property {string} userAvatar - The avatar of the user.
+ * @property {string} reply - The reply of the user.
+ * @property {string} repliedAt - The date on which the reply was posted.
+ */
+export interface Reply {
+  user: string;
+  username: string;
+  userAvatar: string;
+  reply: string;
+  repliedAt?: string;
 }
 
 /**

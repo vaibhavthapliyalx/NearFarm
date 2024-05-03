@@ -15,6 +15,13 @@ const ReviewSchema = new mongoose.Schema({
   reviewedAt: { type: Date, default: Date.now },
   likes: { type: Number, default: 0 },
   edited: { type: Boolean, default: false, required: false },
+  replies: [{
+    user: { type: String },
+    username: { type: String },
+    userAvatar: { type: String },
+    reply: { type: String },
+    repliedAt: { type: Date, default: Date.now }
+  }],
 });
 
 export default mongoose.models.Review || mongoose.model('Review', ReviewSchema);

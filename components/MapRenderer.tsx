@@ -124,10 +124,10 @@ export default function MapRenderer({onDismiss, containerStyle, type, customCoor
                   mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                 >
                 <div>
-                  <SellerProfileToolTip sellerId={location.userId} className="w-80 h-30" onDismiss={onDismiss} />
-                  <Button className="absolute top-1 left-72 text-black dark:text-white hover:text-red-600  p-1 rounded-full" variant={'ghost'} onClick={() => setCurrentLocation(undefined)}>
-                    <X size={15}/>
-                  </Button>
+                  <SellerProfileToolTip sellerId={location.userId} className="w-80 h-30" onDismiss={onDismiss}
+                    onInfoDismiss={()=> setCurrentLocation(undefined)}
+                  />
+                  
                 </div>
               </OverlayView>
                 )}

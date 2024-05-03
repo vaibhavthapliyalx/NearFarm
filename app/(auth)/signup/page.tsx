@@ -62,7 +62,7 @@ export default function SignUp() {
       toast(
         {
           description: response.message,
-          variant: ToastType.DEFAULT,
+          variant: ToastType.SUCCESS,
           title: "Account created successfully",
           action: <ToastAction altText='Continue to login' onClick={() => router.push("/login")}> Continue to login </ToastAction>
         }

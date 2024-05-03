@@ -35,10 +35,10 @@ export async function GET(request: NextRequest) {
       order = await Order.findOne(query);
     } else if (userId) {
       query = { userId: uid };
-      order = await Order.find(query);
+      order = await Order.find(query).sort({ _id: -1 });
     } else if (sellerId) {
       query = { "items.sellerId": sid };
-      order = await Order.find(query);
+      order = await Order.find(query).sort({ _id: -1 });
     }
 
     if (order) {
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
             email: seller.email,
           }
         }));
-        await sendEmail(seller.id,"You have a new order", html);
+        await sendEmail(seller.email,"You have a new order", html);
       } catch(error) {
         return NextResponse.json({
             status: 500,

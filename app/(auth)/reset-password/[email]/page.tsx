@@ -62,7 +62,7 @@ export default function ResetPassword({params}: IProps) {
     .then((response) => {
       toast({
         description: response.message,
-        variant: ToastType.DEFAULT,
+        variant: ToastType.SUCCESS,
         title: "Success!",
       });
       // Redirect to the login page after 2 seconds.

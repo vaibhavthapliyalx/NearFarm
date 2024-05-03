@@ -34,6 +34,9 @@ export default function Dashboard() {
 
   // This fetches the seller details and the best selling products when the component mounts
   useEffect(() => {
+    // Check if the calculation and analysis have been done before
+    // This is to prevent the calculation from running every time the page is refreshed.
+    const hasRunCalculation = sessionStorage.getItem('hasRunCalculation');
     // Fetch the seller details
     async function fetchSeller() {
       const session =  await apiConnectorInstance.getCurrentUserFromSession();
@@ -72,19 +75,35 @@ export default function Dashboard() {
     }
 
     // Fetch the seller details.
-    Promise.all([simulateCalculationAndDeepAnalysis(),fetchSeller(), fetchAllListedProducts(), fetchCustomerCities()])
-    .finally(() => {
-      setIsLoading(false);
-    });
-
-    // Cleanup function on unmount.
-    return function cleanup() {
-      setSeller(null);
-      setProducts([]);
-      setCustomers([]);
+  Promise.all([
+    hasRunCalculation ? Promise.resolve() : simulateCalculationAndDeepAnalysis(),
+    fetchSeller(), 
+    fetchAllListedProducts(), 
+    fetchCustomerCities()
+  ])
+  .then(() => {
+    // Store a flag in local storage
+    if (!hasRunCalculation) {
+      sessionStorage.setItem('hasRunCalculation', 'true');
     }
-  },[]);
+  })
+  .finally(() => {
+    setIsLoading(false);
+  });
 
+  // Cleanup function on unmount.
+  return function cleanup() {
+    setSeller(null);
+    setProducts([]);
+    setCustomers([]);
+  }
+},[]);
+
+  /**
+   *  Simulates a long running calculation and deep analysis process.
+   * 
+   * @returns Promise<void>
+   */
   async function simulateCalculationAndDeepAnalysis() {
     return new Promise<void>((resolve) => {
     setIsLoading(true)
@@ -108,14 +127,10 @@ export default function Dashboard() {
   
               setTimeout(() => {
                 setMessage("Preparing Insights...");
-                // After another delay of two seconds, display finishing up analysis.
+                // After another delay of one second, resolve the promise.
                 setTimeout(() => {
-                  setMessage("Finishing up analysis. Exciting insights ahead. Stay tuned!");
-                  // After another delay of one second, resolve the promise.
-                  setTimeout(() => {
-                    resolve();
-                  }, 2000);
-                }, 2000);
+                  resolve();
+                }, 1000);
               }, 2000);
             }, 2000);
           }, 1500);
@@ -226,13 +241,6 @@ export default function Dashboard() {
                       containerStyle={{height: '500px', width: '100%'}}
                       type={MapType.NEARBY_CUSTOMERS}
                       customCoordinates={cities.map((city: any) => {
-                        console.log({
-                          coordinates: {
-                            lat: city.coordinates.lat as number,
-                            lng: city.coordinates.lng as number
-                          },
-                          userId: city.userId as string
-                        })
                         return {
                           coordinates: {
                             lat: city.coordinates.lat as number,

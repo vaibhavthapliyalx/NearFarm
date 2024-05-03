@@ -10,15 +10,17 @@ import ApiConnector from "@/app/services/ApiConnector";
 import { User } from "@/shared/interfaces";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Card, CardContent } from "./ui/card";
-import { BoxIcon, Package, UsersIcon } from "lucide-react";
+import { Card, CardContent, CardHeader } from "./ui/card";
+import { BoxIcon, Package, UsersIcon, X } from "lucide-react";
 import Link from "next/link";
+import { Button } from "./ui/button";
 
 // Interface for the props of the SellerProfileToolTip component.
 interface IProps {
   sellerId: string;
   className?: string;
   onDismiss: () => void;
+  onInfoDismiss: () => void;
 }
 // Grabs the instance of the ApiConnector Class (Singleton) which connects to the backend endpoints.
 const apiConnectorInstance = ApiConnector.getInstance();
@@ -29,9 +31,10 @@ const apiConnectorInstance = ApiConnector.getInstance();
  * @param sellerId The id of the seller.
  * @param className The tailwind classes to apply to the tooltip.
  * @param onDismiss The function to call when the tooltip is dismissed.
+ * @param onInfoDismiss The function to call when the info button is dismissed.
  * @returns 
  */
-export default function SellerProfileToolTip({ sellerId, className, onDismiss}: IProps) {
+export default function SellerProfileToolTip({ sellerId, className, onDismiss, onInfoDismiss}: IProps) {
   // State variables.
   const [seller, setSeller] = useState<User | null>(null);
 
@@ -53,11 +56,16 @@ export default function SellerProfileToolTip({ sellerId, className, onDismiss}: 
 
   /************************ Render Function *********************/
   return (
-    <Card className={`${className} pt-2 bg-white  dark:bg-gray-800 rounded-lg shadow-md border-none`}>
-      <CardContent className="flex mt-2 items-start space-x-2 w-full">
+    <Card className={`relative ${className} pt-2 bg-white  dark:bg-gray-800 rounded-lg shadow-md border-none min-w-fit`}>
+      <CardHeader>
+      <Button className="absolute top-2 right-2 text-black dark:text-white hover:text-red-600 p-1 rounded-full" variant={'ghost'} onClick={onInfoDismiss}>
+        <X size={15}/>
+      </Button>
+      </CardHeader>
+      <CardContent className="flex mt-[-40px] items-start space-x-2 w-full">
         <Image
-          src={seller?.image as string}
-          alt={seller?.name as string}
+          src={seller?.image as string || "/assets/icons/user.svg"}
+          alt={seller?.name as string || "User"}
           width={60}
           height={60}
           className="rounded-full"
