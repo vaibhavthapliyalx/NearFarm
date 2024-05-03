@@ -55,7 +55,7 @@ export default function ForgotPassword() {
       .then((response) => {
         toast({
           description: response.message,
-          variant: ToastType.DEFAULT,
+          variant: ToastType.SUCCESS,
           title: "Success!",
         })
       })

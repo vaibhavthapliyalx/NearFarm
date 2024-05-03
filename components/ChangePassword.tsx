@@ -89,7 +89,7 @@ export function ChangePasswordDrawer( {user, setLoadingMessage, displaySpinner}:
       .then((response: ApiResponse) => {
         toast({
           description: response.message,
-          variant: ToastType.DEFAULT,
+          variant: ToastType.SUCCESS,
           title: "Success"   
         });
       })

@@ -12,12 +12,17 @@ export async function GET(request: NextRequest) {
     await connectDB();
     const product_id = request.nextUrl.searchParams.get('productId');
     const user_id = request.nextUrl.searchParams.get('userId');
+    const review_id = request.nextUrl.searchParams.get('reviewId');
 
     let query;
-    if (user_id) {
-      query = { userId: user_id };
-    } else {
+    if (product_id) {
       query = { productId: product_id };
+    } else if (user_id) {
+      query = { userId: user_id };
+    } else if (review_id) {
+      query = { _id: review_id };
+    } else {
+      query = {};
     }
 
     // Get the reviews using the query specified.

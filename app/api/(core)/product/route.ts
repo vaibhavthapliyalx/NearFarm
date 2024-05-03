@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
     const id = params.id;
     const sellerId = params.sellerId;
     const bestSelling = params.bestSelling;
+    const sortByRatingOrder = params.sortByRatingOrder;
     const name = params.name;
     const sortByPrice = params.sortByPriceOrder; // 'asc' or 'desc'
     const availableFromDate = params.sortByAvailableFromDate; // expects a date string
@@ -58,11 +59,13 @@ export async function GET(request: NextRequest) {
       sort = { ...sort, sale_price: sortByPrice === SortOrder.ASCENDING ? 1 : -1 };
     }
     if (availableFromDate) {
-      sort = { ...sort, available_from: 1 };
-      query = { ...query, available_from: { $gte: new Date(availableFromDate) } };
+      sort = { ...sort, available_from: availableFromDate === SortOrder.ASCENDING ? 1 : -1 };
     }
     if (bestSelling === "true") {
       sort = { ...sort, soldTillDate: -1 };
+    }
+    if (sortByRatingOrder) {
+      sort = { ...sort, rating: sortByRatingOrder === SortOrder.ASCENDING ? 1 : -1 };
     }
     // If collectionAddress is provided, sort products based on the distance from the collection address
     if (collectionAddress) {

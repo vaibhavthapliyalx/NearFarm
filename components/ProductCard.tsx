@@ -74,7 +74,7 @@ export default function ProductCard({ product }: IProps) {
       toast({
         title: "Success",
         description: response.message,
-        variant: ToastType.DEFAULT,
+        variant: ToastType.SUCCESS,
       })
     })
     .catch((error) => {

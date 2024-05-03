@@ -95,7 +95,7 @@ export default function Orders() {
         toast({
           title: "Success",
           description: res.message,
-          variant: ToastType.DEFAULT
+          variant: ToastType.SUCCESS
         });
       }
     } catch (error) {
