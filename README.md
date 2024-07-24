@@ -89,7 +89,7 @@ This project is currently a work in progress. Developed as a Final Year Project 
 
 ## Disclaimer
 
-Nearfarm is a Final Year project developed by Vaibhav Thapliyal. All rights to the codebase, including but not limited to its design, implementation, and associated documentation, are reserved. Any unauthorized use, reproduction, or distribution of the codebase or its components is strictly prohibited. The project maintainers and contributors disclaim any liability for any issues, damages, or legal consequences arising from the unauthorized use or distribution of Nearfarm. 
+Nearfarm is a Final Year project developed by Vaibhav Thapliyal. All rights to the codebase, including but not limited to its design, implementation, and associated documentation, are reserved.
 Any third-party services, libraries, or tools used in this project are the respective properties of their owners and may be protected by trademarks, copyrights, or other intellectual property rights. They are subject to their own terms and licenses.
 
 ## Open Issues and Suggestions
@@ -105,4 +105,4 @@ To open an issue, please follow these steps:
 
 ## License
 
-This project is proprietary and currently not licensed for public use. All rights to the codebase are reserved by the project owner. Unauthorized use, reproduction, or distribution of the code is strictly prohibited. If you wish to use or modify the codebase, please contact the project owner for permission.
+This project is licensed under the MIT Licence - see the [LICENSE](LICENSE) file for details.
